@@ -1,0 +1,255 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+
+import video from "@/assets/images/temp/teaser-thumbnail.jpg";
+import backdrop from "@/assets/images/temp/backdrop-image.jpg";
+import poster from "@/assets/images/temp/poster-image.jpg";
+import play from "@/assets/images/play-button.png";
+import apiCall from "@/lib/apiCall";
+import {
+  ImagesResultType,
+  MovieTVDetailMediaCompType,
+  MovieTVImagesResponseType,
+  MovieTVVideoResponseType,
+  VideoResultType,
+} from "@/constants/types";
+
+const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
+  mediaType,
+  itemId,
+}) => {
+  const [activeTab, setActiveTab] = useState<string>("popular");
+
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const [videos, setVideos] = useState<VideoResultType[]>();
+  const [backdrops, setBackdrops] = useState<ImagesResultType[]>();
+  const [posters, setPosters] = useState<ImagesResultType[]>();
+
+  const handleTabClick = (tab: string) => {
+    setActiveTab(tab);
+  };
+
+  useEffect(() => {
+    const getData = async () => {
+      setLoading(true);
+      const endpoint: string = `/${mediaType}/${itemId}`;
+
+      const resVideo: MovieTVVideoResponseType = await apiCall(
+        `${endpoint}/videos`
+      );
+      const resImages: MovieTVImagesResponseType = await apiCall(
+        `${endpoint}/images`
+      );
+
+      setVideos(resVideo?.results);
+      setBackdrops(resImages?.backdrops);
+      setPosters(resImages?.posters);
+
+      setLoading(false);
+    };
+
+    getData();
+  }, [activeTab]);
+
+  return (
+    <div className="w-fill grid gap-5 py-[1.875rem]">
+      <div className="w-full flex justify-start items-center gap-[3.125rem]">
+        <p className="text-[1.25rem] font-semibold">Media</p>
+
+        <div className="flex justify-start items-center gap-10 font-medium text-[1rem]">
+          <div
+            className={`flex justify-start items-center gap-1 hover:cursor-pointer py-2 text-black font-medium capitalize border-y-[0.1875rem] border-y-solid border-t-transparent ${
+              activeTab === "popular"
+                ? "border-b-black"
+                : "border-b-transparent"
+            }`}
+            onClick={() => handleTabClick("popular")}
+          >
+            Most Popular
+          </div>
+          <div
+            className={`flex justify-start items-center gap-1 hover:cursor-pointer py-2 text-black font-medium capitalize border-y-[0.1875rem] border-y-solid border-t-transparent ${
+              activeTab === "videos" ? "border-b-black" : "border-b-transparent"
+            }`}
+            onClick={() => handleTabClick("videos")}
+          >
+            {`Videos (${videos?.length})`}
+          </div>
+          <div
+            className={`flex justify-start items-center gap-1 hover:cursor-pointer py-2 text-black font-medium capitalize border-y-[0.1875rem] border-y-solid border-t-transparent ${
+              activeTab === "backdrops"
+                ? "border-b-black"
+                : "border-b-transparent"
+            }`}
+            onClick={() => handleTabClick("backdrops")}
+          >
+            {`Backdrops (${backdrops?.length})`}
+          </div>
+          <div
+            className={`flex justify-start items-center gap-1 hover:cursor-pointer py-2 text-black font-medium capitalize border-y-[0.1875rem] border-y-solid border-t-transparent ${
+              activeTab === "posters"
+                ? "border-b-black"
+                : "border-b-transparent"
+            }`}
+            onClick={() => handleTabClick("posters")}
+          >
+            {`Posters (${posters?.length})`}
+          </div>
+        </div>
+      </div>
+
+      {!loading && (
+        <div className="w-full h-[18.75rem] flex flex-row flex-nowrap justify-start items-start gap-0 rounded-mdb overflow-x-scroll">
+          {activeTab === "popular" && (
+            <>
+              <div className="relative shrink-0 h-full w-[33.333rem] flex justify-center items-center">
+                <Image
+                  src={
+                    videos
+                      ? `https://i.ytimg.com/vi/${videos[0]?.key}/hqdefault.jpg`
+                      : ""
+                  }
+                  // src={video}
+                  width={500}
+                  height={300}
+                  alt="Video"
+                  className="h-full w-full object-cover object-center"
+                />
+
+                <Image
+                  src={play}
+                  alt="Play"
+                  className="absolute left-[50%] top-[50%] -translate-x-1/2 -translate-y-1/2 z-[2]"
+                />
+              </div>
+              <div className="shrink-0 h-full w-[33.333rem] flex justify-center items-center">
+                <Image
+                  src={
+                    backdrops
+                      ? `https://image.tmdb.org/t/p/w780/${backdrops[0]?.file_path}`
+                      : ""
+                  }
+                  width={500}
+                  height={300}
+                  alt="Backdrop"
+                  className="h-full w-full object-cover object-center"
+                />
+              </div>
+              <div className="shrink-0 h-full w-fit flex justify-center items-center">
+                <Image
+                  src={
+                    posters
+                      ? `https://image.tmdb.org/t/p/w300/${posters[0]?.file_path}`
+                      : ""
+                  }
+                  width={240}
+                  height={300}
+                  alt="Poster"
+                  className="h-full w-full object-cover object-center"
+                />
+              </div>
+            </>
+          )}
+
+          {activeTab === "videos" && (
+            <>
+              {videos &&
+                videos.map(
+                  (video, i: number) =>
+                    i < 6 && (
+                      <>
+                        <div className="relative shrink-0 h-full w-[33.333rem] flex justify-center items-center">
+                          <Image
+                            src={
+                              videos
+                                ? `https://i.ytimg.com/vi/${video?.key}/hqdefault.jpg`
+                                : ""
+                            }
+                            // src={video}
+                            width={500}
+                            height={300}
+                            alt="Video"
+                            className="h-full w-full object-cover object-center"
+                          />
+
+                          <Image
+                            src={play}
+                            alt="Play"
+                            className="absolute left-[50%] top-[50%] -translate-x-1/2 -translate-y-1/2 z-[2]"
+                          />
+                        </div>
+                      </>
+                    )
+                )}
+              <div className="relative shrink-0 h-full w-[33.333rem] flex justify-center items-center font-semibold">
+                View More
+              </div>
+            </>
+          )}
+
+          {activeTab === "backdrops" && (
+            <>
+              {backdrops &&
+                backdrops.map(
+                  (backdrop, i: number) =>
+                    i < 6 && (
+                      <div
+                        className="shrink-0 h-full w-[33.333rem] flex justify-center items-center"
+                        key={i}
+                      >
+                        <Image
+                          src={
+                            backdrops
+                              ? `https://image.tmdb.org/t/p/w780/${backdrop?.file_path}`
+                              : ""
+                          }
+                          width={500}
+                          height={300}
+                          alt="Backdrop"
+                          className="h-full w-full object-cover object-center"
+                        />
+                      </div>
+                    )
+                )}
+
+              <div className="relative shrink-0 h-full w-[33.333rem] flex justify-center items-center font-semibold">
+                View More
+              </div>
+            </>
+          )}
+
+          {activeTab === "posters" && (
+            <>
+              {posters &&
+                posters.map(
+                  (poster, i: number) =>
+                    i < 6 && (
+                      <div
+                        className="shrink-0 h-full w-fit flex justify-center items-center"
+                        key={i}
+                      >
+                        <Image
+                          src={`https://image.tmdb.org/t/p/w300/${poster?.file_path}`}
+                          width={240}
+                          height={300}
+                          alt="Poster"
+                          className="h-full w-full object-cover object-center"
+                        />
+                      </div>
+                    )
+                )}
+              <div className="relative shrink-0 h-full w-[12.5rem] flex justify-center items-center font-semibold">
+                View More
+              </div>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default MovieTVDetailMedia;
