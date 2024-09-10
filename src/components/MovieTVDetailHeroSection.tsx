@@ -53,15 +53,15 @@ const MovieTVDetailHeroSection: React.FC<MovieTVDetailHeroSectionCompType> = ({
   };
 
   const getGenresString = (arr: GenresType[]) => {
-    const final = arr.map((item, i) => {
+    const final = arr?.map((item, i) => {
       if (i < 4) {
         return item.name;
       }
     });
 
-    const temp = final.filter((item) => item);
+    const temp = final?.filter((item) => item);
 
-    return temp.join(", ");
+    return temp?.join(", ");
   };
 
   const credits = () => {

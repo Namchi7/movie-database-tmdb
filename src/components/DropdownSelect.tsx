@@ -10,12 +10,13 @@ import { SelectType } from "@/constants/types";
 
 const DropdownSelect: React.FC<SelectType> = ({
   placeholder,
+  setToKey,
   listData,
   value,
-  setValue,
+  setValueFn,
 }) => {
   return (
-    <Select value={value} onValueChange={setValue}>
+    <Select value={value} onValueChange={(v) => setValueFn(v, setToKey)}>
       <SelectTrigger
         defaultValue={listData[0].value}
         className="w-full focus:ring-0 hover:bg-[#E4E7EB]"

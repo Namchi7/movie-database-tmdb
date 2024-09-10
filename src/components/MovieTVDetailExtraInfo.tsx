@@ -10,6 +10,8 @@ import twitter from "@/assets/images/twitter.png";
 import instagram from "@/assets/images/instagram.png";
 import link from "@/assets/images/visit-homepage.png";
 
+import { languages } from "@/constants/languageCodes";
+
 import {
   MovieTVDetailExtraInfoCompType,
   MovieTVExternalIdsType,
@@ -57,7 +59,7 @@ const MovieTVDetailExtraInfo: React.FC<MovieTVDetailExtraInfoCompType> = ({
       );
 
       setExternalIds(resIds);
-      setKeywords(resKeywords?.keywords);
+      setKeywords(resKeywords?.results);
     };
 
     getData();
@@ -69,7 +71,9 @@ const MovieTVDetailExtraInfo: React.FC<MovieTVDetailExtraInfoCompType> = ({
       const keys: string[] = Object.keys(externalIds);
       setExternalIdsLength(
         keys.filter(
-          (key: string) => externalIds[key] !== null && select.includes(key)
+          (key: string) =>
+            externalIds[key as keyof MovieTVExternalIdsType] !== null &&
+            select.includes(key)
         ).length
       );
     }
@@ -202,7 +206,9 @@ const MovieTVDetailExtraInfo: React.FC<MovieTVDetailExtraInfoCompType> = ({
         {itemData?.original_language && (
           <div className="grid gap-1">
             <p className="text-[0.9rem] font-medium">Original Language</p>
-            <p className="text-[0.9rem]">{itemData?.original_language}</p>
+            <p className="text-[0.9rem]">
+              {languages[itemData?.original_language]}
+            </p>
           </div>
         )}
       </div>

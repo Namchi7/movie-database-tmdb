@@ -13,6 +13,7 @@ const Movie: React.FC = () => {
 
   const [title, setTitle] = useState<string>("");
   const [isList, setIsList] = useState<boolean>(true);
+  const [isListLoading, setIsListLoading] = useState<boolean>(true);
 
   useEffect(() => {
     switch (category) {
@@ -41,11 +42,12 @@ const Movie: React.FC = () => {
         break;
       }
     }
+    setIsListLoading(false);
   }, [category]);
 
   return (
     <>
-      {isList ? (
+      {!isListLoading && isList ? (
         <MovieAndTVList title={title} mediaType={mediaType} />
       ) : (
         <MovieTVDetail title={category} />

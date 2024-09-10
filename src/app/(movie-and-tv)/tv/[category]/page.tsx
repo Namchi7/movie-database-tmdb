@@ -13,6 +13,7 @@ const TV: React.FC = () => {
 
   const [title, setTitle] = useState<string>("");
   const [isList, setIsList] = useState<boolean>(true);
+  const [isListLoading, setIsListLoading] = useState<boolean>(true);
 
   useEffect(() => {
     switch (category) {
@@ -21,13 +22,13 @@ const TV: React.FC = () => {
         setIsList(true);
         break;
       }
-      case "now-playing": {
-        setTitle("Now Playing");
+      case "airing-today": {
+        setTitle("Airing Today");
         setIsList(true);
         break;
       }
-      case "upcoming": {
-        setTitle("Upcoming");
+      case "on-the-air": {
+        setTitle("On The Air");
         setIsList(true);
         break;
       }
@@ -41,11 +42,12 @@ const TV: React.FC = () => {
         break;
       }
     }
+    setIsListLoading(false);
   }, [category]);
 
   return (
     <>
-      {isList ? (
+      {!isListLoading && isList ? (
         <MovieAndTVList title={title} mediaType={mediaType} />
       ) : (
         <MovieTVDetail title={category} />

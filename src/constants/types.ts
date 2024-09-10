@@ -95,15 +95,23 @@ export interface filterListItemType {
   value: string;
 }
 
+export type SetValueFnType = (value: string | string[], key: string) => void;
+
 export interface SelectType {
   placeholder: string;
+  setToKey: string;
   listData: filterListItemType[];
   value: string;
-  setValue: React.Dispatch<React.SetStateAction<string>>;
+  setValueFn: (value: string, key: string) => void;
 }
 
 export interface DatePickerCompType {
   ariaLabel: string;
+  setToKey: string;
+  minDate: string;
+  maxDate: string;
+  value: string;
+  setValueFn: SetValueFnType;
 }
 
 export interface GenresType {
@@ -111,19 +119,24 @@ export interface GenresType {
   name: string;
 }
 
+export type ToggleTTypeType = 1 | 2;
+
 export interface ToggleType {
   itemList: GenresType[];
-  tType: number;
-  setSelectedGenres: React.Dispatch<React.SetStateAction<number[]>>;
-  setSelectedCertificate: React.Dispatch<React.SetStateAction<string>>;
+  tType: ToggleTTypeType;
+  value: string | string[] | undefined;
+  // value: ToggleTTypeType extends 1 ? string[] | undefined : string | undefined;
+  setToKey: string;
+  setValueFn: SetValueFnType;
 }
 
 export interface NumberPickerByStepType {
   min: number;
   max: number;
+  setToKey: string;
   step: number;
   value: number;
-  setValue: React.Dispatch<React.SetStateAction<number>>;
+  setValueFn: (value: string | number, key: string) => void;
 }
 
 export interface MovieTVDetailCompPropsType {
@@ -423,7 +436,7 @@ export interface MovieTVKeywordsType {
 
 export interface MovieTVKeywordsResponseType {
   id: number;
-  keywords: MovieTVKeywordsType[];
+  results: MovieTVKeywordsType[];
 }
 
 export interface PersonDataResponseType {
@@ -711,4 +724,27 @@ export interface TopicBackToMainCompType {
   topic: string;
   backPath: string;
   imgPath: string;
+}
+
+export interface LanguageCodeType {
+  [code: string]: string;
+}
+
+export interface LanguageListItemType {
+  value: string;
+  label: string;
+}
+export interface FiltersType {
+  sort_by: string;
+  "release_date.gte": string;
+  "release_date.lte": string;
+  with_genres: string[];
+  certification: string;
+  with_original_language: string;
+  "vote_count.gte": number;
+  "vote_count.lte": number;
+  "with_runtime.gte": number;
+  "with_runtime.lte": number;
+  with_keywords: string;
+  with_origin_country: string;
 }

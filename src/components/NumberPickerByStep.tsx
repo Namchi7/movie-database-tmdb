@@ -11,13 +11,14 @@ const NumberPickerByStep: React.FC<NumberPickerByStepType> = ({
   max,
   step,
   value,
-  setValue,
+  setToKey,
+  setValueFn,
 }) => {
   const decreaseValueByStep = () => {
-    setValue((prev) => (prev - step < min ? min : prev - step));
+    setValueFn(value - step < min ? min : value - step, setToKey);
   };
   const increaseValueByStep = () => {
-    setValue((prev) => (prev + step > max ? max : prev + step));
+    setValueFn(value + step > max ? max : value + step, setToKey);
   };
 
   return (

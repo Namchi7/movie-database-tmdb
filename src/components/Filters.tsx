@@ -4,48 +4,50 @@ import React, { useEffect, useState } from "react";
 
 import { Button } from "./ui/button";
 import DatePickerComp from "./DatePickerComp";
-import DropdownSelect from "./DowpdownSelect";
+import DropdownSelect from "./DropdownSelect";
 import ToggleGroupComp from "./ToggleGroupComp";
 import NumberPickerByStep from "./NumberPickerByStep";
 import { certificates, filterSortList, genres } from "@/constants/filterLists";
+import { languages } from "@/constants/languageCodes";
+import { LanguageListItemType, FiltersType } from "@/constants/types";
 
 const Filters: React.FC = () => {
-  const [sortBy, setSortBy] = useState<string>("popularity.desc");
-  const [originalLanguage, setOriginalLanguage] = useState<string>("en");
-  const [selectedGenres, setSelectedGenres] = useState<number[]>([]);
-  const [selectedCertificate, setSelectedCertificate] = useState<string>("");
-  const [minScore, setMinScore] = useState<number>(0);
-  const [maxScore, setMaxScore] = useState<number>(10);
-  const [minRunTime, setMinRunTime] = useState<number>(30);
-  const [maxRunTime, setMaxRunTime] = useState<number>(350);
-  const [keyword, setKeyword] = useState<string>("");
+  const [filters, setFilters] = useState<FiltersType>({
+    sort_by: "",
+    "release_date.gte": "",
+    "release_date.lte": "2024-09-06",
+    with_genres: [],
+    certification: "",
+    with_original_language: "en",
+    "vote_count.gte": 0,
+    "vote_count.lte": 10,
+    "with_runtime.gte": 30,
+    "with_runtime.lte": 350,
+    with_keywords: "",
+    with_origin_country: "", // pick from user ip or location
+  });
 
   // TODO: configure date and keyword retrieval from components
 
-  const filters = {
-    sort_by: sortBy,
-    // "release_date.gte": from,
-    // "release_date.lte": to,
-    with_genres: selectedGenres,
-    certification: selectedCertificate,
-    with_original_language: originalLanguage,
-    "vote_count.gte": minScore,
-    "vote_count.lte": minScore,
-    "with_runtime.gte": minRunTime,
-    "with_runtime.lte": maxRunTime,
-    with_keywords: keyword,
-    with_origin_country: "ind", // pick from user ip or location
+  const getLanguageList = () => {
+    const keys: string[] = Object.keys(languages);
+    const languageList: LanguageListItemType[] = keys.map((item: string) => {
+      return {
+        value: item,
+        label: languages[item],
+      };
+    });
+
+    return languageList;
   };
 
-  // useEffect(() => {
-  //   console.log(selectedGenres);
-  // }, [selectedGenres]);
-  // useEffect(() => {
-  //   console.log(selectedCertificate);
-  // }, [selectedCertificate]);
-  // useEffect(() => {
-  //   console.log("Min Score:", minScore);
-  // }, [minScore]);
+  const setFilterKey = (value: string | string[], key: string) => {
+    setFilters((prevFilters) => ({ ...prevFilters, [key]: value }));
+  };
+
+  useEffect(() => {
+    console.log(filters);
+  }, [filters]);
 
   return (
     <div className="w-[260px] h-fit shrink-0 grow-0 grid gap-3">
@@ -54,9 +56,10 @@ const Filters: React.FC = () => {
 
         <DropdownSelect
           placeholder="Select Sort Order"
+          setToKey="sort_by"
           listData={filterSortList}
-          value={sortBy}
-          setValue={setSortBy}
+          value={filters.sort_by}
+          setValueFn={setFilterKey}
         />
       </div>
 
@@ -71,12 +74,26 @@ const Filters: React.FC = () => {
           <div className="w-full grid gap-2">
             <div className="w-full flex flex-nowrap justify-between items-center gap-4">
               <span className="text-black text-[14px] opacity-80">From</span>
-              <DatePickerComp ariaLabel="Release From Date" />
+              <DatePickerComp
+                ariaLabel="Release From Date"
+                setToKey="release_date.gte"
+                minDate="1900-01-01"
+                maxDate={filters["release_date.lte"]}
+                value={filters["release_date.gte"]}
+                setValueFn={setFilterKey}
+              />
             </div>
 
             <div className="w-full flex flex-nowrap justify-between items-center gap-4">
               <span className="text-black text-[14px] opacity-80">To</span>
-              <DatePickerComp ariaLabel="Release To Date" />
+              <DatePickerComp
+                ariaLabel="Release To Date"
+                setToKey="release_date.lte"
+                minDate={filters["release_date.gte"]}
+                maxDate={""}
+                value={filters["release_date.lte"]}
+                setValueFn={setFilterKey}
+              />
             </div>
           </div>
         </div>
@@ -88,8 +105,9 @@ const Filters: React.FC = () => {
             <ToggleGroupComp
               itemList={genres}
               tType={1}
-              setSelectedGenres={setSelectedGenres}
-              setSelectedCertificate={setSelectedCertificate}
+              value={filters.with_genres}
+              setToKey="with_genres"
+              setValueFn={setFilterKey}
             />
           </div>
         </div>
@@ -101,8 +119,9 @@ const Filters: React.FC = () => {
             <ToggleGroupComp
               itemList={certificates}
               tType={2}
-              setSelectedGenres={setSelectedGenres}
-              setSelectedCertificate={setSelectedCertificate}
+              value={filters.certification}
+              setToKey="certification"
+              setValueFn={setFilterKey}
             />
           </div>
         </div>
@@ -114,9 +133,10 @@ const Filters: React.FC = () => {
 
           <DropdownSelect
             placeholder="Select Language"
-            listData={filterSortList}
-            value={originalLanguage}
-            setValue={setOriginalLanguage}
+            setToKey="with_original_language"
+            listData={getLanguageList()}
+            value={filters.with_original_language}
+            setValueFn={setFilterKey}
           />
         </div>
 
@@ -128,10 +148,11 @@ const Filters: React.FC = () => {
 
             <NumberPickerByStep
               min={0}
-              max={maxScore}
+              max={filters["vote_count.lte"]}
+              setToKey="vote_count.gte"
               step={1}
-              value={minScore}
-              setValue={setMinScore}
+              value={filters["vote_count.gte"]}
+              setValueFn={setFilterKey}
             />
           </div>
 
@@ -139,11 +160,12 @@ const Filters: React.FC = () => {
             <span className="text-black text-[14px] opacity-80">Max</span>
 
             <NumberPickerByStep
-              min={minScore}
+              min={filters["vote_count.gte"]}
               max={10}
+              setToKey="vote_count.lte"
               step={1}
-              value={maxScore}
-              setValue={setMaxScore}
+              value={filters["vote_count.lte"]}
+              setValueFn={setFilterKey}
             />
           </div>
         </div>
@@ -156,10 +178,11 @@ const Filters: React.FC = () => {
 
             <NumberPickerByStep
               min={30}
-              max={maxRunTime}
+              max={filters["with_runtime.lte"]}
+              setToKey="with_runtime.gte"
               step={15}
-              value={minRunTime}
-              setValue={setMinRunTime}
+              value={filters["with_runtime.gte"]}
+              setValueFn={setFilterKey}
             />
           </div>
 
@@ -167,11 +190,12 @@ const Filters: React.FC = () => {
             <span className="text-black text-[14px] opacity-80">Max</span>
 
             <NumberPickerByStep
-              min={minRunTime}
+              min={filters["with_runtime.gte"]}
               max={350}
+              setToKey="with_runtime.lte"
               step={15}
-              value={maxRunTime}
-              setValue={setMaxRunTime}
+              value={filters["with_runtime.lte"]}
+              setValueFn={setFilterKey}
             />
           </div>
         </div>
@@ -183,7 +207,7 @@ const Filters: React.FC = () => {
             type="text"
             placeholder="Enter Search Keyword"
             className="w-full px-3 py-2 rounded-mdb-sm text-[14px] border-[0.5px] border-solid border-gray-200 focus:border-gray-400 focus:outline-none"
-            onChange={(e) => setKeyword(e.target.value)}
+            onChange={(e) => setFilterKey(e.target.value, "with_keywords")}
           />
         </div>
       </div>
