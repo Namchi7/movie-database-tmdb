@@ -93,11 +93,23 @@ export interface MovieAndTVListType {
 export interface filterListItemType {
   label: string;
   value: string;
+  code?: string;
 }
 
-export type SetValueFnType = (value: string | string[], key: string) => void;
+export type SetValueFnType = (
+  value: string | string[] | undefined,
+  key: string
+) => void;
 
 export interface SelectType {
+  placeholder: string;
+  setToKey: string;
+  listData: filterListItemType[];
+  value: string;
+  setValueFn: (value: string, key: string) => void;
+}
+
+export interface DropdownSearchSelectType {
   placeholder: string;
   setToKey: string;
   listData: filterListItemType[];
@@ -747,4 +759,10 @@ export interface FiltersType {
   "with_runtime.lte": number;
   with_keywords: string;
   with_origin_country: string;
+}
+
+export interface CountryCodeType {
+  iso_3166_1: string;
+  english_name: string;
+  native_name: string;
 }

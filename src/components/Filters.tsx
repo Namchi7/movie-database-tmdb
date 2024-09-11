@@ -10,6 +10,8 @@ import NumberPickerByStep from "./NumberPickerByStep";
 import { certificates, filterSortList, genres } from "@/constants/filterLists";
 import { languages } from "@/constants/languageCodes";
 import { LanguageListItemType, FiltersType } from "@/constants/types";
+import { countries } from "@/constants/countryCodes";
+import DropdownSearchSelect from "./DropdownSearchSelect";
 
 const Filters: React.FC = () => {
   const [filters, setFilters] = useState<FiltersType>({
@@ -27,8 +29,6 @@ const Filters: React.FC = () => {
     with_origin_country: "", // pick from user ip or location
   });
 
-  // TODO: configure date and keyword retrieval from components
-
   const getLanguageList = () => {
     const keys: string[] = Object.keys(languages);
     const languageList: LanguageListItemType[] = keys.map((item: string) => {
@@ -39,6 +39,16 @@ const Filters: React.FC = () => {
     });
 
     return languageList;
+  };
+
+  const getCountryList = () => {
+    return countries.map((item) => {
+      return {
+        label: item.english_name,
+        value: item.english_name.toLowerCase(),
+        code: item.iso_3166_1,
+      };
+    });
   };
 
   const setFilterKey = (value: string | string[], key: string) => {
@@ -127,12 +137,31 @@ const Filters: React.FC = () => {
         </div>
 
         <div className="w-full px-4 py-3 grid gap-3">
+          <p className="text-black text-[14px] font-medium">Origin Country</p>
+
+          <DropdownSearchSelect
+            placeholder="Select Country..."
+            setToKey="with_origin_country"
+            listData={getCountryList()}
+            value={filters.with_origin_country}
+            setValueFn={setFilterKey}
+          />
+          {/* <DropdownSelect
+            placeholder="Select Country"
+            setToKey="with_origin_country"
+            listData={getCountryList()}
+            value={filters.with_origin_country}
+            setValueFn={setFilterKey}
+          /> */}
+        </div>
+
+        <div className="w-full px-4 py-3 grid gap-3">
           <p className="text-black text-[14px] font-medium">
             Original Language
           </p>
 
           <DropdownSelect
-            placeholder="Select Language"
+            placeholder="Select Language.."
             setToKey="with_original_language"
             listData={getLanguageList()}
             value={filters.with_original_language}
