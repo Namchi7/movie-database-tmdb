@@ -55,10 +55,6 @@ const Filters: React.FC = () => {
     setFilters((prevFilters) => ({ ...prevFilters, [key]: value }));
   };
 
-  useEffect(() => {
-    console.log(filters);
-  }, [filters]);
-
   return (
     <div className="w-[260px] h-fit shrink-0 grow-0 grid gap-3">
       <div className="w-full px-4 py-3 grid gap-[10px] shadow-filters bg-white rounded-mdb">

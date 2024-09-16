@@ -8,20 +8,26 @@ import {
   MovieTVDataType,
 } from "@/constants/types";
 import apiCall from "@/lib/apiCall";
+import PostersListSkeleton from "./skeletonLoaders/PostersListSkeleton";
 
 const MovieAndTVList: React.FC<MovieAndTVListType> = ({ title, mediaType }) => {
   const [posterData, setPosterData] = useState<MovieTVDataType[]>([]);
   const [category, setCategory] = useState<string>("");
   const [page, setPage] = useState<number>(1);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const getData = async (category: string, pageNo: number) => {
     const endpoint: string = `/${mediaType}/${category}`;
 
     const params: string = `?page=${pageNo}`;
 
+    setIsLoading(true);
+
     const res: MovieTVListResponseType = await apiCall(endpoint, params);
 
     setPosterData((prev) => [...prev, ...(res?.results || [])]);
+
+    setIsLoading(false);
   };
 
   const loadMoreData = (pageNo: number) => {
@@ -80,9 +86,19 @@ const MovieAndTVList: React.FC<MovieAndTVListType> = ({ title, mediaType }) => {
             inlinePadding={false}
           />
 
+          {isLoading && (
+            <PostersListSkeleton
+              posterData={[]}
+              variant="wrap"
+              showDetail={true}
+              inlinePadding={false}
+            />
+          )}
+
           <Button
             variant={"action"}
             size={"full8"}
+            disabled={isLoading}
             onClick={() => loadMoreData(page + 1)}
           >
             Load More

@@ -15,6 +15,40 @@ export interface SliderSelectorType {
   setSelectedTab: React.Dispatch<React.SetStateAction<string>>;
 }
 
+export interface IPInfoType {
+  ip: string;
+  network: string;
+  version: string;
+  city: string;
+  region: string;
+  region_code: string;
+  country: string;
+  country_name: string;
+  country_code: string;
+  country_code_iso3: string;
+  country_capital: string;
+  country_tld: string;
+  continent_code: string;
+  in_eu: boolean;
+  postal: string;
+  latitude: number;
+  longitude: number;
+  timezone: string;
+  utc_offset: string;
+  country_calling_code: string;
+  currency: string;
+  currency_name: string;
+  languages: string;
+  country_area: number;
+  country_population: number;
+  asn: string;
+  org: string;
+}
+
+export interface HomepageListType {
+  ipInfo: IPInfoType | undefined;
+}
+
 export interface PostersListType {
   variant: "overflow" | "wrap";
   posterData: MovieTVDataType[];
@@ -765,4 +799,33 @@ export interface CountryCodeType {
   iso_3166_1: string;
   english_name: string;
   native_name: string;
+}
+
+export interface SearchInputCompType {
+  setSearchKeyword: React.Dispatch<React.SetStateAction<string>>;
+  handleSearchClick: () => void;
+}
+
+export type SearchSelectedResultType = "movie" | "tv" | "people" | undefined;
+
+export interface SearchTabSeqType {
+  movie: number;
+  tv: number;
+  people: number;
+}
+
+export interface SearchTabsCompType {
+  searchTabSeq: SearchTabSeqType;
+  selectedResult: SearchSelectedResultType;
+  setSelectedResult: React.Dispatch<
+    React.SetStateAction<SearchSelectedResultType>
+  >;
+}
+
+export interface MovieTVSearchResultItemType {
+  itemData: MovieTVDataType;
+}
+
+export interface PersonSearchResultItemType {
+  personData: PersonDataType;
 }

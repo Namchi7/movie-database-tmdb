@@ -30,7 +30,7 @@ const Pagination: React.FC<PaginationCompType> = ({
       </div>
 
       <div className="flex flex-nowrap justify-start items-center gap-2">
-        {page === lastPage && (
+        {page - 2 > 0 && (
           <Button
             variant={"pagination"}
             size={"pg"}
@@ -69,7 +69,7 @@ const Pagination: React.FC<PaginationCompType> = ({
           </Button>
         )}
 
-        {page === 1 && (
+        {page + 1 < lastPage && (
           <Button
             variant={"pagination"}
             size={"pg"}

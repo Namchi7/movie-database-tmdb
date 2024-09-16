@@ -27,7 +27,7 @@ const PosterImageElement: React.FC<CustomImageElementType> = ({
         width={w}
         height={h}
         className={`object-center ${
-          imgError ? "size-[3.75rem] " : "size-full object-cover"
+          imgError ? "size-[3.75rem] " : "size-full object-cover "
         }`}
       />
     </>

@@ -23,7 +23,7 @@ const DropdownSelect: React.FC<SelectType> = ({
       >
         <SelectValue placeholder={listData[0].label} />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="w-full max-w-[14.25rem] border-gray-200">
         {listData.map((item, i: number) => (
           <SelectItem value={item.value} key={i}>
             {item.label}

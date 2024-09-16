@@ -4,28 +4,29 @@ import React, { useEffect, useState } from "react";
 
 import SliderSelector from "./SliderSelector";
 import PostersList from "./PostersList";
+import PostersListSkeleton from "./skeletonLoaders/PostersListSkeleton";
 import apiCall from "@/lib/apiCall";
-import { ApiResponseType, PosterDataType } from "@/constants/types";
-
-// const posterData = {
-//   id: 0,
-//   title: "Inside Out 2",
-//   release_date: "25 July, 2024",
-//   vote_average: 7.5,
-//   poster_path: "",
-//   item_url: "",
-// };
+import {
+  MovieTVListResponseType,
+  MovieTVDataType,
+  HomepageListType,
+  IPInfoType,
+} from "@/constants/types";
+import getIPInfo from "@/lib/getIPInfo";
 
 export const TrendingList: React.FC = () => {
   const trendingItems: string[] = ["Today", "This Week"];
 
-  const [posterData, setPosterData] = useState<PosterDataType[]>([]);
-
+  const [posterData, setPosterData] = useState<MovieTVDataType[]>([]);
   const [selectedTab, setSelectedTab] = useState<string>(trendingItems[0]);
+
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const getData = async () => {
     const tab: string = selectedTab === "Today" ? "day" : "week";
-    const res: ApiResponseType = await apiCall(
+
+    setIsLoading(true);
+    const res: MovieTVListResponseType = await apiCall(
       `/trending/all/${tab}`,
       "?language=en-US"
     );
@@ -33,6 +34,8 @@ export const TrendingList: React.FC = () => {
     if (res) {
       setPosterData(res?.results || []);
     }
+
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -40,7 +43,7 @@ export const TrendingList: React.FC = () => {
   }, [selectedTab]);
 
   return (
-    <div className="w-full max-w-[1200px] pt-[30px] pb-[40px] grid gap-[20px]">
+    <div className="w-full max-w-[1200px] pt-[1.875rem] pb-[1.875rem] grid gap-[20px]">
       <SliderSelector
         className="px-[40px]"
         title={"Trending"}
@@ -48,7 +51,16 @@ export const TrendingList: React.FC = () => {
         setSelectedTab={setSelectedTab}
       />
 
-      {posterData && (
+      {isLoading && (
+        <PostersListSkeleton
+          posterData={[]}
+          variant="overflow"
+          showDetail={true}
+          inlinePadding={true}
+        />
+      )}
+
+      {!isLoading && posterData && (
         <PostersList
           posterData={posterData}
           variant="overflow"
@@ -63,9 +75,11 @@ export const TrendingList: React.FC = () => {
 export const PopularMovieList: React.FC = () => {
   const popularItems: string[] = ["Streaming", "For Rent", "In Theaters"];
 
-  const [posterData, setPosterData] = useState<PosterDataType[]>([]);
-
+  const [posterData, setPosterData] = useState<MovieTVDataType[]>([]);
   const [selectedTab, setSelectedTab] = useState<string>(popularItems[0]);
+  const [ipInfo, setIPInfo] = useState<IPInfoType>();
+
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const getData = async () => {
     const type: string =
@@ -75,9 +89,9 @@ export const PopularMovieList: React.FC = () => {
         ? "rent"
         : "";
 
-    console.log(type);
+    const region = ipInfo?.country_code;
 
-    const region = "IN";
+    setIsLoading(true);
 
     const moreParams: string =
       selectedTab === "In Theaters"
@@ -87,17 +101,27 @@ export const PopularMovieList: React.FC = () => {
     const endpoint: string = "/discover/movie";
     const params: string = `?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&${moreParams}`;
 
-    const res: ApiResponseType = await apiCall(endpoint, params);
+    const res: MovieTVListResponseType = await apiCall(endpoint, params);
 
     setPosterData(res?.results || []);
+
+    setIsLoading(false);
   };
 
   useEffect(() => {
-    getData();
+    const afterIPInfo = async () => {
+      setIPInfo(await getIPInfo());
+    };
+
+    afterIPInfo();
   }, [selectedTab]);
 
+  useEffect(() => {
+    getData();
+  }, [ipInfo]);
+
   return (
-    <div className="w-full max-w-[1200px] pt-[30px] pb-[40px] grid gap-[20px]">
+    <div className="w-full max-w-[1200px] pt-[1.5rem] pb-[1.875rem] grid gap-[20px]">
       <SliderSelector
         className="px-[40px]"
         title={"What's Popular (Movie)"}
@@ -105,12 +129,23 @@ export const PopularMovieList: React.FC = () => {
         setSelectedTab={setSelectedTab}
       />
 
-      <PostersList
-        posterData={posterData}
-        variant="overflow"
-        showDetail={true}
-        inlinePadding={true}
-      />
+      {isLoading && (
+        <PostersListSkeleton
+          posterData={[]}
+          variant="overflow"
+          showDetail={true}
+          inlinePadding={true}
+        />
+      )}
+
+      {!isLoading && posterData && (
+        <PostersList
+          posterData={posterData}
+          variant="overflow"
+          showDetail={true}
+          inlinePadding={true}
+        />
+      )}
     </div>
   );
 };
@@ -118,33 +153,73 @@ export const PopularMovieList: React.FC = () => {
 export const PopularTVList: React.FC = () => {
   const popularItems: string[] = ["Streaming", "On TV"];
 
-  const [posterData, setPosterData] = useState<PosterDataType[]>([]);
-
+  const [posterData, setPosterData] = useState<MovieTVDataType[]>([]);
   const [selectedTab, setSelectedTab] = useState<string>(popularItems[0]);
+  const [ipInfo, setIPInfo] = useState<IPInfoType>();
+
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const getMonthWithZero = (num: number) => {
+    if (num + 1 < 10) {
+      return `0${num}`;
+    } else {
+      return `${num}`;
+    }
+  };
+
+  const getDates = () => {
+    const today = new Date();
+    const startDate = new Date();
+
+    startDate.setDate(today.getDate() - 15);
+
+    const todayString = `${today.getFullYear()}-${getMonthWithZero(
+      today.getMonth()
+    )}-${today.getDate()}`;
+    const startDateString = `${startDate.getFullYear()}-${getMonthWithZero(
+      startDate.getMonth()
+    )}-${startDate.getDate()}`;
+
+    return { start: startDateString, end: todayString };
+  };
 
   const getData = async () => {
-    const region = "IN";
-    const timezone = "Asia/Kolkata";
+    const region = ipInfo?.country_code;
+    const timezone = ipInfo?.timezone;
+
+    setIsLoading(true);
 
     const moreParams: string =
       selectedTab === "Streaming"
         ? `with_watch_monetization_types=flatrate&watch_region=${region}`
-        : `timezone-${timezone}&air_date.gte=2024-07-15&air_date.lte=2024-07-30`;
+        : `timezone-${timezone}&air_date.gte=${getDates().start}&air_date.lte=${
+            getDates().end
+          }`;
 
     const endpoint: string = "/discover/tv";
     const params: string = `?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&${moreParams}`;
 
-    const res: ApiResponseType = await apiCall(endpoint, params);
+    const res: MovieTVListResponseType = await apiCall(endpoint, params);
 
     setPosterData(res?.results || []);
+
+    setIsLoading(false);
   };
 
   useEffect(() => {
-    getData();
+    const afterIPInfo = async () => {
+      setIPInfo(await getIPInfo());
+    };
+
+    afterIPInfo();
   }, [selectedTab]);
 
+  useEffect(() => {
+    getData();
+  }, [ipInfo]);
+
   return (
-    <div className="w-full max-w-[1200px] pt-[30px] pb-[40px] grid gap-[20px]">
+    <div className="w-full max-w-[75rem] pt-[1.5rem] pb-[1.875rem] grid gap-[20px]">
       <SliderSelector
         className="px-[40px]"
         title={"What's Popular (TV)"}
@@ -152,12 +227,23 @@ export const PopularTVList: React.FC = () => {
         setSelectedTab={setSelectedTab}
       />
 
-      <PostersList
-        posterData={posterData}
-        variant="overflow"
-        showDetail={true}
-        inlinePadding={true}
-      />
+      {isLoading && (
+        <PostersListSkeleton
+          posterData={[]}
+          variant="overflow"
+          showDetail={true}
+          inlinePadding={true}
+        />
+      )}
+
+      {!isLoading && posterData && (
+        <PostersList
+          posterData={posterData}
+          variant="overflow"
+          showDetail={true}
+          inlinePadding={true}
+        />
+      )}
     </div>
   );
 };
@@ -165,42 +251,67 @@ export const PopularTVList: React.FC = () => {
 export const FreeList: React.FC = () => {
   const freeItems: string[] = ["Movies", "TV"];
 
-  const [posterData, setPosterData] = useState<PosterDataType[]>([]);
-
+  const [posterData, setPosterData] = useState<MovieTVDataType[]>([]);
   const [selectedTab, setSelectedTab] = useState<string>(freeItems[0]);
+  const [ipInfo, setIPInfo] = useState<IPInfoType>();
+
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const getData = async () => {
-    const tab: string = selectedTab === "Movie" ? "movie" : "tv";
+    const tab: string = selectedTab === "Movies" ? "movie" : "tv";
 
-    const region = "IN";
+    const region = ipInfo?.country_code;
 
-    const res: ApiResponseType = await apiCall(
+    setIsLoading(true);
+
+    const res: MovieTVListResponseType = await apiCall(
       `/discover/${tab}`,
       `?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&&with_watch_monetization_types=ads|free&watch_region=${region}`
     );
 
     setPosterData(res?.results || []);
+
+    setIsLoading(false);
   };
 
   useEffect(() => {
-    getData();
+    const afterIPInfo = async () => {
+      setIPInfo(await getIPInfo());
+    };
+
+    afterIPInfo();
   }, [selectedTab]);
 
+  useEffect(() => {
+    getData();
+  }, [ipInfo]);
+
   return (
-    <div className="w-full max-w-[1200px] pt-[30px] pb-[40px] grid gap-[20px]">
+    <div className="w-full max-w-[1200px] pt-[1.5rem] pb-[1.875rem] grid gap-[20px]">
       <SliderSelector
         className="px-[40px]"
-        title={"Trending"}
+        title={"Free To Watch"}
         items={freeItems}
         setSelectedTab={setSelectedTab}
       />
 
-      <PostersList
-        posterData={posterData}
-        variant="overflow"
-        showDetail={true}
-        inlinePadding={true}
-      />
+      {isLoading && (
+        <PostersListSkeleton
+          posterData={[]}
+          variant="overflow"
+          showDetail={true}
+          inlinePadding={true}
+        />
+      )}
+
+      {!isLoading && posterData && (
+        <PostersList
+          posterData={posterData}
+          variant="overflow"
+          showDetail={true}
+          inlinePadding={true}
+        />
+      )}
     </div>
   );
 };

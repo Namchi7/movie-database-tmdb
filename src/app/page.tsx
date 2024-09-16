@@ -2,10 +2,10 @@ import React from "react";
 
 import Hero from "@/components/HeroSection";
 import {
-  FreeList,
+  TrendingList,
   PopularMovieList,
   PopularTVList,
-  TrendingList,
+  FreeList,
 } from "@/components/HomepageLists";
 
 const Home: React.FC = () => {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 
 import { cn } from "@/lib/utils";
@@ -40,6 +40,20 @@ const DropdownSearchSelect: React.FC<DropdownSearchSelectType> = ({
     setValueFn(val === "" ? "" : code, setToKey);
   };
 
+  useEffect(() => {
+    const getCurrentLocation = async () => {
+      const res = await fetch("https://ipapi.co/json/");
+
+      const result = await res.json();
+
+      setValueFn(result.country_code, setToKey);
+    };
+
+    if (value === "") {
+      getCurrentLocation();
+    }
+  }, [value]);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -55,7 +69,7 @@ const DropdownSearchSelect: React.FC<DropdownSearchSelectType> = ({
           <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full max-w-[14.25rem] p-0">
+      <PopoverContent className="w-full max-w-[14.25rem] border-gray-200 p-0">
         <Command>
           <CommandInput placeholder={placeholder} className="h-9" />
           <CommandList>
@@ -66,8 +80,9 @@ const DropdownSearchSelect: React.FC<DropdownSearchSelectType> = ({
                   key={item.value}
                   value={item.value}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
-
+                    setValue(currentValue);
+                    // setValue(currentValue === value ? "" : currentValue);
+                    // To unselect when value clicked twice
                     setOpen(false);
                   }}
                 >
