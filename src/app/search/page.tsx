@@ -33,7 +33,8 @@ const Search: React.FC = () => {
   });
 
   const [selectedResult, setSelectedResult] =
-    useState<SearchSelectedResultType>("movie");
+    useState<SearchSelectedResultType>();
+  const [isTabChange, setIsTabChange] = useState<boolean>(false);
   const [searchTabSeq, setSearchTabSeq] = useState<SearchTabSeqType>({
     movie: 0,
     tv: 0,
@@ -53,14 +54,17 @@ const Search: React.FC = () => {
       //   "/search/multi",
       //   `?include_adult=false&language=en-US&query=${searchKeyword}&page=${pageNo}`
       // );
+
       const resMovie: MovieTVListResponseType = await apiCall(
         "/search/movie",
         `?include_adult=false&language=en-US&query=${searchKeyword}&page=${pageNo}`
       );
+
       const resTV: MovieTVListResponseType = await apiCall(
         "/search/tv",
         `?include_adult=false&language=en-US&query=${searchKeyword}&page=${pageNo}`
       );
+
       const resPeople: PeopleListResponseType = await apiCall(
         "/search/person",
         `?include_adult=false&language=en-US&query=${searchKeyword}&page=${pageNo}`
@@ -88,66 +92,39 @@ const Search: React.FC = () => {
         };
       });
 
+      if (!selectedResult) {
+        const x: SearchTabSeqType = {
+          movie: resMovie.total_pages,
+          tv: resTV.total_pages,
+          people: resPeople.total_pages,
+        };
+
+        const y: SearchSelectedResultType = Object.keys(x).sort(
+          (a, b) => x[b as keyof typeof x] - x[a as keyof typeof x]
+        )[0] as SearchSelectedResultType;
+
+        setSelectedResult(y);
+      }
+
       setIsLoading(false);
     };
 
     getData();
   };
 
-  // useEffect(() => {
-  //   const getData = async () => {
-  //     setIsLoading(true);
-  //     // const res: MovieTVListResponseType = await apiCall(
-  //     //   "/search/multi",
-  //     //   `?include_adult=false&language=en-US&query=${searchKeyword}&page=${pageNo}`
-  //     // );
-  //     const resMovie: MovieTVListResponseType = await apiCall(
-  //       "/search/movie",
-  //       `?include_adult=false&language=en-US&query=${searchKeyword}&page=${pageNo}`
-  //     );
-  //     const resTV: MovieTVListResponseType = await apiCall(
-  //       "/search/tv",
-  //       `?include_adult=false&language=en-US&query=${searchKeyword}&page=${pageNo}`
-  //     );
-  //     const resPeople: PeopleListResponseType = await apiCall(
-  //       "/search/person",
-  //       `?include_adult=false&language=en-US&query=${searchKeyword}&page=${pageNo}`
-  //     );
-
-  //     setMovies(resMovie.results);
-  //     setTV(resTV.results);
-  //     setPeople(resPeople.results);
-
-  //     setSearchTabSeq((prev) => {
-  //       return {
-  //         ...prev,
-  //         movie: resMovie.total_results,
-  //         tv: resTV.total_results,
-  //         people: resPeople.total_results,
-  //       };
-  //     });
-
-  //     setIsLoading(false);
-  //   };
-
-  //   const getDataTimeout = setTimeout(() => {
-  //     getData();
-  //   }, 1500);
-
-  //   return () => {
-  //     clearTimeout(getDataTimeout);
-  //   };
-  // }, [searchKeyword, pageNo]);
+  useEffect(() => {
+    if (searchKeyword && !isTabChange) {
+      handleSearchClick();
+    }
+    setIsTabChange(false);
+  }, [pageNo]);
 
   useEffect(() => {
-    setSelectedResult(
-      Object.keys(searchTabSeq).sort(
-        (a: string, b: string) =>
-          searchTabSeq[b as keyof typeof searchTabSeq] -
-          searchTabSeq[a as keyof typeof searchTabSeq]
-      )[0] as SearchSelectedResultType
-    );
-  }, [searchTabSeq]);
+    if (isTabChange) {
+      setPageNo(1);
+      setIsTabChange(false);
+    }
+  }, [selectedResult]);
 
   return (
     <main className="w-full min-h-[calc(100vh-4.25rem)] flex flex-col justify-start items-center px-4">
@@ -156,14 +133,15 @@ const Search: React.FC = () => {
         handleSearchClick={handleSearchClick}
       />
 
-      <div className=" w-full max-w-[75rem] grid grid-cols-[240px_1fr] gap-4">
+      <div className="w-full grow max-w-[75rem] grid grid-cols-[240px_1fr] gap-4 mb-8">
         <SearchTabs
           searchTabSeq={searchTabSeq}
           selectedResult={selectedResult}
           setSelectedResult={setSelectedResult}
+          setIsTabChange={setIsTabChange}
         />
 
-        <div className="flex flex-col justify-start items-start gap-8 mb-8">
+        <div className="h-full flex flex-col justify-between items-start gap-8">
           <div className="w-full flex flex-col justify-start items-start gap-4">
             {isLoading &&
               (selectedResult === "people" ? (

@@ -9,6 +9,7 @@ const SearchTabs: React.FC<SearchTabsCompType> = ({
   searchTabSeq,
   selectedResult,
   setSelectedResult,
+  setIsTabChange,
 }) => {
   return (
     <div className="sticky top-4 h-fit border border-solid border-gray-200 rounded-mdb flex flex-col justify-start items-start overflow-hidden">
@@ -28,9 +29,12 @@ const SearchTabs: React.FC<SearchTabsCompType> = ({
               className={`w-full px-4 py-3 flex flex-row justify-between items-center gap-2 group ${
                 selectedResult === item ? "bg-gray-200" : ""
               } hover:bg-gray-200 cursor-pointer`}
-              onClick={() =>
-                setSelectedResult(item as SearchSelectedResultType)
-              }
+              onClick={() => {
+                if (selectedResult !== item) {
+                  setIsTabChange(true);
+                  setSelectedResult(item as SearchSelectedResultType);
+                }
+              }}
               key={i}
             >
               <p

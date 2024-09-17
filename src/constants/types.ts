@@ -820,6 +820,7 @@ export interface SearchTabsCompType {
   setSelectedResult: React.Dispatch<
     React.SetStateAction<SearchSelectedResultType>
   >;
+  setIsTabChange: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface MovieTVSearchResultItemType {
