@@ -4,6 +4,7 @@ import { Button } from "./ui/button";
 import { SearchInputCompType } from "@/constants/types";
 
 const SearchInput: React.FC<SearchInputCompType> = ({
+  value,
   setSearchKeyword,
   handleSearchClick,
 }) => {
@@ -13,6 +14,7 @@ const SearchInput: React.FC<SearchInputCompType> = ({
         type="text"
         placeholder="Search for a movie, tv show, person..."
         className="w-full rounded-full border border-gray-500 border-solid pl-6 px-8 py-[1.125rem]"
+        value={value as string}
         onChange={(e) => setSearchKeyword(e.target.value)}
       />
 

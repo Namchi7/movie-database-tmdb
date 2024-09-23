@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 import SearchInput from "@/components/SearchInput";
 import apiCall from "@/lib/apiCall";
@@ -24,7 +25,8 @@ import {
 import Pagination from "@/components/Pagination";
 
 const Search: React.FC = () => {
-  const [searchKeyword, setSearchKeyword] = useState<string>("");
+  const [searchKeyword, setSearchKeyword] = useState<string | null>("");
+  const [isKeywordChange, setIsKeywordChange] = useState<boolean>(false);
   const [pageNo, setPageNo] = useState<number>(1);
   const [lastPage, setLastPage] = useState<SearchTabSeqType>({
     movie: 0,
@@ -47,77 +49,82 @@ const Search: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  const getData = async () => {
+    setIsLoading(true);
+    // const res: MovieTVListResponseType = await apiCall(
+    //   "/search/multi",
+    //   `?include_adult=false&language=en-US&query=${searchKeyword}&page=${pageNo}`
+    // );
+
+    const resMovie: MovieTVListResponseType = await apiCall(
+      "/search/movie",
+      `?include_adult=false&language=en-US&query=${searchKeyword}&page=${pageNo}`
+    );
+
+    const resTV: MovieTVListResponseType = await apiCall(
+      "/search/tv",
+      `?include_adult=false&language=en-US&query=${searchKeyword}&page=${pageNo}`
+    );
+
+    const resPeople: PeopleListResponseType = await apiCall(
+      "/search/person",
+      `?include_adult=false&language=en-US&query=${searchKeyword}&page=${pageNo}`
+    );
+
+    setMovies(resMovie.results);
+    setTV(resTV.results);
+    setPeople(resPeople.results);
+
+    setSearchTabSeq((prev) => {
+      return {
+        ...prev,
+        movie: resMovie.total_results,
+        tv: resTV.total_results,
+        people: resPeople.total_results,
+      };
+    });
+
+    setLastPage((prev) => {
+      return {
+        ...prev,
+        movie: resMovie.total_pages,
+        tv: resTV.total_pages,
+        people: resPeople.total_pages,
+      };
+    });
+
+    if (!selectedResult || isKeywordChange) {
+      const x: SearchTabSeqType = {
+        movie: resMovie.total_pages,
+        tv: resTV.total_pages,
+        people: resPeople.total_pages,
+      };
+
+      const y: SearchSelectedResultType = Object.keys(x).sort(
+        (a, b) => x[b as keyof typeof x] - x[a as keyof typeof x]
+      )[0] as SearchSelectedResultType;
+
+      setSelectedResult(y);
+    }
+
+    setIsLoading(false);
+  };
+
   const handleSearchClick = () => {
-    const getData = async () => {
-      setIsLoading(true);
-      // const res: MovieTVListResponseType = await apiCall(
-      //   "/search/multi",
-      //   `?include_adult=false&language=en-US&query=${searchKeyword}&page=${pageNo}`
-      // );
-
-      const resMovie: MovieTVListResponseType = await apiCall(
-        "/search/movie",
-        `?include_adult=false&language=en-US&query=${searchKeyword}&page=${pageNo}`
-      );
-
-      const resTV: MovieTVListResponseType = await apiCall(
-        "/search/tv",
-        `?include_adult=false&language=en-US&query=${searchKeyword}&page=${pageNo}`
-      );
-
-      const resPeople: PeopleListResponseType = await apiCall(
-        "/search/person",
-        `?include_adult=false&language=en-US&query=${searchKeyword}&page=${pageNo}`
-      );
-
-      setMovies(resMovie.results);
-      setTV(resTV.results);
-      setPeople(resPeople.results);
-
-      setSearchTabSeq((prev) => {
-        return {
-          ...prev,
-          movie: resMovie.total_results,
-          tv: resTV.total_results,
-          people: resPeople.total_results,
-        };
-      });
-
-      setLastPage((prev) => {
-        return {
-          ...prev,
-          movie: resMovie.total_pages,
-          tv: resTV.total_pages,
-          people: resPeople.total_pages,
-        };
-      });
-
-      if (!selectedResult) {
-        const x: SearchTabSeqType = {
-          movie: resMovie.total_pages,
-          tv: resTV.total_pages,
-          people: resPeople.total_pages,
-        };
-
-        const y: SearchSelectedResultType = Object.keys(x).sort(
-          (a, b) => x[b as keyof typeof x] - x[a as keyof typeof x]
-        )[0] as SearchSelectedResultType;
-
-        setSelectedResult(y);
-      }
-
-      setIsLoading(false);
-    };
-
     getData();
+    setIsKeywordChange(false);
   };
 
   useEffect(() => {
     if (searchKeyword && !isTabChange) {
-      handleSearchClick();
+      getData();
     }
     setIsTabChange(false);
   }, [pageNo]);
+
+  useEffect(() => {
+    setIsKeywordChange(true);
+  }, [searchKeyword]);
 
   useEffect(() => {
     if (isTabChange) {
@@ -129,6 +136,7 @@ const Search: React.FC = () => {
   return (
     <main className="w-full min-h-[calc(100vh-4.25rem)] flex flex-col justify-start items-center px-4">
       <SearchInput
+        value={searchKeyword}
         setSearchKeyword={setSearchKeyword}
         handleSearchClick={handleSearchClick}
       />
@@ -170,13 +178,22 @@ const Search: React.FC = () => {
               people.map((item, i) => (
                 <PersonSearchResultItem personData={item} key={i} />
               ))}
+
+            {searchTabSeq.movie + searchTabSeq.tv + searchTabSeq.people ===
+              0 && (
+              <p className="text-[0.9rem]">
+                Enter a keyword and click on search button to get results.
+              </p>
+            )}
           </div>
 
-          <Pagination
-            page={pageNo}
-            lastPage={lastPage[selectedResult as keyof typeof lastPage]}
-            setPage={setPageNo}
-          />
+          {searchTabSeq[selectedResult as keyof typeof searchTabSeq] > 0 && (
+            <Pagination
+              page={pageNo}
+              lastPage={lastPage[selectedResult as keyof typeof lastPage]}
+              setPage={setPageNo}
+            />
+          )}
         </div>
       </div>
     </main>

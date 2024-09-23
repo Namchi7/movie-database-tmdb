@@ -802,7 +802,8 @@ export interface CountryCodeType {
 }
 
 export interface SearchInputCompType {
-  setSearchKeyword: React.Dispatch<React.SetStateAction<string>>;
+  value?: string | null;
+  setSearchKeyword: React.Dispatch<React.SetStateAction<string | null>>;
   handleSearchClick: () => void;
 }
 
