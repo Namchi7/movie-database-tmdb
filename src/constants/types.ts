@@ -71,6 +71,17 @@ export interface NetworksType {
   origin_country: string;
 }
 
+export interface TVSeasonsType {
+  air_date: string;
+  episode_count: number;
+  id: number;
+  name: string;
+  overview: string;
+  poster_path: string;
+  season_number: number;
+  vote_average: number;
+}
+
 export interface MovieTVDataType {
   id: number;
   title: string;
@@ -98,6 +109,7 @@ export interface MovieTVDataType {
   budget: number;
   revenue: number;
   homepage: string;
+  seasons: TVSeasonsType[];
 }
 
 export interface PosterCompType {
@@ -214,6 +226,7 @@ export interface CustomImageElementType {
   alt: string;
   w: number;
   h: number;
+  errStyle?: string;
 }
 
 export interface AverageImageColorReturnType {
@@ -766,12 +779,6 @@ export interface PersonImagesResponseType {
   profiles: PersonImagesProfilesDataType[];
 }
 
-export interface TopicBackToMainCompType {
-  topic: string;
-  backPath: string;
-  imgPath: string;
-}
-
 export interface LanguageCodeType {
   [code: string]: string;
 }
@@ -830,4 +837,94 @@ export interface MovieTVSearchResultItemType {
 
 export interface PersonSearchResultItemType {
   personData: PersonDataType;
+}
+
+export interface ReleaseDateType {
+  certification: string;
+  descriptors: string[];
+  iso_639_1: string;
+  note: string;
+  release_date: string;
+  type: number;
+}
+
+export interface ReleaseDatesResultType {
+  iso_3166_1: string;
+  release_dates: ReleaseDateType[];
+}
+
+export interface ReleaseDatesResponseType {
+  id: number;
+  results: ReleaseDatesResultType[];
+}
+
+export interface ReleaseTypeType {
+  [key: number]: string;
+}
+
+export interface TitlesType {
+  iso_3166_1: string;
+  title: string;
+  type: string;
+}
+
+export interface TitlesResponseType {
+  id: number;
+  titles: TitlesType[];
+}
+
+export interface TranslationDataType {
+  homepage: string;
+  overview: string;
+  runtime: number;
+  tagline: string;
+  title: string;
+}
+
+export interface TranslationType {
+  iso_3166_1: string;
+  iso_639_1: string;
+  name: string;
+  english_name: string;
+  data: TranslationDataType;
+}
+
+export interface TranslationResponseType {
+  id: number;
+  translations: TranslationType[];
+}
+
+export interface ImagesItemType {
+  aspect_ratio: number;
+  height: number;
+  iso_639_1: string;
+  file_path: string;
+  vote_average: number;
+  vote_count: number;
+  width: number;
+}
+
+export interface ImagesResponseType {
+  id: number;
+  backdrops: ImagesItemType[];
+  logos: ImagesItemType[];
+  posters: ImagesItemType[];
+}
+
+export interface VideoResultType {
+  id: string;
+  iso_639_1: string;
+  iso_3166_1: string;
+  name: string;
+  key: string;
+  site: string;
+  size: number;
+  type: string;
+  official: boolean;
+  published_at: string;
+}
+
+export interface VideosResponseType {
+  id: number;
+  results: VideoResultType[];
 }

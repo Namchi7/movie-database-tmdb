@@ -55,14 +55,14 @@ const Header: React.FC = () => {
             href={"/search"}
             className="flex flex-nowrap justify-center items-center gap-2 text-[0.8rem] text-white font-medium"
           >
-            Filter{" "}
-            <Image
+            Search{" "}
+            {/* <Image
               src={filter}
               alt=""
               height={18}
               width={18}
               className="size-4"
-            />
+            /> */}
           </Link>
         </nav>
       </div>

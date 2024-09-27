@@ -90,7 +90,7 @@ const MovieTVDetail: React.FC<MovieTVDetailCompPropsType> = ({ title }) => {
           />
 
           <div className="w-full flex justify-center items-center">
-            <div className="w-full max-w-[1200px] flex flex-row justify-between items-start gap-[1.875rem] px-[20px] pb-[30px]">
+            <div className="w-full max-w-[75rem] flex flex-row justify-between items-start gap-[1.875rem] px-5 pb-[1.875rem]">
               <div className="basis-[56.875rem] grid gap-0 divide-solid divide-y-1 divide-gray-300">
                 {castSeasonReviewData && (
                   <>

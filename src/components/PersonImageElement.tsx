@@ -11,6 +11,7 @@ const PersonImageElement: React.FC<CustomImageElementType> = ({
   alt,
   w,
   h,
+  errStyle = "",
 }) => {
   const [imgError, setImgError] = useState(false);
 
@@ -22,16 +23,16 @@ const PersonImageElement: React.FC<CustomImageElementType> = ({
     <>
       <Image
         onError={() => setImgError(true)}
-        src={
-          imgError
-            ? personFallbackImage
-            : `https://image.tmdb.org/t/p/h632/${src}`
-        }
+        src={imgError ? personFallbackImage : src}
         alt={alt}
         width={w}
         height={h}
         className={`object-center ${
-          imgError ? "size-[3.75rem] " : "size-full object-cover"
+          imgError
+            ? errStyle
+              ? errStyle
+              : "size-[3.75rem] "
+            : "size-full object-cover"
         }`}
       />
     </>

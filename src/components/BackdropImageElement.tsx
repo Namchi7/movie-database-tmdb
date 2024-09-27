@@ -6,7 +6,7 @@ import Image from "next/image";
 import imageFallbackImage from "@/assets/images/image-placeholder.png";
 import { CustomImageElementType } from "@/constants/types";
 
-const PosterImageElement: React.FC<CustomImageElementType> = ({
+const BackdropImageElement: React.FC<CustomImageElementType> = ({
   src,
   alt,
   w,
@@ -39,4 +39,4 @@ const PosterImageElement: React.FC<CustomImageElementType> = ({
   );
 };
 
-export default PosterImageElement;
+export default BackdropImageElement;

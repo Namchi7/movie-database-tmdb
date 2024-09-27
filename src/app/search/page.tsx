@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 import SearchInput from "@/components/SearchInput";
 import apiCall from "@/lib/apiCall";
@@ -119,6 +118,7 @@ const Search: React.FC = () => {
     if (searchKeyword && !isTabChange) {
       getData();
     }
+
     setIsTabChange(false);
   }, [pageNo]);
 

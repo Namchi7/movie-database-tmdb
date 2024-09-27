@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import CastList from "./CastList";
 import MovieTVReview from "./MovieTVReview";
@@ -12,9 +13,24 @@ const CastSeasonReviewComp: React.FC<CastSeasonReviewCompType> = ({
   type,
   data,
 }) => {
+  const pathname: string = usePathname();
+
   const [title, setTitle] = useState<string>("");
   const [viewAllText, setViewAllText] = useState<string>("");
   const [titleItems, setTitleItems] = useState<number>(0);
+
+  const getViewAllLink = () => {
+    if (type === "cast") {
+      return `${pathname}/cast`;
+    }
+    if (type === "season") {
+      return `${pathname}/seasons`;
+    }
+    if (type === "review") {
+      return `${pathname}/reviews`;
+    }
+    return "";
+  };
 
   useEffect(() => {
     switch (type) {
@@ -50,7 +66,10 @@ const CastSeasonReviewComp: React.FC<CastSeasonReviewCompType> = ({
       {type === "review" && <MovieTVReview data={data.review} />}
       {type === "season" && <MovieTVSeason data={data.season} />}
 
-      <Link href={""} className="text-[1rem] font-medium opacity-80">
+      <Link
+        href={getViewAllLink()}
+        className="text-[1rem] font-medium opacity-80"
+      >
         {viewAllText}
       </Link>
     </div>

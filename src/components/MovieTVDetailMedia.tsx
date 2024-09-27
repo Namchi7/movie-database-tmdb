@@ -3,9 +3,6 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 
-import video from "@/assets/images/temp/teaser-thumbnail.jpg";
-import backdrop from "@/assets/images/temp/backdrop-image.jpg";
-import poster from "@/assets/images/temp/poster-image.jpg";
 import play from "@/assets/images/play-button.png";
 import apiCall from "@/lib/apiCall";
 import {
@@ -168,7 +165,6 @@ const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
                                 ? `https://i.ytimg.com/vi/${video?.key}/hqdefault.jpg`
                                 : ""
                             }
-                            // src={video}
                             width={500}
                             height={300}
                             alt="Video"

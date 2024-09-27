@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 
 import SliderSelector from "./SliderSelector";
 import PostersList from "./PostersList";
@@ -13,6 +14,8 @@ import {
   IPInfoType,
 } from "@/constants/types";
 import getIPInfo from "@/lib/getIPInfo";
+
+import home_trending_bg from "@/assets/svg/home_trending_bg.svg";
 
 export const TrendingList: React.FC = () => {
   const trendingItems: string[] = ["Today", "This Week"];
@@ -43,31 +46,42 @@ export const TrendingList: React.FC = () => {
   }, [selectedTab]);
 
   return (
-    <div className="w-full max-w-[1200px] pt-[1.875rem] pb-[1.875rem] grid gap-[20px]">
-      <SliderSelector
-        className="px-[40px]"
-        title={"Trending"}
-        items={trendingItems}
-        setSelectedTab={setSelectedTab}
-      />
-
-      {isLoading && (
-        <PostersListSkeleton
-          posterData={[]}
-          variant="overflow"
-          showDetail={true}
-          inlinePadding={true}
+    <div className="relative w-full h-max max-w-[1200px] overflow-y-hidden mb-[1.875rem]">
+      <div className="w-full pt-[1.875rem] grid gap-[20px] z-[3]">
+        <SliderSelector
+          className="px-[40px] z-[3]"
+          title={"Trending"}
+          items={trendingItems}
+          setSelectedTab={setSelectedTab}
         />
-      )}
 
-      {!isLoading && posterData && (
-        <PostersList
-          posterData={posterData}
-          variant="overflow"
-          showDetail={true}
-          inlinePadding={true}
+        {isLoading && (
+          <PostersListSkeleton
+            posterData={[]}
+            variant="overflow"
+            showDetail={true}
+            inlinePadding={true}
+          />
+        )}
+
+        {!isLoading && posterData && (
+          <PostersList
+            posterData={posterData}
+            variant="overflow"
+            showDetail={true}
+            inlinePadding={true}
+          />
+        )}
+      </div>
+
+      <div className="absolute inset-0 top-1/4 h-full z-[1] opacity-60">
+        <Image
+          src={home_trending_bg}
+          alt=""
+          className="h-full object-cover object-center"
+          fill
         />
-      )}
+      </div>
     </div>
   );
 };

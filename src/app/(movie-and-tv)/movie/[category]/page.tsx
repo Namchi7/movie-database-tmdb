@@ -12,7 +12,7 @@ const Movie: React.FC = () => {
   const category: string = pathname.split("/")[2];
 
   const [title, setTitle] = useState<string>("");
-  const [isList, setIsList] = useState<boolean>(true);
+  const [isList, setIsList] = useState<boolean | null>(null);
   const [isListLoading, setIsListLoading] = useState<boolean>(true);
 
   useEffect(() => {

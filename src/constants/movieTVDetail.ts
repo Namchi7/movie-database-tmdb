@@ -8,6 +8,7 @@ export const movieTVDetailTabData: DetailTabDataType[] = [
       { link_text: "Alternative Titles", link_path: "titles" },
       { link_text: "Cast & Crew", link_path: "cast" },
       { link_text: "Release Dates", link_path: "releases" },
+      { link_text: "Seasons", link_path: "seasons" },
       { link_text: "Translations", link_path: "translations" },
     ],
   },

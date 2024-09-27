@@ -1,21 +1,21 @@
-"use client";
+// "use client";
 
 import React from "react";
 import Image from "next/image";
 
 import hero_cover_image from "@/assets/images/mdb-home-cover-image.jpg";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
+// import { Button } from "@/components/ui/button";
+// import { useState } from "react";
 
 const Hero: React.FC = () => {
-  const [searchKeyword, setSearchKeyword] = useState<string>("");
+  // const [searchKeyword, setSearchKeyword] = useState<string>("");
 
-  const handleSearchClick = () => {
-    console.log(searchKeyword);
-  };
+  // const handleSearchClick = () => {
+  //   console.log(searchKeyword);
+  // };
 
   return (
-    <section className="relative grow w-full max-w-[75rem] h-max min-h-[19.5rem] ">
+    <section className="relative grow w-full max-w-[75rem] h-max min-h-[19.5rem] flex flex-col justify-center items-center">
       <div className="relative z-[3] flex flex-col justify-center items-center gap-8 p-10">
         <div className="w-full grid gap-0">
           <h1 className="w-full text-[2.25rem] text-white font-bold">
@@ -26,7 +26,8 @@ const Hero: React.FC = () => {
           </h2>
         </div>
 
-        <div className="relative w-full">
+        {/* Search Bar Disabled */}
+        {/* <div className="relative w-full">
           <input
             type="text"
             placeholder="Search for a movie, tv show, person..."
@@ -39,7 +40,7 @@ const Hero: React.FC = () => {
               Search
             </Button>
           </div>
-        </div>
+        </div> */}
       </div>
 
       <div className="absolute inset-0 h-full z-[1]">

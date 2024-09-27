@@ -20,8 +20,8 @@ const PersonCard: React.FC<PersonCardCompType> = ({ personData }) => {
         className="aspect-square w-full flex justify-center items-center"
       >
         <PersonImageElement
-          src={personData.profile_path}
-          alt={personData.name}
+          src={personData?.profile_path}
+          alt={personData?.name}
           w={220}
           h={220}
         />
@@ -29,13 +29,15 @@ const PersonCard: React.FC<PersonCardCompType> = ({ personData }) => {
 
       <div className="w-full grid gap-1 p-2">
         <Link href={`/person/${getNamePathWithID()}`}>
-          <p className="text-[1rem] font-semibold">{personData.name}</p>
+          <p className="text-[1rem] font-semibold">{personData?.name}</p>
         </Link>
         <p className="text-[0.9rem] font-regular">
-          {`${personData.known_for[0].title || personData.known_for[0].name}, ${
-            personData.known_for[1].title || personData.known_for[1].name
+          {`${
+            personData?.known_for[0]?.title || personData?.known_for[0]?.name
+          }, ${
+            personData?.known_for[1]?.title || personData?.known_for[1]?.name
           } and ${
-            personData.known_for[2].title || personData.known_for[2].name
+            personData?.known_for[2]?.title || personData?.known_for[2]?.name
           }`}
         </p>
       </div>

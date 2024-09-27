@@ -37,6 +37,14 @@ const DetailTabs: React.FC<DetailTabCompType> = ({ tabData }) => {
         setActiveTab("overview");
         break;
       }
+      case "seasons": {
+        setActiveTab("overview");
+        break;
+      }
+      case "season": {
+        setActiveTab("overview");
+        break;
+      }
       case "releases": {
         setActiveTab("overview");
         break;
@@ -74,22 +82,42 @@ const DetailTabs: React.FC<DetailTabCompType> = ({ tabData }) => {
             className="w-fit min-w-[11.25rem] p-0 overflow-hidden border-slate-200"
           >
             <ul>
-              {item.sub.map((sub, ind) => (
-                <Link
-                  href={`${preUrl}/${
-                    item.tab === "media"
-                      ? sub.link_path === "videos"
-                        ? ""
-                        : "images/"
-                      : ""
-                  }${sub.link_path}`}
-                  key={ind}
-                >
-                  <li className="w-full px-4 py-2 text-black text-[0.85rem] hover:bg-slate-100 capitalize">
-                    {sub.link_text}
-                  </li>
-                </Link>
-              ))}
+              {item.sub.map((sub, ind) => {
+                if (
+                  item.tab === "overview" &&
+                  sub.link_path === "seasons" &&
+                  pathArr[1] === "movie"
+                ) {
+                  return <></>;
+                }
+
+                if (
+                  item.tab === "overview" &&
+                  sub.link_path === "releases" &&
+                  pathArr[1] === "tv"
+                ) {
+                  return <></>;
+                }
+
+                return (
+                  <>
+                    <Link
+                      href={`${preUrl}/${
+                        item.tab === "media"
+                          ? sub.link_path === "videos"
+                            ? ""
+                            : "images/"
+                          : ""
+                      }${sub.link_path}`}
+                      key={ind}
+                    >
+                      <li className="w-full px-4 py-2 text-black text-[0.85rem] hover:bg-slate-100 capitalize">
+                        {sub.link_text}
+                      </li>
+                    </Link>
+                  </>
+                );
+              })}
             </ul>
           </HoverCardContent>
         </HoverCard>

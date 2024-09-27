@@ -6,9 +6,11 @@ import {
   MovieTVListResponseType,
   MovieAndTVListType,
   MovieTVDataType,
+  IPInfoType,
 } from "@/constants/types";
 import apiCall from "@/lib/apiCall";
 import PostersListSkeleton from "./skeletonLoaders/PostersListSkeleton";
+import getIPInfo from "@/lib/getIPInfo";
 
 const MovieAndTVList: React.FC<MovieAndTVListType> = ({ title, mediaType }) => {
   const [posterData, setPosterData] = useState<MovieTVDataType[]>([]);
@@ -17,9 +19,11 @@ const MovieAndTVList: React.FC<MovieAndTVListType> = ({ title, mediaType }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const getData = async (category: string, pageNo: number) => {
+    const ipInfo: IPInfoType = await getIPInfo();
+
     const endpoint: string = `/${mediaType}/${category}`;
 
-    const params: string = `?page=${pageNo}`;
+    const params: string = `?page=${pageNo}&region=${ipInfo?.country_code}`;
 
     setIsLoading(true);
 
@@ -73,12 +77,26 @@ const MovieAndTVList: React.FC<MovieAndTVListType> = ({ title, mediaType }) => {
 
   return (
     <main className="w-full max-w-[75rem] grid gap-[1.875rem] px-5 py-[1.875rem]">
-      <h3 className="text-[1.5rem] text-[#032541] font-semibold ">{title}</h3>
+      <h3 className="lg:hidden text-[1.5rem] text-[#032541] font-semibold ">
+        {title}
+      </h3>
 
       <section className="flex justify-start items-start gap-[1.875rem]">
-        <Filters />
+        {/* <Filters /> */}
 
-        <div className="w-full grid gap-[1.875rem]">
+        <div className="sticky top-[1.875rem] hidden min-w-fit h-[460px] lg:grid grid-cols-[1.5rem_3.5rem_1.5rem] gap-4">
+          <div className="h-full bg-[#01b4e4] rounded-mdb-sm"></div>
+
+          <div className="relative h-full bg-[#01b4e4] rounded-mdb-sm px-1 py-2">
+            <h3 className="absolute text-[2rem] text-white font-semibold -rotate-90 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap">
+              {title}
+            </h3>
+          </div>
+
+          <div className="h-full bg-[#01b4e4] rounded-mdb-sm"></div>
+        </div>
+
+        <div className="w-full grid">
           <PostersList
             posterData={posterData}
             variant="wrap"
@@ -95,14 +113,16 @@ const MovieAndTVList: React.FC<MovieAndTVListType> = ({ title, mediaType }) => {
             />
           )}
 
-          <Button
-            variant={"action"}
-            size={"full8"}
-            disabled={isLoading}
-            onClick={() => loadMoreData(page + 1)}
-          >
-            Load More
-          </Button>
+          <div className="w-full h-fit mt-[1.875rem]">
+            <Button
+              variant={"action"}
+              size={"full8"}
+              disabled={isLoading}
+              onClick={() => loadMoreData(page + 1)}
+            >
+              Load More
+            </Button>
+          </div>
         </div>
       </section>
     </main>
