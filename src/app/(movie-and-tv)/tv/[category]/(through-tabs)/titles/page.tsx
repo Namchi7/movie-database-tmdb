@@ -22,7 +22,7 @@ const Titles: React.FC = () => {
         ""
       );
 
-      setData(res.titles);
+      setData(res.results);
     };
 
     getData();

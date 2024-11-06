@@ -62,7 +62,7 @@ const DetailTabs: React.FC<DetailTabCompType> = ({ tabData }) => {
   return (
     <div className="w-full h-fit flex justify-center items-center gap-[2.5rem]">
       {tabData.map((item, i: number) => (
-        <HoverCard openDelay={0} closeDelay={0} key={item.tab}>
+        <HoverCard openDelay={0} closeDelay={0} key={`${item.tab}-${i}`}>
           <HoverCardTrigger
             className={`flex justify-start items-center gap-1 hover:cursor-pointer py-2 border-y-[0.1875rem] border-y-solid border-t-transparent hover:border-b-black ${
               item.tab.toLowerCase() === activeTab.toLowerCase()
@@ -82,13 +82,18 @@ const DetailTabs: React.FC<DetailTabCompType> = ({ tabData }) => {
             className="w-fit min-w-[11.25rem] p-0 overflow-hidden border-slate-200"
           >
             <ul>
-              {item.sub.map((sub, ind) => {
+              {item.sub.map((sub, ind: number) => {
                 if (
                   item.tab === "overview" &&
                   sub.link_path === "seasons" &&
                   pathArr[1] === "movie"
                 ) {
-                  return <></>;
+                  return (
+                    <div
+                      className="hidden"
+                      key={`${item.tab}-${i}-${ind}`}
+                    ></div>
+                  );
                 }
 
                 if (
@@ -96,26 +101,29 @@ const DetailTabs: React.FC<DetailTabCompType> = ({ tabData }) => {
                   sub.link_path === "releases" &&
                   pathArr[1] === "tv"
                 ) {
-                  return <></>;
+                  return (
+                    <div
+                      className="hidden"
+                      key={`${item.tab}-${i}-${ind}`}
+                    ></div>
+                  );
                 }
 
                 return (
-                  <>
-                    <Link
-                      href={`${preUrl}/${
-                        item.tab === "media"
-                          ? sub.link_path === "videos"
-                            ? ""
-                            : "images/"
-                          : ""
-                      }${sub.link_path}`}
-                      key={ind}
-                    >
-                      <li className="w-full px-4 py-2 text-black text-[0.85rem] hover:bg-slate-100 capitalize">
-                        {sub.link_text}
-                      </li>
-                    </Link>
-                  </>
+                  <Link
+                    href={`${preUrl}/${
+                      item.tab === "media"
+                        ? sub.link_path === "videos"
+                          ? ""
+                          : "images/"
+                        : ""
+                    }${sub.link_path}`}
+                    key={`${item.tab}-${i}-${ind}`}
+                  >
+                    <li className="w-full px-4 py-2 text-black text-[0.85rem] hover:bg-slate-100 capitalize">
+                      {sub.link_text}
+                    </li>
+                  </Link>
                 );
               })}
             </ul>

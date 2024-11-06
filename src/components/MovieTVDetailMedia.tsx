@@ -16,6 +16,9 @@ import {
 const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
   mediaType,
   itemId,
+  setVideoOpen,
+  setVideoKey,
+  setVideoTitle,
 }) => {
   const [activeTab, setActiveTab] = useState<string>("popular");
 
@@ -41,9 +44,9 @@ const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
         `${endpoint}/images`
       );
 
-      setVideos(resVideo?.results);
-      setBackdrops(resImages?.backdrops);
-      setPosters(resImages?.posters);
+      setVideos(resVideo.results);
+      setBackdrops(resImages.backdrops);
+      setPosters(resImages.posters);
 
       setLoading(false);
     };
@@ -52,7 +55,7 @@ const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
   }, [activeTab]);
 
   return (
-    <div className="w-fill grid gap-5 py-[1.875rem]">
+    <div className="w-full grid gap-5 py-[1.875rem]">
       <div className="w-full flex justify-start items-center gap-[3.125rem]">
         <p className="text-[1.25rem] font-semibold">Media</p>
 
@@ -102,52 +105,66 @@ const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
         <div className="w-full h-[18.75rem] flex flex-row flex-nowrap justify-start items-start gap-0 rounded-mdb overflow-x-scroll">
           {activeTab === "popular" && (
             <>
-              <div className="relative shrink-0 h-full w-[33.333rem] flex justify-center items-center">
-                <Image
-                  src={
-                    videos
-                      ? `https://i.ytimg.com/vi/${videos[0]?.key}/hqdefault.jpg`
-                      : ""
-                  }
-                  // src={video}
-                  width={500}
-                  height={300}
-                  alt="Video"
-                  className="h-full w-full object-cover object-center"
-                />
+              {videos && videos.length > 0 && (
+                <div
+                  className="relative shrink-0 h-full w-[33.333rem] flex justify-center items-center hover:cursor-pointer"
+                  onClick={() => {
+                    setVideoOpen(true);
+                    setVideoKey(videos[0]?.key);
+                    setVideoTitle(videos[0]?.name);
+                  }}
+                >
+                  <Image
+                    src={
+                      videos
+                        ? `https://i.ytimg.com/vi/${videos[0]?.key}/hqdefault.jpg`
+                        : ""
+                    }
+                    width={500}
+                    height={300}
+                    alt="Video"
+                    className="h-full w-full object-cover object-center"
+                  />
 
-                <Image
-                  src={play}
-                  alt="Play"
-                  className="absolute left-[50%] top-[50%] -translate-x-1/2 -translate-y-1/2 z-[2]"
-                />
-              </div>
-              <div className="shrink-0 h-full w-[33.333rem] flex justify-center items-center">
-                <Image
-                  src={
-                    backdrops
-                      ? `https://image.tmdb.org/t/p/w780/${backdrops[0]?.file_path}`
-                      : ""
-                  }
-                  width={500}
-                  height={300}
-                  alt="Backdrop"
-                  className="h-full w-full object-cover object-center"
-                />
-              </div>
-              <div className="shrink-0 h-full w-fit flex justify-center items-center">
-                <Image
-                  src={
-                    posters
-                      ? `https://image.tmdb.org/t/p/w300/${posters[0]?.file_path}`
-                      : ""
-                  }
-                  width={240}
-                  height={300}
-                  alt="Poster"
-                  className="h-full w-full object-cover object-center"
-                />
-              </div>
+                  <Image
+                    src={play}
+                    alt="Play"
+                    className="absolute left-[50%] top-[50%] -translate-x-1/2 -translate-y-1/2 z-[2]"
+                  />
+                </div>
+              )}
+
+              {backdrops && backdrops.length > 0 && (
+                <div className="shrink-0 h-full w-[33.333rem] flex justify-center items-center">
+                  <Image
+                    src={
+                      backdrops
+                        ? `https://image.tmdb.org/t/p/w780/${backdrops[0]?.file_path}`
+                        : ""
+                    }
+                    width={500}
+                    height={300}
+                    alt="Backdrop"
+                    className="h-full w-full object-cover object-center"
+                  />
+                </div>
+              )}
+
+              {posters && posters.length > 0 && (
+                <div className="shrink-0 h-full w-fit flex justify-center items-center">
+                  <Image
+                    src={
+                      posters
+                        ? `https://image.tmdb.org/t/p/w300/${posters[0]?.file_path}`
+                        : ""
+                    }
+                    width={240}
+                    height={300}
+                    alt="Poster"
+                    className="h-full w-full object-cover object-center"
+                  />
+                </div>
+              )}
             </>
           )}
 
@@ -158,7 +175,14 @@ const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
                   (video, i: number) =>
                     i < 6 && (
                       <>
-                        <div className="relative shrink-0 h-full w-[33.333rem] flex justify-center items-center">
+                        <div
+                          className="relative shrink-0 h-full w-[33.333rem] flex justify-center items-center hover:cursor-pointer"
+                          onClick={() => {
+                            setVideoOpen(true);
+                            setVideoKey(video?.key);
+                            setVideoTitle(video?.name);
+                          }}
+                        >
                           <Image
                             src={
                               videos

@@ -15,10 +15,11 @@ import CastSeasonReviewComp from "./CastSeasonReviewComp";
 import MovieTVDetailMedia from "./MovieTVDetailMedia";
 import MovieTVDetailRecommendations from "./MovieTVDetailRecommendations";
 import MovieTVDetailExtraInfo from "./MovieTVDetailExtraInfo";
+import MovieTVDetailHeroSection from "./MovieTVDetailHeroSection";
 import { movieTVDetailTabData } from "@/constants/movieTVDetail";
 import apiCall from "@/lib/apiCall";
 import { usePathname } from "next/navigation";
-import MovieTVDetailHeroSection from "./MovieTVDetailHeroSection";
+import YoutubeEmbed from "./YoutubeEmbed";
 
 const MovieTVDetail: React.FC<MovieTVDetailCompPropsType> = ({ title }) => {
   const path: string = usePathname();
@@ -31,6 +32,19 @@ const MovieTVDetail: React.FC<MovieTVDetailCompPropsType> = ({ title }) => {
   const [castSeasonReviewData, setCastSeasonReviewData] =
     useState<CastSeasonReviewDataType>();
   const [bgImg, setBgImg] = useState<string>("");
+
+  const [videoOpen, setVideoOpen] = useState<boolean>(false);
+  const [videoKey, setVideoKey] = useState<string>("");
+  const [videoTitle, setVideoTitle] = useState<string>("");
+
+  useEffect(() => {
+    if (!videoOpen) {
+      setVideoKey("");
+      setVideoTitle("");
+    }
+
+    console.log("Open Video", videoOpen);
+  }, [videoOpen]);
 
   useEffect(() => {
     const getData = async () => {
@@ -111,7 +125,13 @@ const MovieTVDetail: React.FC<MovieTVDetailCompPropsType> = ({ title }) => {
                   </>
                 )}
 
-                <MovieTVDetailMedia mediaType={mediaType} itemId={itemId} />
+                <MovieTVDetailMedia
+                  mediaType={mediaType}
+                  itemId={itemId}
+                  setVideoKey={setVideoKey}
+                  setVideoTitle={setVideoTitle}
+                  setVideoOpen={setVideoOpen}
+                />
 
                 <MovieTVDetailRecommendations
                   mediaType={mediaType}
@@ -123,6 +143,16 @@ const MovieTVDetail: React.FC<MovieTVDetailCompPropsType> = ({ title }) => {
             </div>
           </div>
         </>
+      )}
+
+      {videoOpen && (
+        <div className="fixed inset-0 z-[990]">
+          <YoutubeEmbed
+            title={videoTitle}
+            videoKey={videoKey}
+            setOpen={setVideoOpen}
+          />
+        </div>
       )}
     </main>
   );

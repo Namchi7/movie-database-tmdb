@@ -131,7 +131,7 @@ export const PopularMovieList: React.FC = () => {
   }, [selectedTab]);
 
   useEffect(() => {
-    getData();
+    if (ipInfo) getData();
   }, [ipInfo]);
 
   return (

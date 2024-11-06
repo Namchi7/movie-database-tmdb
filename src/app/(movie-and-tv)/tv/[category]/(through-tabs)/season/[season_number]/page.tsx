@@ -28,6 +28,7 @@ const Season: React.FC = () => {
 
   const [seasons, setSeasons] = useState<TVSeasonsType[]>();
   const [data, setData] = useState<SeasonEpisodeType[]>();
+  const [name, setName] = useState<string>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const months = [
@@ -117,6 +118,7 @@ const Season: React.FC = () => {
       );
 
       setSeasons(res.seasons);
+      setName(resData.name);
       setData(resData.episodes);
 
       setIsLoading(false);
@@ -126,9 +128,9 @@ const Season: React.FC = () => {
   }, [seasonNo]);
 
   return (
-    <div className="w-full grid gap-0 divide-y-1 divide-gray-200">
+    <div className="w-full grid">
       {seasons && (
-        <div className="w-full flex justify-center items-center px-5">
+        <div className="w-full flex justify-center items-center border-b-1 border-gray-200 px-5">
           <div className="w-full max-w-[75rem] flex flex-row justify-between items-center">
             <div className="">
               {getSeasonsNav()?.prev !== null && (
@@ -183,54 +185,68 @@ const Season: React.FC = () => {
         </div>
       )}
 
-      {data &&
-        data.map((item, i: number) => (
-          <div
-            className="w-full flex justify-center items-center gap-5 px-5 py-[1.875rem]"
-            key={i}
-          >
-            <div className="w-full max-w-[75rem] grid md:grid-cols-[14.1875rem_1fr] rounded-mdb overflow-hidden shadow-poster">
-              <div className="aspect-[227/127] w-[14.1875rem] mx-auto md:align-top flex justify-center items-center bg-slate-100">
-                <BackdropImageElement
-                  src={`https://image.tmdb.org/t/p/w342${item.still_path}`}
-                  alt={item.name}
-                  w={227}
-                  h={127}
-                />
-              </div>
+      <div className="w-full flex justify-center items-center px-5 pt-5">
+        {data && (
+          <div className="w-full max-w-[75rem] grid gap-2">
+            <h3 className="text-[1.5rem] font-bold">{name}</h3>
+            <p className="text-[1.1rem] font-semibold opacity-70">
+              {`Episodes `}
+              <span className="">{`(${data?.length})`}</span>
+            </p>
+          </div>
+        )}
+      </div>
 
-              <div className="min-h-full flex flex-col justify-center items-start gap-1 px-4 py-1">
-                <h3 className="text-[1.1rem] font-semibold">{`${item.episode_number}. ${item.name}`}</h3>
-
-                <div className="flex flex-row flex-wrap justify-start items-center gap-2">
-                  {item.vote_average >= 0 && (
-                    <StarScore score={Math.round(item.vote_average * 10)} />
-                  )}
-
-                  <div className="text-[0.9rem] font-medium">
-                    {getDateObject(item.air_date).year}
-                  </div>
-
-                  <div className="size-1 rounded-full bg-black"></div>
-
-                  <div className="text-[0.9rem] font-medium">
-                    {`${getDateObject(item.air_date).month} ${
-                      getDateObject(item.air_date).date
-                    }, ${getDateObject(item.air_date).year}.`}
-                  </div>
-
-                  <div className="size-1 rounded-full bg-black"></div>
-
-                  <div className="text-[0.9rem] font-medium">
-                    {resolvedRuntime(item.runtime)}
-                  </div>
+      <div className="w-full grid gap-0 divide-y-1 divide-gray-200">
+        {data &&
+          data.map((item, i: number) => (
+            <div
+              className="w-full flex justify-center items-center gap-5 px-5 py-[1.875rem]"
+              key={i}
+            >
+              <div className="w-full max-w-[75rem] grid md:grid-cols-[14.1875rem_1fr] rounded-mdb overflow-hidden shadow-poster">
+                <div className="aspect-[227/127] w-[14.1875rem] mx-auto md:align-top flex justify-center items-center bg-slate-100">
+                  <BackdropImageElement
+                    src={`https://image.tmdb.org/t/p/w342${item.still_path}`}
+                    alt={item.name}
+                    w={227}
+                    h={127}
+                  />
                 </div>
 
-                <div className="text-[0.9rem] mt-2">{item.overview}</div>
+                <div className="min-h-full flex flex-col justify-center items-start gap-1 px-4 py-1">
+                  <h3 className="text-[1.1rem] font-semibold">{`${item.episode_number}. ${item.name}`}</h3>
+
+                  <div className="flex flex-row flex-wrap justify-start items-center gap-2">
+                    {item.vote_average >= 0 && (
+                      <StarScore score={Math.round(item.vote_average * 10)} />
+                    )}
+
+                    <div className="text-[0.9rem] font-medium">
+                      {getDateObject(item.air_date).year}
+                    </div>
+
+                    <div className="size-1 rounded-full bg-black"></div>
+
+                    <div className="text-[0.9rem] font-medium">
+                      {`${getDateObject(item.air_date).month} ${
+                        getDateObject(item.air_date).date
+                      }, ${getDateObject(item.air_date).year}.`}
+                    </div>
+
+                    <div className="size-1 rounded-full bg-black"></div>
+
+                    <div className="text-[0.9rem] font-medium">
+                      {resolvedRuntime(item.runtime)}
+                    </div>
+                  </div>
+
+                  <div className="text-[0.9rem] mt-2">{item.overview}</div>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+      </div>
     </div>
   );
 };

@@ -7,13 +7,12 @@ const apiCall = async (
     method: method,
     headers: {
       accept: "application/json",
-      Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlNjY3MmRjNmViNTAyZWZhZGE4NDZmMTFkMTJmNjA5ZSIsIm5iZiI6MTcyMjUxMDUwMi44MjM0MDQsInN1YiI6IjY2YTc2Y2NjMzUwMDQ1M2IzNTU2YzI3NSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Nrg62ZW0tVTAhJSdkpqozLZUhAHadzpLb28DPHrBqNI",
+      Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_TOKEN}`,
     },
   };
 
   const response = await fetch(
-    `https://api.themoviedb.org/3${endpoint}${parameters}`,
+    `${process.env.NEXT_PUBLIC_TMDB_URI}${endpoint}${parameters}`,
     options
   );
 

@@ -400,6 +400,9 @@ export interface MovieTVSeasonCompType {
 export interface MovieTVDetailMediaCompType {
   mediaType: string;
   itemId: number;
+  setVideoKey: React.Dispatch<React.SetStateAction<string>>;
+  setVideoTitle: React.Dispatch<React.SetStateAction<string>>;
+  setVideoOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface VideoResultType {
@@ -870,7 +873,7 @@ export interface TitlesType {
 
 export interface TitlesResponseType {
   id: number;
-  titles: TitlesType[];
+  results: TitlesType[];
 }
 
 export interface TranslationDataType {

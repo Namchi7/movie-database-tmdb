@@ -149,8 +149,8 @@ const MovieTVDetailHeroSection: React.FC<MovieTVDetailHeroSectionCompType> = ({
         className="relative w-full flex justify-center items-center"
       >
         <Image
-          src={bgImg}
-          alt=""
+          src={bgImg ?? ""}
+          alt="Hidden Image"
           fill
           ref={imgRef}
           className="absolute -z-10 opacity-0"
