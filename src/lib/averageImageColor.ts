@@ -43,8 +43,6 @@ const averageImageColor = async (
         b: b,
       };
 
-      // console.log(`rgb(${r},${g},${b})`);
-
       resolve(averageColor);
     };
 

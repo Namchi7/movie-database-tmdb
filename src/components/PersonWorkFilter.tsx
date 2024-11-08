@@ -13,6 +13,7 @@ import { PersonWorkFilterCompType } from "@/constants/types";
 
 const PersonWorkFilter: React.FC<PersonWorkFilterCompType> = ({
   setListToShow,
+  setDeptToShow,
 }) => {
   const workFilterData = [
     {
@@ -20,14 +21,14 @@ const PersonWorkFilter: React.FC<PersonWorkFilterCompType> = ({
       placeholder: "Combined",
       items: ["Combined", "Movies", "TV Shows"],
     },
-    {
-      title: "department_type",
-      placeholder: "Department",
-      items: ["All", "Acting", "Production", "Directing"],
-    },
+    // {
+    //   title: "department_type",
+    //   placeholder: "Department",
+    //   items: ["All", "Acting", "Production", "Directing"],
+    // },
   ];
 
-  const changeState = (item: string) => {
+  const changeListState = (item: string) => {
     if (item === "Combined") {
       setListToShow(0);
     }
@@ -37,6 +38,12 @@ const PersonWorkFilter: React.FC<PersonWorkFilterCompType> = ({
     if (item === "TV Shows") {
       setListToShow(2);
     }
+  };
+
+  const changeDeptState = (item: string) => {
+    const i: number = workFilterData[1].items.indexOf(item);
+
+    setDeptToShow(i);
   };
 
   return (
@@ -60,7 +67,11 @@ const PersonWorkFilter: React.FC<PersonWorkFilterCompType> = ({
             <ul>
               {workType.items.map((item, ind: number) => (
                 <li
-                  onClick={() => changeState(item)}
+                  onClick={() =>
+                    workType.title === "work_type"
+                      ? changeListState(item)
+                      : changeDeptState(item)
+                  }
                   className="w-full px-4 py-2 text-black text-[0.85rem] hover:bg-slate-100 capitalize hover:cursor-pointer"
                   key={ind}
                 >

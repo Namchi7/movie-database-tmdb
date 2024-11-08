@@ -5,16 +5,17 @@ const apiCall = async (
 ) => {
   const options = {
     method: method,
-    headers: {
-      accept: "application/json",
-      Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_TOKEN}`,
-    },
+    // headers: {
+    //   accept: "application/json",
+    //   Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_TOKEN}`,
+    // },
   };
 
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_TMDB_URI}${endpoint}${parameters}`,
-    options
-  );
+  const query: string = `${endpoint}${parameters}`;
+
+  const response = await fetch(`/api/tmdb-api?param=${query}`, {
+    cache: "no-store",
+  });
 
   const result = await response.json();
 

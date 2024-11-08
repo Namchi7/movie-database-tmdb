@@ -5,8 +5,6 @@ export const fetchIPInfo = createAsyncThunk("fetchIPInfo", async () => {
 
   const result = await res.json();
 
-  console.log(result);
-
   return result;
 });
 

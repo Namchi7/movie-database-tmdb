@@ -99,13 +99,15 @@ const TopicBackToMain: React.FC = () => {
       style={{ backgroundColor: averageColor, color: heroTextColor }}
       className="relative w-full flex items-center justify-center bg-slate-100 px-5 py-5"
     >
-      <Image
-        src={pImg ?? ""}
-        alt=""
-        fill
-        ref={imgRef}
-        className="absolute -z-10 opacity-0"
-      />
+      {pImg && (
+        <Image
+          src={pImg}
+          alt="Topic Back"
+          fill
+          ref={imgRef}
+          className="absolute -z-10 opacity-0"
+        />
+      )}
 
       {isLoading && <TopicBackToMainSkeleton />}
 

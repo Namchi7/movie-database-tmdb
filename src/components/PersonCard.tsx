@@ -20,7 +20,7 @@ const PersonCard: React.FC<PersonCardCompType> = ({ personData }) => {
         className="aspect-square w-full flex justify-center items-center"
       >
         <PersonImageElement
-          src={personData?.profile_path}
+          src={`https://image.tmdb.org/t/p/h632${personData?.profile_path}`}
           alt={personData?.name}
           w={220}
           h={220}

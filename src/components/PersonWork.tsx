@@ -28,7 +28,8 @@ const PersonWork: React.FC<PersonWorkCompType> = ({
   tvCredits,
   combinedCredits,
 }) => {
-  const [listToShow, setListToShow] = useState<number>(1);
+  const [listToShow, setListToShow] = useState<number>(0);
+  const [deptToShow, setDeptToShow] = useState<number>(0);
 
   const [movieCastCredits, setMovieCastCredits] = useState<
     PersonCombinedCreditCastType[]
@@ -226,18 +227,62 @@ const PersonWork: React.FC<PersonWorkCompType> = ({
     getCrewCreditsGroupedByDepartment();
   }, [listToShow]);
 
+  useEffect(() => {
+    if (
+      movieCastCredits.length > 0 ||
+      movieCrewCredits.length > 0 ||
+      tvCastCredits.length > 0 ||
+      tvCrewCredits.length > 0 ||
+      combinedCastCredits.length > 0 ||
+      combinedCrewCredits.length > 0
+    ) {
+      getCastCreditsGroupedByYear();
+      getCrewCreditsGroupedByDepartment();
+    }
+  }, [
+    movieCastCredits,
+    movieCrewCredits,
+    tvCastCredits,
+    tvCrewCredits,
+    combinedCastCredits,
+    combinedCrewCredits,
+  ]);
+
   return (
     <div className="w-full grid gap-5">
       <div className="w-full flex flex-row justify-between items-start">
-        <p className="text-[1.25rem] font-semibold">Credits</p>
+        <div className="flex justify-start items-baseline gap-1">
+          <h3 className="text-[1.25rem] font-semibold">Credits</h3>
+          <p className="text-[0.9rem] font-regular opacity-90">
+            {listToShow === 1
+              ? `(Movies)`
+              : listToShow === 2
+              ? "(TV Shows)"
+              : ""}
+          </p>
+        </div>
 
-        <PersonWorkFilter setListToShow={setListToShow} />
+        <PersonWorkFilter
+          setListToShow={setListToShow}
+          setDeptToShow={setDeptToShow}
+        />
       </div>
 
       <div className="w-full grid gap-4">
         {groupedCastCredits && (
           <div className="w-full grid gap-2 bg-white rounded-mdb shadow-filters p-2">
-            <p className="text-[1.25rem] font-semibold">Acting</p>
+            <div className="flex justify-start items-baseline gap-1">
+              <h3 className="text-[1.25rem] font-semibold">Acting</h3>
+              <p className="text-[1rem] font-regular opacity-90">
+                {`(${
+                  listToShow === 1
+                    ? movieCastCredits.length
+                    : listToShow === 2
+                    ? tvCastCredits.length
+                    : combinedCastCredits.length
+                })`}
+              </p>
+            </div>
 
             <Accordion type="multiple">
               {groupedCastCredits &&
@@ -291,7 +336,16 @@ const PersonWork: React.FC<PersonWorkCompType> = ({
               className="w-full grid gap-2 bg-white rounded-mdb shadow-filters p-2"
               key={i}
             >
-              <p className="text-[1.25rem] font-semibold">{department}</p>
+              <div className="flex justify-start items-baseline gap-1">
+                <h3 className="text-[1.25rem] font-semibold">{department}</h3>
+                <p className="text-[1rem] font-regular opacity-90">
+                  {`(${
+                    combinedCrewCredits.filter(
+                      (item) => item.department === department
+                    ).length
+                  })`}
+                </p>
+              </div>
 
               <Accordion type="multiple">
                 {Object.keys(

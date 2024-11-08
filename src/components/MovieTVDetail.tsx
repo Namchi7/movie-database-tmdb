@@ -42,8 +42,6 @@ const MovieTVDetail: React.FC<MovieTVDetailCompPropsType> = ({ title }) => {
       setVideoKey("");
       setVideoTitle("");
     }
-
-    console.log("Open Video", videoOpen);
   }, [videoOpen]);
 
   useEffect(() => {
@@ -57,7 +55,9 @@ const MovieTVDetail: React.FC<MovieTVDetailCompPropsType> = ({ title }) => {
       setItemData(res);
     };
 
-    getData();
+    if (itemId) {
+      getData();
+    }
   }, [itemId]);
 
   useEffect(() => {

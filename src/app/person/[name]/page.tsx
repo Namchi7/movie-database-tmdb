@@ -16,6 +16,7 @@ import PostersList from "@/components/PostersList";
 import PersonWork from "@/components/PersonWork";
 import apiCall from "@/lib/apiCall";
 import {
+  MovieTVDataType,
   PersonCombinedCreditResponseType,
   PersonDataResponseType,
   PersonExternalIdsType,
@@ -35,6 +36,7 @@ const Person: React.FC = () => {
     useState<PersonCombinedCreditResponseType>();
   const [tvCredits, setTVCredits] =
     useState<PersonCombinedCreditResponseType>();
+  const [knownForList, setKnownForList] = useState<MovieTVDataType[]>();
 
   const genders: string[] = [
     "Not set / not specified",
@@ -97,7 +99,10 @@ const Person: React.FC = () => {
 
   useEffect(() => {
     const getData = async () => {
-      const res: PersonDataResponseType = await apiCall(`/person/${personId}`);
+      const res: PersonDataResponseType = await apiCall(
+        `/person/${personId}`,
+        "?language=en-US"
+      );
       const resIds: PersonExternalIdsType = await apiCall(
         `/person/${personId}/external_ids`
       );
@@ -117,6 +122,12 @@ const Person: React.FC = () => {
       setCombinedCredits(resCombinedCredits);
       setMovieCredits(resMovieCredits);
       setTVCredits(resTVCredits);
+      setKnownForList(
+        [...resCombinedCredits.cast, ...resCombinedCredits.crew].slice(
+          0,
+          8
+        ) as any
+      );
     };
 
     getData();
@@ -132,7 +143,7 @@ const Person: React.FC = () => {
             <div className="w-1/4 min-w-[260px] grid gap-5">
               <div className="aspect-[6/9] w-full flex justify-center items-center rounded-mdb shadow-filters bg-slate-300 overflow-hidden">
                 <PersonImageElement
-                  src={`https://image.tmdb.org/t/p/h632/${personData?.profile_path}`}
+                  src={`https://image.tmdb.org/t/p/h632${personData?.profile_path}`}
                   alt={personData?.name}
                   w={300}
                   h={450}
@@ -295,12 +306,12 @@ const Person: React.FC = () => {
               <div className="w-full grid gap-5">
                 <p className="text-[1.25rem] font-semibold">Known For</p>
 
-                {/* <PostersList
-              variant="overflow"
-              posterData={posterData}
-              showDetail={false}
-              inlinePadding={false}
-            /> */}
+                <PostersList
+                  variant="overflow"
+                  posterData={knownForList as MovieTVDataType[]}
+                  showDetail={false}
+                  inlinePadding={false}
+                />
               </div>
 
               {movieCredits && tvCredits && combinedCredits && (

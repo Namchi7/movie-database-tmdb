@@ -11,7 +11,7 @@ const Hero: React.FC = () => {
   // const [searchKeyword, setSearchKeyword] = useState<string>("");
 
   // const handleSearchClick = () => {
-  //   console.log(searchKeyword);
+  //   return (searchKeyword);
   // };
 
   return (

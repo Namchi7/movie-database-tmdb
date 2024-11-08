@@ -19,25 +19,21 @@ const MovieAndTVList: React.FC<MovieAndTVListType> = ({ title, mediaType }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const getData = async (category: string, pageNo: number) => {
-    const ipInfo: IPInfoType = await getIPInfo();
+    if (category) {
+      const ipInfo: IPInfoType = await getIPInfo();
 
-    const endpoint: string = `/${mediaType}/${category}`;
+      const endpoint: string = `/${mediaType}/${category}`;
 
-    const params: string = `?page=${pageNo}&region=${ipInfo?.country_code}`;
+      const params: string = `?page=${pageNo}&region=${ipInfo?.country_code}`;
 
-    setIsLoading(true);
+      setIsLoading(true);
 
-    const res: MovieTVListResponseType = await apiCall(endpoint, params);
+      const res: MovieTVListResponseType = await apiCall(endpoint, params);
 
-    setPosterData((prev) => [...prev, ...(res?.results || [])]);
+      setPosterData((prev) => [...prev, ...(res?.results || [])]);
 
-    setIsLoading(false);
-  };
-
-  const loadMoreData = (pageNo: number) => {
-    setPage(pageNo);
-
-    getData(category, pageNo);
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -74,6 +70,12 @@ const MovieAndTVList: React.FC<MovieAndTVListType> = ({ title, mediaType }) => {
       }
     }
   }, [title, mediaType]);
+
+  useEffect(() => {
+    if (category) {
+      getData(category, page);
+    }
+  }, [category, page]);
 
   return (
     <main className="w-full max-w-[75rem] grid gap-[1.875rem] px-5 py-[1.875rem]">
@@ -118,7 +120,7 @@ const MovieAndTVList: React.FC<MovieAndTVListType> = ({ title, mediaType }) => {
               variant={"action"}
               size={"full8"}
               disabled={isLoading}
-              onClick={() => loadMoreData(page + 1)}
+              onClick={() => setPage((prev) => prev + 1)}
             >
               Load More
             </Button>

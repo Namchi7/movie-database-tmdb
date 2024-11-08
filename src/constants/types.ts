@@ -694,6 +694,7 @@ export interface PersonWorkCompType {
 
 export interface PersonWorkFilterCompType {
   setListToShow: React.Dispatch<React.SetStateAction<number>>;
+  setDeptToShow: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export interface NormalizedCastDataType {

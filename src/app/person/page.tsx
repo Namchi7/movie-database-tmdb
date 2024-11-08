@@ -8,7 +8,6 @@ import apiCall from "@/lib/apiCall";
 import { PersonDataType, PeopleListResponseType } from "@/constants/types";
 
 const PopularPerson: React.FC = () => {
-  const arr = new Array(16).fill(0);
   const [peopleList, setPeopleList] = useState<PersonDataType[]>([]);
   const [page, setPage] = useState<number>(1);
   const [lastPage, setLastPage] = useState<number>(1);
