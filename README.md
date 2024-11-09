@@ -6,7 +6,12 @@ This project is aimed at making something similar to TMDB([The Movie Database](h
 
 ### How to run this project locally on you device:
 
-- Clone this repository in your device.
+- Clone this repository in your device:
+
+```
+git clone https://github.com/Namchi7/movie-database-tmdb.git
+```
+
 - Go to the project directory:
 
 ```
@@ -36,6 +41,17 @@ npm run dev
 
 - Open the link given in the terminal in your browser (ctrl + click).
 - Now you can run this project locally on your device.
+
+### Tech Stack Used:
+
+- Next.js
+- React.js
+- Tailwind CSS
+- TypeScript
+
+---
+
+Live Link: [https://tmvdb.netlify.app](https://tmvdb.netlify.app)
 
 ---
 
