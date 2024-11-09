@@ -46,13 +46,7 @@ const Profiles: React.FC = () => {
     <div className="w-full flex flex-col justify-start items-center gap-0">
       <DetailTabs tabData={personDetailTabData} />
 
-      {personDetails && (
-        <TopicBackToMain
-          topic={personDetails.name}
-          backPath={backPath}
-          imgPath={personDetails.profile_path}
-        />
-      )}
+      {personDetails && <TopicBackToMain />}
 
       <div className="w-full max-w-[75rem] grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-5 px-5 py-[1.875rem]">
         {profiles &&
