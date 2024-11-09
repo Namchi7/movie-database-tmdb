@@ -874,7 +874,7 @@ export interface TitlesType {
 
 export interface TitlesResponseType {
   id: number;
-  results: TitlesType[];
+  titles: TitlesType[];
 }
 
 export interface TranslationDataType {
