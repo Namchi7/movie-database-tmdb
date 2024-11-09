@@ -143,7 +143,7 @@ export interface filterListItemType {
 }
 
 export type SetValueFnType = (
-  value: string | string[] | undefined,
+  value: string | string[] | number | undefined,
   key: string
 ) => void;
 
@@ -194,7 +194,7 @@ export interface NumberPickerByStepType {
   setToKey: string;
   step: number;
   value: number;
-  setValueFn: (value: string | number, key: string) => void;
+  setValueFn: SetValueFnType;
 }
 
 export interface MovieTVDetailCompPropsType {

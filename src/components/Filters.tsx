@@ -51,7 +51,10 @@ const Filters: React.FC = () => {
     });
   };
 
-  const setFilterKey = (value: string | string[], key: string) => {
+  const setFilterKey = (
+    value: string | string[] | number | undefined,
+    key: string
+  ) => {
     setFilters((prevFilters) => ({ ...prevFilters, [key]: value }));
   };
 
