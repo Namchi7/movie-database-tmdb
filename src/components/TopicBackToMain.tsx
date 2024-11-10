@@ -3,11 +3,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { notFound, usePathname } from "next/navigation";
 
 import PosterImageElement from "./PosterImageElement";
 import TopicBackToMainSkeleton from "./skeletonLoaders/TopicBackToMainSkeleton";
-import { MovieTVDataType } from "@/constants/types";
+import { MovieTVDataType, PersonDataType } from "@/constants/types";
 import apiCall from "@/lib/apiCall";
 import averageImageColor from "@/lib/averageImageColor";
 import invertColor, { rgbToHex } from "@/lib/oppositeColor";
@@ -16,10 +16,12 @@ import back from "@/assets/svg/back-icon.svg";
 const TopicBackToMain: React.FC = () => {
   const pathname = usePathname();
   const pathArr: string[] = pathname.split("/");
+  const topicType: string = pathname.split("/")[1];
   const backPath: string = [pathArr[0], pathArr[1], pathArr[2]].join("/");
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [data, setData] = useState<MovieTVDataType>();
+  const [data, setData] = useState<MovieTVDataType | PersonDataType>();
+  const [is404, setIs404] = useState<boolean>(false);
 
   const [pImg, setPImg] = useState<string>("");
   const [heroTextColor, setHeroTextColor] = useState<string>("#000000");
@@ -70,29 +72,39 @@ const TopicBackToMain: React.FC = () => {
   }, [pImg]);
 
   useEffect(() => {
-    if (data) {
+    if (data && !is404) {
       setPImg(`https://image.tmdb.org/t/p/w342${data?.poster_path}`);
     }
   }, [data]);
 
   useEffect(() => {
     setIsLoading(true);
+
     const topicId: string = pathname.split("/")[2].split("-")[0];
-    const topicType: string = pathname.split("/")[1];
 
     const getData = async () => {
-      const res: MovieTVDataType = await apiCall(
+      const res: MovieTVDataType | PersonDataType = await apiCall(
         `/${topicType}/${topicId}`,
         ""
       );
 
-      setData(res);
+      if ("error" in res) {
+        setIs404(true);
+      } else {
+        setData(res);
+      }
     };
 
     getData();
 
     setIsLoading(false);
   }, [pathname]);
+
+  useEffect(() => {
+    if (is404) {
+      return notFound();
+    }
+  }, [is404]);
 
   return (
     <div
@@ -115,8 +127,16 @@ const TopicBackToMain: React.FC = () => {
         <div className="w-full max-w-[75rem] flex flex-row justify-start items-center gap-5">
           <div className="aspect-[58/87] w-[3.625rem] flex justify-center items-center bg-slate-200 rounded-mdb overflow-hidden">
             <PosterImageElement
-              src={`https://image.tmdb.org/t/p/w185${data?.poster_path}`}
-              alt={data?.title ? data?.title : data?.name}
+              src={`https://image.tmdb.org/t/p/w185${
+                topicType !== "person"
+                  ? (data as MovieTVDataType)?.poster_path
+                  : (data as PersonDataType)?.profile_path
+              }`}
+              alt={
+                (data as MovieTVDataType)?.title
+                  ? (data as MovieTVDataType)?.title
+                  : data?.name
+              }
               w={58}
               h={87}
               errStyle={"size-[1.5rem]"}
@@ -125,12 +145,16 @@ const TopicBackToMain: React.FC = () => {
 
           <div className="grid gap-0">
             <p className="text-[1.75rem] font-bold">
-              {data?.title ? data?.title : data?.name}{" "}
-              <span className="opacity-70 font-normal">
-                {data?.first_air_date
-                  ? `(${getYear(data?.first_air_date)})`
-                  : `(${getYear(data?.release_date)})`}
-              </span>
+              {(data as MovieTVDataType)?.title
+                ? (data as MovieTVDataType)?.title
+                : data?.name}{" "}
+              {topicType !== "person" && (
+                <span className="opacity-70 font-normal">
+                  {(data as MovieTVDataType)?.first_air_date
+                    ? `(${getYear((data as MovieTVDataType)?.first_air_date)})`
+                    : `(${getYear((data as MovieTVDataType)?.release_date)})`}
+                </span>
+              )}
             </p>
 
             <Link

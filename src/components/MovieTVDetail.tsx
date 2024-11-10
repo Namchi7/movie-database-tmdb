@@ -9,6 +9,7 @@ import {
   CastSeasonReviewDataType,
   SeasonResponseType,
   ReviewsResponseType,
+  FailedResponseType,
 } from "@/constants/types";
 import DetailTabs from "./DetailTab";
 import CastSeasonReviewComp from "./CastSeasonReviewComp";
@@ -18,7 +19,7 @@ import MovieTVDetailExtraInfo from "./MovieTVDetailExtraInfo";
 import MovieTVDetailHeroSection from "./MovieTVDetailHeroSection";
 import { movieTVDetailTabData } from "@/constants/movieTVDetail";
 import apiCall from "@/lib/apiCall";
-import { usePathname } from "next/navigation";
+import { notFound, usePathname } from "next/navigation";
 import YoutubeEmbed from "./YoutubeEmbed";
 
 const MovieTVDetail: React.FC<MovieTVDetailCompPropsType> = ({ title }) => {
@@ -26,6 +27,8 @@ const MovieTVDetail: React.FC<MovieTVDetailCompPropsType> = ({ title }) => {
   const mediaType: string = path.split("/")[1];
   const titleString: string = title;
   const itemId = parseInt(titleString.split("-")[0]);
+
+  const [is404, setIs404] = useState<boolean>(false);
 
   const [itemData, setItemData] = useState<MovieTVDataType>();
   const [creditsData, setCreditsData] = useState<CreditResponseType>();
@@ -52,7 +55,12 @@ const MovieTVDetail: React.FC<MovieTVDetailCompPropsType> = ({ title }) => {
 
       const res: MovieTVDataType = await apiCall(endpoint, params);
 
-      setItemData(res);
+      if ("error" in res) {
+        console.log("***Error***", res.error);
+        setIs404(true);
+      } else {
+        setItemData(res);
+      }
     };
 
     if (itemId) {
@@ -61,7 +69,7 @@ const MovieTVDetail: React.FC<MovieTVDetailCompPropsType> = ({ title }) => {
   }, [itemId]);
 
   useEffect(() => {
-    if (itemData) {
+    if (itemData && !is404) {
       setBgImg(`https://image.tmdb.org/t/p/original/${itemData.backdrop_path}`);
 
       const getData = async () => {
@@ -90,6 +98,12 @@ const MovieTVDetail: React.FC<MovieTVDetailCompPropsType> = ({ title }) => {
       getData();
     }
   }, [itemData]);
+
+  useEffect(() => {
+    if (is404) {
+      return notFound();
+    }
+  }, [is404]);
 
   return (
     <main className="w-full grid gap-0">

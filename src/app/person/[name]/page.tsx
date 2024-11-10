@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { notFound, usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -37,6 +37,8 @@ const Person: React.FC = () => {
   const [tvCredits, setTVCredits] =
     useState<PersonCombinedCreditResponseType>();
   const [knownForList, setKnownForList] = useState<MovieTVDataType[]>();
+
+  const [is404, setIs404] = useState<boolean>(false);
 
   const genders: string[] = [
     "Not set / not specified",
@@ -116,22 +118,32 @@ const Person: React.FC = () => {
         `/person/${personId}/tv_credits`
       );
 
-      setPersonData(res);
-      setExternalIds(resIds);
+      if ("error" in res) {
+        setIs404(true);
+      } else {
+        setPersonData(res);
+        setExternalIds(resIds);
 
-      setCombinedCredits(resCombinedCredits);
-      setMovieCredits(resMovieCredits);
-      setTVCredits(resTVCredits);
-      setKnownForList(
-        [...resCombinedCredits.cast, ...resCombinedCredits.crew].slice(
-          0,
-          8
-        ) as any
-      );
+        setCombinedCredits(resCombinedCredits);
+        setMovieCredits(resMovieCredits);
+        setTVCredits(resTVCredits);
+        setKnownForList(
+          [...resCombinedCredits.cast, ...resCombinedCredits.crew].slice(
+            0,
+            8
+          ) as any
+        );
+      }
     };
 
     getData();
   }, [personId]);
+
+  useEffect(() => {
+    if (is404) {
+      return notFound();
+    }
+  }, [is404]);
 
   return (
     <div className="w-full flex flex-col justify-start items-center gap-0">

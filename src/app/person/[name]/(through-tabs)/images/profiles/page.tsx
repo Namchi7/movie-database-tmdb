@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 
 import DetailTabs from "@/components/DetailTab";
 import TopicBackToMain from "@/components/TopicBackToMain";
+import PersonImageElement from "@/components/PersonImageElement";
 
 import { personDetailTabData } from "@/constants/personDetail";
 import {
@@ -15,7 +16,6 @@ import {
 
 import apiCall from "@/lib/apiCall";
 import Image from "next/image";
-import PersonImageElement from "./../../../../../components/PersonImageElement";
 
 const Profiles: React.FC = () => {
   const path: string = usePathname();
@@ -56,7 +56,7 @@ const Profiles: React.FC = () => {
               key={i}
             >
               <PersonImageElement
-                src={item.file_path}
+                src={`https://image.tmdb.org/t/p/h632${item.file_path}`}
                 alt={personDetails ? personDetails?.name : "Person"}
                 w={150}
                 h={225}
