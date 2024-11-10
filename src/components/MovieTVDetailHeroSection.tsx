@@ -170,12 +170,7 @@ const MovieTVDetailHeroSection: React.FC<MovieTVDetailHeroSectionCompType> = ({
           <div className="aspect-[2/3] w-1/4 max-w-[18.75rem] basis-[18.75rem] flex justify-center items-center">
             <Image
               src={`https://image.tmdb.org/t/p/w342/${itemData.poster_path}`}
-              alt={
-                (itemData.media_type === "movie"
-                  ? itemData.title
-                  : itemData.name) ||
-                (itemData.media_type ? "" : itemData.title)
-              }
+              alt={itemData.title ? itemData.title : itemData.name}
               width={300}
               height={450}
               className="size-full object-cover object-center rounded-mdb"

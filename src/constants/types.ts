@@ -932,3 +932,7 @@ export interface VideosResponseType {
   id: number;
   results: VideoResultType[];
 }
+
+export interface FailedResponseType {
+  error: string;
+}
