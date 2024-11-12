@@ -33,6 +33,7 @@ const buttonVariants = cva(
         full: "w-full h-full rounded-full",
         full8: "w-full h-full rounded-mdb p-[0.625rem] text-[1.5rem]",
         pg: "px-2 py-1 rounded-mdb-sm text-[0.9rem]",
+        "pg-icon": "rounded-mdb-sm text-[0.9rem]",
       },
     },
     defaultVariants: {

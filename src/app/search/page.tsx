@@ -141,7 +141,7 @@ const Search: React.FC = () => {
         handleSearchClick={handleSearchClick}
       />
 
-      <div className="w-full grow max-w-[75rem] grid grid-cols-[240px_1fr] gap-4 mb-8">
+      <div className="w-full grow max-w-[75rem] grid md:grid-cols-[240px_1fr] gap-4 mb-8">
         <SearchTabs
           searchTabSeq={searchTabSeq}
           selectedResult={selectedResult}

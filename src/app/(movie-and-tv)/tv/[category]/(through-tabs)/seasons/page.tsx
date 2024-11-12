@@ -82,7 +82,7 @@ const Seasons: React.FC = () => {
             className="w-full flex justify-center items-center gap-0"
             key={i}
           >
-            <div className="w-full max-w-[75rem] grid grid-cols-[6.52rem_1fr] gap-5 px-5 py-[1.875rem]">
+            <div className="w-full max-w-[75rem] grid grid-cols-[6.52rem_1fr] gap-4 md:gap-5 px-4 md:px-5 py-[1.875rem]">
               <div className="aspect-[100/150] w-[6.25rem] flex justify-center items-center rounded-mdb bg-slate-100 overflow-hidden shadow-poster">
                 <PosterImageElement
                   src={`https://image.tmdb.org/t/p/w185${item.poster_path}`}

@@ -55,7 +55,7 @@ const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
   }, [activeTab]);
 
   return (
-    <div className="w-full grid gap-5 py-[1.875rem]">
+    <div className="w-full grid gap-4 md:gap-5 py-[1.875rem]">
       <div className="w-full flex justify-between md:justify-start items-start md:items-center gap-4 md:gap-[3.125rem]">
         <p className="text-xl font-semibold">Media</p>
 

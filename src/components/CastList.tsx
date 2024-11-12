@@ -14,7 +14,7 @@ const CastList: React.FC<CastListCompType> = ({ data }) => {
   };
 
   return (
-    <div className="w-full grid gap-5 grid-flow-col auto-cols-[8.625rem] overflow-x-scroll overflow-y-visible px-2 pt-5 pb-5">
+    <div className="w-full grid gap-4 md:gap-5 grid-flow-col auto-cols-[8.625rem] overflow-x-scroll overflow-y-visible px-2 pt-5 pb-5">
       {data.map(
         (item, i) =>
           i < 20 && (

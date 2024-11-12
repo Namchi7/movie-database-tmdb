@@ -1,6 +1,12 @@
 import React from "react";
+import Image from "next/image";
 import { Button } from "./ui/button";
 import { PaginationCompType } from "@/constants/types";
+
+import first from "@/assets/images/first.png";
+import prev from "@/assets/images/prev.png";
+import next from "@/assets/images/next.png";
+import last from "@/assets/images/last.png";
 
 const Pagination: React.FC<PaginationCompType> = ({
   page,
@@ -12,20 +18,24 @@ const Pagination: React.FC<PaginationCompType> = ({
       <div className="flex flex-nowrap justify-start items-center gap-2">
         <Button
           variant={"pagination"}
-          size={"pg"}
+          size={"pg-icon"}
           onClick={() => setPage(1)}
           disabled={page === 1 ? true : false}
         >
-          First
+          <div className="aspect-square h-8 flex justify-center items-center">
+            <Image src={first} alt="First" className="size-full" />
+          </div>
         </Button>
 
         <Button
           variant={"pagination"}
-          size={"pg"}
+          size={"pg-icon"}
           onClick={() => setPage(page - 1)}
           disabled={page === 1 ? true : false}
         >
-          Prev
+          <div className="aspect-square h-8 flex justify-center items-center">
+            <Image src={prev} alt="Prev" className="size-full" />
+          </div>
         </Button>
       </div>
 
@@ -35,6 +45,7 @@ const Pagination: React.FC<PaginationCompType> = ({
             variant={"pagination"}
             size={"pg"}
             onClick={() => setPage(page - 2)}
+            className="hidden md:inline-flex min-h-8"
           >
             {page - 2}
           </Button>
@@ -45,6 +56,7 @@ const Pagination: React.FC<PaginationCompType> = ({
             variant={"pagination"}
             size={"pg"}
             onClick={() => setPage(page - 1)}
+            className="min-h-8"
           >
             {page - 1}
           </Button>
@@ -54,7 +66,7 @@ const Pagination: React.FC<PaginationCompType> = ({
           variant={"pagination"}
           size={"pg"}
           onClick={() => setPage(page)}
-          className="hover:bg-[#90cea1]/60 bg-[#90cea1]/60"
+          className="min-h-8 hover:bg-[#90cea1]/60 bg-[#90cea1]/60"
         >
           {page}
         </Button>
@@ -64,6 +76,7 @@ const Pagination: React.FC<PaginationCompType> = ({
             variant={"pagination"}
             size={"pg"}
             onClick={() => setPage(page + 1)}
+            className="min-h-8"
           >
             {page + 1}
           </Button>
@@ -74,6 +87,7 @@ const Pagination: React.FC<PaginationCompType> = ({
             variant={"pagination"}
             size={"pg"}
             onClick={() => setPage(page + 2)}
+            className="hidden md:inline-flex min-h-8"
           >
             {page + 2}
           </Button>
@@ -83,20 +97,24 @@ const Pagination: React.FC<PaginationCompType> = ({
       <div className="flex flex-nowrap justify-start items-center gap-2">
         <Button
           variant={"pagination"}
-          size={"pg"}
+          size={"pg-icon"}
           onClick={() => setPage(page + 1)}
           disabled={page === lastPage ? true : false}
         >
-          Next
+          <div className="aspect-square h-8 flex justify-center items-center">
+            <Image src={next} alt="Next" className="size-full" />
+          </div>
         </Button>
 
         <Button
           variant={"pagination"}
-          size={"pg"}
+          size={"pg-icon"}
           onClick={() => setPage(lastPage)}
           disabled={page === lastPage ? true : false}
         >
-          Last
+          <div className="aspect-square h-8 flex justify-center items-center">
+            <Image src={last} alt="Last" className="size-full" />
+          </div>
         </Button>
       </div>
     </div>

@@ -81,9 +81,9 @@ const MovieTVDetailExtraInfo: React.FC<MovieTVDetailExtraInfoCompType> = ({
 
   return (
     <div className="w-full md:w-[16.25rem] shrink-0 grid gap-[1.875rem] py-[1.875rem]">
-      <div className="w-full flex flex-row justify-start items-center gap-5 divide-x-1">
+      <div className="w-full flex flex-row justify-start items-center gap-4 md:gap-5 divide-x-1">
         {externalIdsLength > 0 && (
-          <div className="flex flex-row justify-start items-center gap-5">
+          <div className="flex flex-row justify-start items-center gap-4 md:gap-5">
             {externalIds?.facebook_id && (
               <Link
                 href={`https://www.facebook.com/${externalIds?.facebook_id}`}
@@ -153,7 +153,7 @@ const MovieTVDetailExtraInfo: React.FC<MovieTVDetailExtraInfoCompType> = ({
         )}
       </div>
 
-      <div className="w-full grid gap-5">
+      <div className="w-full grid gap-4 md:gap-5">
         <p className="text-[1rem] font-semibold">Facts</p>
 
         {itemData?.status && (
@@ -213,7 +213,7 @@ const MovieTVDetailExtraInfo: React.FC<MovieTVDetailExtraInfoCompType> = ({
         )}
       </div>
 
-      <div className="w-full grid gap-5">
+      <div className="w-full grid gap-4 md:gap-5">
         <p className="text-[1rem] font-semibold">Keywords</p>
 
         <div className="w-full flex flex-wrap gap-x-[0.325rem] gap-[0.625rem]">

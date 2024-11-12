@@ -28,9 +28,9 @@ const PopularPerson: React.FC = () => {
   }, [page]);
 
   return (
-    <div className="w-full max-w-[75rem] grid gap-[1.875rem] px-5 py-[1.875rem]">
+    <div className="w-full max-w-[75rem] grid gap-[1.875rem] px-4 md:px-5 py-[1.875rem]">
       <h3 className="text-2xl text-[#032541] font-semibold ">Popular People</h3>
-      <div className="w-full grid gap-5 grid-cols-[repeat(auto-fill,minmax(210px,1fr))]">
+      <div className="w-full grid gap-4 md:gap-5 grid-cols-[repeat(auto-fill,minmax(210px,1fr))]">
         {peopleList.map((person, i: number) => (
           <PersonCard personData={person} key={i} />
         ))}

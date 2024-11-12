@@ -249,7 +249,7 @@ const PersonWork: React.FC<PersonWorkCompType> = ({
   ]);
 
   return (
-    <div className="w-full grid gap-5">
+    <div className="w-full grid gap-4 md:gap-5">
       <div className="w-full flex flex-row justify-between items-start">
         <div className="flex justify-start items-baseline gap-1">
           <h3 className="text-[1.25rem] font-semibold">Credits</h3>

@@ -114,7 +114,7 @@ const TopicBackToMain: React.FC = () => {
   return (
     <div
       style={{ backgroundColor: averageColor, color: heroTextColor }}
-      className="relative w-full flex items-center justify-center bg-slate-100 px-5 py-5"
+      className="relative w-full flex items-center justify-center bg-slate-100 px-4 md:px-5 py-5"
     >
       {pImg && (
         <Image
@@ -129,8 +129,8 @@ const TopicBackToMain: React.FC = () => {
       {isLoading && <TopicBackToMainSkeleton />}
 
       {!isLoading && data && (
-        <div className="w-full max-w-[75rem] flex flex-row justify-start items-center gap-5">
-          <div className="aspect-[58/87] w-[3.625rem] flex justify-center items-center bg-slate-200 rounded-mdb overflow-hidden">
+        <div className="w-full max-w-[75rem] flex flex-row justify-start items-center gap-4 md:gap-5">
+          <div className="aspect-[58/87] shrink-0 w-[3.625rem] flex justify-center items-center bg-slate-200 rounded-mdb overflow-hidden">
             <PosterImageElement
               src={`https://image.tmdb.org/t/p/w185${
                 topicType !== "person"

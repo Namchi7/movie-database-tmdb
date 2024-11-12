@@ -169,7 +169,7 @@ const Person: React.FC = () => {
               </h3>
 
               {/* Socials */}
-              <div className="flex flex-row justify-center md:justify-start items-center gap-5">
+              <div className="flex flex-row justify-center md:justify-start items-center gap-4 md:gap-5">
                 {externalIds?.facebook_id && (
                   <Link
                     href={`https://www.facebook.com/${externalIds?.facebook_id}`}
@@ -304,7 +304,7 @@ const Person: React.FC = () => {
               </h3>
 
               {/* Person Biography */}
-              <div className="w-full grid gap-5">
+              <div className="w-full grid gap-4 md:gap-5">
                 <p className="text-[1.25rem] font-semibold">Biography</p>
 
                 <div className="relative w-full">
@@ -332,7 +332,7 @@ const Person: React.FC = () => {
               </div>
 
               {/* Known For Work */}
-              <div className="w-full grid gap-5">
+              <div className="w-full grid gap-4 md:gap-5">
                 <p className="text-[1.25rem] font-semibold">Known For</p>
 
                 <PostersList

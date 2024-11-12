@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const query = searchParams.get("param");
+
+  // Decode and assign URL string to query variable
+  const query = decodeURIComponent(searchParams.get("param") as string);
 
   try {
     const apiUrl = `${process.env.TMDB_URI}${query}`;

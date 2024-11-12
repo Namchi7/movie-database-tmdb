@@ -14,8 +14,8 @@ export const SearchMovieTVResultSkeletons = () => {
 
           <div className="w-full h-full flex flex-col justify-between items-start gap-2 p-2">
             <div className="flex flex-col justify-start items-start gap-1">
-              <div className="w-60 max-w-3/4 h-5 bg-gray-200 rounded-mdb-sm"></div>
-              <div className="w-40 max-w-2/4 h-4 bg-gray-200 rounded-mdb-sm"></div>
+              <div className="w-full md:w-60 max-w-3/4 h-5 bg-gray-200 rounded-mdb-sm"></div>
+              <div className="w-20 md:w-40 max-w-2/4 h-4 bg-gray-200 rounded-mdb-sm"></div>
             </div>
 
             <div className="w-full flex flex-col justify-start items-start gap-1">
@@ -42,7 +42,7 @@ export const SearchPeopleResultSkeletons = () => {
           <div className="aspect-square h-full flex justify-center items-center bg-gray-200"></div>
 
           <div className="w-full h-full flex flex-col justify-between items-start gap-2 p-2">
-            <div className="w-60 max-w-3/4 h-5 bg-gray-200 rounded-mdb-sm"></div>
+            <div className="w-full md:w-60 max-w-3/4 h-5 bg-gray-200 rounded-mdb-sm"></div>
 
             <div className="w-full flex flex-row flex-nowrap justify-start items-start gap-1">
               <div className="w-1/12 min-w-20 h-4 bg-gray-200 rounded-mdb-sm"></div>

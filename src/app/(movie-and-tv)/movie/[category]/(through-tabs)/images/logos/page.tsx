@@ -33,7 +33,7 @@ const Logos: React.FC = () => {
   }, [pathname]);
   return (
     <div className="w-full flex justify-center items-center">
-      <div className="w-full max-w-[75rem] grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-5 px-5 py-[1.875rem]">
+      <div className="w-full max-w-[75rem] grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4 md:gap-5 px-4 md:px-5 py-[1.875rem]">
         {isLoading && (
           <div className="w-full flex justify-center items-center">
             Loading...
