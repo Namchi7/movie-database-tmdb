@@ -12,12 +12,22 @@ const config = {
   ],
   prefix: "",
   theme: {
+    backgroundPosition: {
+      mdb: "left calc((50vw - 170px) - 340px) top",
+      left: "left",
+    },
     container: {
       center: true,
       padding: "2rem",
       screens: {
         "2xl": "1400px",
       },
+    },
+    screens: {
+      sm: "490px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1200px",
     },
     extend: {
       fontFamily: {

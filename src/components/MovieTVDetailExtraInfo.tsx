@@ -80,7 +80,7 @@ const MovieTVDetailExtraInfo: React.FC<MovieTVDetailExtraInfoCompType> = ({
   }, [externalIds]);
 
   return (
-    <div className="w-[16.25rem] shrink-0 grid gap-[1.875rem] py-[1.875rem]">
+    <div className="w-full md:w-[16.25rem] shrink-0 grid gap-[1.875rem] py-[1.875rem]">
       <div className="w-full flex flex-row justify-start items-center gap-5 divide-x-1">
         {externalIdsLength > 0 && (
           <div className="flex flex-row justify-start items-center gap-5">

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { isMobile } from "react-device-detect";
 
 import {
   HoverCard,
@@ -22,6 +23,29 @@ const DetailTabs: React.FC<DetailTabCompType> = ({ tabData }) => {
   const activeTabFromUrl: string = pathArr[3] || "";
 
   const [activeTab, setActiveTab] = useState<string>("");
+
+  const initialStates: boolean[] = new Array(tabData.length).fill(false);
+  const [states, setStates] = useState<boolean[]>(initialStates);
+
+  const handleClick = (i: number) => {
+    if (isMobile) {
+      setStates((prev) => {
+        const prevState: boolean = prev[i];
+        const newState: boolean[] = new Array(prev.length).fill(false);
+        newState[i] = !prevState;
+
+        return newState;
+      });
+    }
+  };
+
+  const closeAllStates = () => {
+    setStates((prev) => {
+      const newStates: boolean[] = new Array(prev.length).fill(false);
+
+      return newStates;
+    });
+  };
 
   useEffect(() => {
     switch (activeTabFromUrl) {
@@ -62,8 +86,14 @@ const DetailTabs: React.FC<DetailTabCompType> = ({ tabData }) => {
   return (
     <div className="w-full h-fit flex justify-center items-center gap-[2.5rem]">
       {tabData.map((item, i: number) => (
-        <HoverCard openDelay={0} closeDelay={0} key={`${item.tab}-${i}`}>
+        <HoverCard
+          openDelay={0}
+          closeDelay={0}
+          key={`${item.tab}-${i}`}
+          {...(isMobile ? { open: states[i] } : {})}
+        >
           <HoverCardTrigger
+            onTouchStart={() => handleClick(i)}
             className={`flex justify-start items-center gap-1 hover:cursor-pointer py-2 border-y-[0.1875rem] border-y-solid border-t-transparent hover:border-b-black ${
               item.tab.toLowerCase() === activeTab.toLowerCase()
                 ? " border-b-blue-500"
@@ -78,6 +108,7 @@ const DetailTabs: React.FC<DetailTabCompType> = ({ tabData }) => {
           </HoverCardTrigger>
 
           <HoverCardContent
+            onTouchStart={closeAllStates}
             align="start"
             className="w-fit min-w-[11.25rem] p-0 overflow-hidden border-slate-200"
           >

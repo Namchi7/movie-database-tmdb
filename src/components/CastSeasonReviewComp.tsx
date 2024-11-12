@@ -57,9 +57,11 @@ const CastSeasonReviewComp: React.FC<CastSeasonReviewCompType> = ({
 
   return (
     <div className="w-full grid gap-5 py-[1.875rem] text-black">
-      <div className="flex justify-start items-center gap-[0.5ch] text-[1.25rem]">
-        <p className="font-semibold">{`${title}`}</p>
-        <span className="">{titleItems === 0 ? "" : `(${titleItems})`}</span>
+      <div className="flex justify-start items-center gap-[0.5ch] text-xl">
+        <p className="text-xl font-semibold">{`${title}`}</p>
+        <span className="text-lg">
+          {titleItems === 0 ? "" : `(${titleItems})`}
+        </span>
       </div>
 
       {type === "cast" && <CastList data={data.cast} />}
@@ -68,7 +70,7 @@ const CastSeasonReviewComp: React.FC<CastSeasonReviewCompType> = ({
 
       <Link
         href={getViewAllLink()}
-        className="text-[1rem] font-medium opacity-80"
+        className="text-sm md:text-base font-medium opacity-80"
       >
         {viewAllText}
       </Link>

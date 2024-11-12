@@ -56,12 +56,13 @@ const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
 
   return (
     <div className="w-full grid gap-5 py-[1.875rem]">
-      <div className="w-full flex justify-start items-center gap-[3.125rem]">
-        <p className="text-[1.25rem] font-semibold">Media</p>
+      <div className="w-full flex justify-between md:justify-start items-start md:items-center gap-4 md:gap-[3.125rem]">
+        <p className="text-xl font-semibold">Media</p>
 
-        <div className="flex justify-start items-center gap-10 font-medium text-[1rem]">
+        {/* Media Selector  */}
+        <div className="self-end flex flex-wrap md:flex-nowrap justify-end items-center gap-4 md:gap-10 font-medium text-xs md:text-base">
           <div
-            className={`flex justify-start items-center gap-1 hover:cursor-pointer py-2 text-black font-medium capitalize border-y-[0.1875rem] border-y-solid border-t-transparent ${
+            className={`flex justify-start items-center gap-1 hover:cursor-pointer py-2 text-black font-medium capitalize border-y-[0.1875rem] border-y-solid border-t-transparent whitespace-nowrap ${
               activeTab === "popular"
                 ? "border-b-black"
                 : "border-b-transparent"
@@ -71,7 +72,7 @@ const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
             Most Popular
           </div>
           <div
-            className={`flex justify-start items-center gap-1 hover:cursor-pointer py-2 text-black font-medium capitalize border-y-[0.1875rem] border-y-solid border-t-transparent ${
+            className={`flex justify-start items-center gap-1 hover:cursor-pointer py-2 text-black font-medium capitalize border-y-[0.1875rem] border-y-solid border-t-transparent whitespace-nowrap ${
               activeTab === "videos" ? "border-b-black" : "border-b-transparent"
             }`}
             onClick={() => handleTabClick("videos")}
@@ -79,7 +80,7 @@ const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
             {`Videos (${videos?.length})`}
           </div>
           <div
-            className={`flex justify-start items-center gap-1 hover:cursor-pointer py-2 text-black font-medium capitalize border-y-[0.1875rem] border-y-solid border-t-transparent ${
+            className={`flex justify-start items-center gap-1 hover:cursor-pointer py-2 text-black font-medium capitalize border-y-[0.1875rem] border-y-solid border-t-transparent whitespace-nowrap ${
               activeTab === "backdrops"
                 ? "border-b-black"
                 : "border-b-transparent"
@@ -89,7 +90,7 @@ const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
             {`Backdrops (${backdrops?.length})`}
           </div>
           <div
-            className={`flex justify-start items-center gap-1 hover:cursor-pointer py-2 text-black font-medium capitalize border-y-[0.1875rem] border-y-solid border-t-transparent ${
+            className={`flex justify-start items-center gap-1 hover:cursor-pointer py-2 text-black font-medium capitalize border-y-[0.1875rem] border-y-solid border-t-transparent whitespace-nowrap ${
               activeTab === "posters"
                 ? "border-b-black"
                 : "border-b-transparent"
@@ -101,13 +102,14 @@ const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
         </div>
       </div>
 
+      {/* Media View  */}
       {!loading && (
-        <div className="w-full h-[18.75rem] flex flex-row flex-nowrap justify-start items-start gap-0 rounded-mdb overflow-x-scroll">
+        <div className="w-full h-fit md:h-[18.75rem] flex flex-row flex-nowrap justify-start items-start gap-0 rounded-mdb overflow-x-scroll">
           {activeTab === "popular" && (
             <>
               {videos && videos.length > 0 && (
                 <div
-                  className="relative shrink-0 h-full w-[33.333rem] flex justify-center items-center hover:cursor-pointer"
+                  className="relative shrink-0 aspect-[250/141] w-[15.625rem] md:w-[33.333rem] flex justify-center items-center hover:cursor-pointer"
                   onClick={() => {
                     setVideoOpen(true);
                     setVideoKey(videos[0]?.key);
@@ -135,7 +137,7 @@ const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
               )}
 
               {backdrops && backdrops.length > 0 && (
-                <div className="shrink-0 h-full w-[33.333rem] flex justify-center items-center">
+                <div className="shrink-0 aspect-[250/141] w-[15.625rem] md:w-[33.333rem] flex justify-center items-center">
                   <Image
                     src={
                       backdrops
@@ -151,7 +153,7 @@ const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
               )}
 
               {posters && posters.length > 0 && (
-                <div className="shrink-0 h-full w-fit flex justify-center items-center">
+                <div className="shrink-0 aspect-[150/255] h-[8.8125rem] md:h-full flex justify-center items-center">
                   <Image
                     src={
                       posters
@@ -176,7 +178,7 @@ const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
                     i < 6 && (
                       <>
                         <div
-                          className="relative shrink-0 h-full w-[33.333rem] flex justify-center items-center hover:cursor-pointer"
+                          className="relative shrink-0 aspect-[250/141] w-[15.625rem] md:w-[33.333rem] flex justify-center items-center hover:cursor-pointer"
                           onClick={() => {
                             setVideoOpen(true);
                             setVideoKey(video?.key);
@@ -204,7 +206,7 @@ const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
                       </>
                     )
                 )}
-              <div className="relative shrink-0 h-full w-[33.333rem] flex justify-center items-center font-semibold">
+              <div className="relative shrink-0 aspect-[250/141] h-full w-[15.625rem] md:w-[33.333rem] flex justify-center items-center font-semibold">
                 View More
               </div>
             </>
@@ -217,7 +219,7 @@ const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
                   (backdrop, i: number) =>
                     i < 6 && (
                       <div
-                        className="shrink-0 h-full w-[33.333rem] flex justify-center items-center"
+                        className="shrink-0 aspect-[250/141] w-[15.625rem] md:w-[33.333rem] h-full flex justify-center items-center"
                         key={i}
                       >
                         <Image
@@ -235,7 +237,7 @@ const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
                     )
                 )}
 
-              <div className="relative shrink-0 h-full w-[33.333rem] flex justify-center items-center font-semibold">
+              <div className="relative shrink-0 aspect-[250/141] h-full w-[15.625rem] md:w-[33.333rem] flex justify-center items-center font-semibold">
                 View More
               </div>
             </>
@@ -261,7 +263,7 @@ const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
                       </div>
                     )
                 )}
-              <div className="relative shrink-0 h-full w-[12.5rem] flex justify-center items-center font-semibold">
+              <div className="relative shrink-0 aspect-[150/225] h-full w-[12.5rem] flex justify-center items-center font-semibold">
                 View More
               </div>
             </>

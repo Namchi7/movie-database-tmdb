@@ -1,6 +1,9 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { isMobile } from "react-device-detect";
 
 import {
   HoverCard,
@@ -28,6 +31,29 @@ const PersonWorkFilter: React.FC<PersonWorkFilterCompType> = ({
     // },
   ];
 
+  const initialStates: boolean[] = new Array(workFilterData.length).fill(false);
+  const [states, setStates] = useState<boolean[]>(initialStates);
+
+  const handleClick = (i: number) => {
+    if (isMobile) {
+      setStates((prev) => {
+        const prevState: boolean = prev[i];
+        const newState: boolean[] = new Array(prev.length).fill(false);
+        newState[i] = !prevState;
+
+        return newState;
+      });
+    }
+  };
+
+  const closeAllStates = () => {
+    setStates((prev) => {
+      const newStates: boolean[] = new Array(prev.length).fill(false);
+
+      return newStates;
+    });
+  };
+
   const changeListState = (item: string) => {
     if (item === "Combined") {
       setListToShow(0);
@@ -49,8 +75,14 @@ const PersonWorkFilter: React.FC<PersonWorkFilterCompType> = ({
   return (
     <div className="flex flex-row justify-start items-center gap-4">
       {workFilterData.map((workType, i: number) => (
-        <HoverCard openDelay={0} closeDelay={0} key={i}>
+        <HoverCard
+          openDelay={0}
+          closeDelay={0}
+          key={i}
+          {...(isMobile ? { open: states[i] } : {})}
+        >
           <HoverCardTrigger
+            onTouchStart={() => handleClick(i)}
             className={`flex justify-start items-center gap-1 hover:cursor-pointer py-2`}
           >
             <span className="text-[0.9rem] text-black font-medium capitalize">
@@ -61,6 +93,7 @@ const PersonWorkFilter: React.FC<PersonWorkFilterCompType> = ({
           </HoverCardTrigger>
 
           <HoverCardContent
+            onTouchStart={closeAllStates}
             align="start"
             className="w-fit p-0 overflow-hidden border-slate-200"
           >

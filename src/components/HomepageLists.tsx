@@ -46,10 +46,10 @@ export const TrendingList: React.FC = () => {
   }, [selectedTab]);
 
   return (
-    <div className="relative w-full h-max max-w-[1200px] overflow-y-hidden mb-[1.875rem]">
+    <div className="relative w-full max-w-[1200px] overflow-y-hidden mb-[1.875rem]">
       <div className="w-full pt-[1.875rem] grid gap-[20px] z-[3]">
         <SliderSelector
-          className="px-[40px] z-[3]"
+          className="px-4 md:px-[40px] z-[3]"
           title={"Trending"}
           items={trendingItems}
           setSelectedTab={setSelectedTab}
@@ -95,6 +95,30 @@ export const PopularMovieList: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  const getMonthWithZero = (num: number) => {
+    if (num + 1 < 10) {
+      return `0${num}`;
+    } else {
+      return `${num}`;
+    }
+  };
+
+  const getDates = () => {
+    const today = new Date();
+    const startDate = new Date();
+
+    startDate.setDate(today.getDate() - 15);
+
+    const todayString = `${today.getFullYear()}-${getMonthWithZero(
+      today.getMonth()
+    )}-${today.getDate()}`;
+    const startDateString = `${startDate.getFullYear()}-${getMonthWithZero(
+      startDate.getMonth()
+    )}-${startDate.getDate()}`;
+
+    return { start: startDateString, end: todayString };
+  };
+
   const getData = async () => {
     const type: string =
       selectedTab === "Streaming"
@@ -109,7 +133,9 @@ export const PopularMovieList: React.FC = () => {
 
     const moreParams: string =
       selectedTab === "In Theaters"
-        ? `region=${region}&with_release_type=3&release_date.gte=2024-07-15&release_date.lte=2024-07-30`
+        ? `region=${region}&with_release_type=3&release_date.gte=${
+            getDates().start
+          }&release_date.lte=${getDates().end}`
         : `with_watch_monetization_types=${type}&watch_region=${region}`;
 
     const endpoint: string = "/discover/movie";
@@ -137,7 +163,7 @@ export const PopularMovieList: React.FC = () => {
   return (
     <div className="w-full max-w-[1200px] pt-[1.5rem] pb-[1.875rem] grid gap-[20px]">
       <SliderSelector
-        className="px-[40px]"
+        className="px-4 md:px-[40px]"
         title={"What's Popular (Movie)"}
         items={popularItems}
         setSelectedTab={setSelectedTab}
@@ -235,7 +261,7 @@ export const PopularTVList: React.FC = () => {
   return (
     <div className="w-full max-w-[75rem] pt-[1.5rem] pb-[1.875rem] grid gap-[20px]">
       <SliderSelector
-        className="px-[40px]"
+        className="px-4 md:px-[40px]"
         title={"What's Popular (TV)"}
         items={popularItems}
         setSelectedTab={setSelectedTab}
@@ -303,7 +329,7 @@ export const FreeList: React.FC = () => {
   return (
     <div className="w-full max-w-[1200px] pt-[1.5rem] pb-[1.875rem] grid gap-[20px]">
       <SliderSelector
-        className="px-[40px]"
+        className="px-4 md:px-[40px]"
         title={"Free To Watch"}
         items={freeItems}
         setSelectedTab={setSelectedTab}

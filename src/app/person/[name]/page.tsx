@@ -149,11 +149,12 @@ const Person: React.FC = () => {
     <div className="w-full flex flex-col justify-start items-center gap-0">
       <DetailTabs tabData={personDetailTabData} />
 
-      <div className="w-full max-w-[75rem] flex flex-row flex-nowrap justify-center items-start gap-[1.875rem] px-5 py-[1.875rem]">
+      <div className="w-full max-w-[75rem] flex flex-col md:flex-row flex-nowrap justify-center items-start gap-4 md:gap-[1.875rem] px-4 md:px-5 py-[1.875rem]">
         {personData && (
           <>
-            <div className="w-1/4 min-w-[260px] grid gap-5">
-              <div className="aspect-[6/9] w-full flex justify-center items-center rounded-mdb shadow-filters bg-slate-300 overflow-hidden">
+            <div className="w-full md:w-1/4 min-w-[260px] grid gap-3 md:gap-5">
+              {/* Profile Image */}
+              <div className="aspect-[6/9] w-3/5 md:w-full flex justify-center items-center rounded-mdb shadow-filters bg-slate-300 overflow-hidden mx-auto md:mx-0">
                 <PersonImageElement
                   src={`https://image.tmdb.org/t/p/h632${personData?.profile_path}`}
                   alt={personData?.name}
@@ -162,7 +163,13 @@ const Person: React.FC = () => {
                 />
               </div>
 
-              <div className="flex flex-row justify-start items-center gap-5">
+              {/* Person Name */}
+              <h3 className="block md:hidden w-full text-center text-[2rem] font-bold">
+                {personData?.name}
+              </h3>
+
+              {/* Socials */}
+              <div className="flex flex-row justify-center md:justify-start items-center gap-5">
                 {externalIds?.facebook_id && (
                   <Link
                     href={`https://www.facebook.com/${externalIds?.facebook_id}`}
@@ -212,82 +219,91 @@ const Person: React.FC = () => {
                 )}
               </div>
 
+              {/* Personal Info */}
               <div className="w-full grid gap-4">
                 <p className="text-[1.125rem] font-semibold">Personal Info</p>
 
-                <div className="w-full grid gap-1 text-[0.9rem]">
-                  <p className="font-semibold">Known For</p>
-                  <p className="font-regular">
-                    {personData?.known_for_department}
-                  </p>
-                </div>
-
-                <div className="w-full grid gap-1 text-[0.9rem]">
-                  <p className="font-semibold">Known Credits</p>
-                  <p className="font-regular">
-                    {movieCredits &&
-                      tvCredits &&
-                      movieCredits?.crew.length +
-                        movieCredits?.cast.length +
-                        tvCredits?.crew.length +
-                        tvCredits?.cast.length}
-                  </p>
-                </div>
-
-                <div className="w-full grid gap-1 text-[0.9rem]">
-                  <p className="font-semibold">Gender</p>
-                  <p className="font-regular">{genders[personData?.gender]}</p>
-                </div>
-
-                <div className="w-full grid gap-1 text-[0.9rem]">
-                  <p className="font-semibold">Birthday</p>
-                  <p className="font-regular">
-                    {`${getMonthName(
-                      getYearFromString(personData?.birthday).month.toString()
-                    )} ${getYearFromString(personData?.birthday).day}, ${
-                      getYearFromString(personData?.birthday).year
-                    }`}
-                    {personData?.deathday === null &&
-                      ` (${age(personData?.birthday, "today")} years old)`}
-                  </p>
-                </div>
-
-                {personData?.deathday && (
+                <div className="flex flex-row md:flex-col flex-wrap md:flex-nowrap justify-between md:justify-start items-start gap-4">
                   <div className="w-full grid gap-1 text-[0.9rem]">
-                    <p className="font-semibold">Day of Death</p>
-                    <p className="font-regular">{`${getMonthName(
-                      getYearFromString(personData?.birthday).month.toString()
-                    )} ${getYearFromString(personData?.birthday).day}, ${
-                      getYearFromString(personData?.birthday).year
-                    } (${age(
-                      personData?.birthday,
-                      personData?.deathday
-                    )} years old)`}</p>
+                    <p className="font-semibold">Known For</p>
+                    <p className="font-regular">
+                      {personData?.known_for_department}
+                    </p>
                   </div>
-                )}
 
-                <div className="w-full grid gap-1 text-[0.9rem]">
-                  <p className="font-semibold">Place Of Birth</p>
-                  <p className="font-regular">{personData?.place_of_birth}</p>
-                </div>
+                  <div className="w-full grid gap-1 text-[0.9rem]">
+                    <p className="font-semibold">Known Credits</p>
+                    <p className="font-regular">
+                      {movieCredits &&
+                        tvCredits &&
+                        movieCredits?.crew.length +
+                          movieCredits?.cast.length +
+                          tvCredits?.crew.length +
+                          tvCredits?.cast.length}
+                    </p>
+                  </div>
 
-                <div className="w-full grid gap-1 text-[0.9rem]">
-                  <p className="font-semibold">Also Known As</p>
+                  <div className="w-full grid gap-1 text-[0.9rem]">
+                    <p className="font-semibold">Gender</p>
+                    <p className="font-regular">
+                      {genders[personData?.gender]}
+                    </p>
+                  </div>
 
-                  <div className="w-full grid gap-2">
-                    {personData?.also_known_as.map((name, i: number) => (
-                      <p className="font-regular" key={i}>
-                        {name}
-                      </p>
-                    ))}
+                  <div className="w-full grid gap-1 text-[0.9rem]">
+                    <p className="font-semibold">Birthday</p>
+                    <p className="font-regular">
+                      {`${getMonthName(
+                        getYearFromString(personData?.birthday).month.toString()
+                      )} ${getYearFromString(personData?.birthday).day}, ${
+                        getYearFromString(personData?.birthday).year
+                      }`}
+                      {personData?.deathday === null &&
+                        ` (${age(personData?.birthday, "today")} years old)`}
+                    </p>
+                  </div>
+
+                  {personData?.deathday && (
+                    <div className="w-full grid gap-1 text-[0.9rem]">
+                      <p className="font-semibold">Day of Death</p>
+                      <p className="font-regular">{`${getMonthName(
+                        getYearFromString(personData?.birthday).month.toString()
+                      )} ${getYearFromString(personData?.birthday).day}, ${
+                        getYearFromString(personData?.birthday).year
+                      } (${age(
+                        personData?.birthday,
+                        personData?.deathday
+                      )} years old)`}</p>
+                    </div>
+                  )}
+
+                  <div className="w-full grid gap-1 text-[0.9rem]">
+                    <p className="font-semibold">Place Of Birth</p>
+                    <p className="font-regular">{personData?.place_of_birth}</p>
+                  </div>
+
+                  <div className="w-full grid gap-1 text-[0.9rem]">
+                    <p className="font-semibold">Also Known As</p>
+
+                    <div className="w-full grid gap-2">
+                      {personData?.also_known_as.map((name, i: number) => (
+                        <p className="font-regular" key={i}>
+                          {name}
+                        </p>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="w-3/4 h-fit grid gap-[1.875rem] pl-[1.875rem]">
-              <h3 className="text-[2rem] font-bold">{personData?.name}</h3>
+            <div className="w-full md:w-3/4 h-fit grid gap-[1.875rem] pl-0 md:pl-[1.875rem]">
+              {/* Person Name */}
+              <h3 className="hidden md:block text-[2rem] font-bold">
+                {personData?.name}
+              </h3>
 
+              {/* Person Biography */}
               <div className="w-full grid gap-5">
                 <p className="text-[1.25rem] font-semibold">Biography</p>
 
@@ -315,6 +331,7 @@ const Person: React.FC = () => {
                 </div>
               </div>
 
+              {/* Known For Work */}
               <div className="w-full grid gap-5">
                 <p className="text-[1.25rem] font-semibold">Known For</p>
 
@@ -326,6 +343,7 @@ const Person: React.FC = () => {
                 />
               </div>
 
+              {/* Work by Person */}
               {movieCredits && tvCredits && combinedCredits && (
                 <PersonWork
                   movieCredits={movieCredits}

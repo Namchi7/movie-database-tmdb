@@ -23,11 +23,23 @@ const MovieTVDetailHeroSection: React.FC<MovieTVDetailHeroSectionCompType> = ({
   const [heroTextColor, setHeroTextColor] = useState<string>("#000000");
   const [averageColor, setAverageColor] =
     useState<AverageImageColorReturnType>();
+  // const [bgPos, setBgPos] = useState<string>("");
 
   const imgRef = useRef<HTMLImageElement>(null);
   const bgGradientRef = useRef<HTMLDivElement>(null);
 
-  const bgPos = "left calc((50vw - 170px) - 340px) top";
+  // const getBgPos = () => {
+  //   const w: number = window.innerWidth;
+  //   console.log(w);
+
+  //   if (w < 1024) {
+  //     setBgPos("left");
+  //   } else {
+  //     setBgPos("left calc((50vw - 170px) - 340px) top");
+  //   }
+  // };
+
+  // const bgPos = "left calc((50vw - 170px) - 340px) top";
 
   const getYearFromString = (dateString: string) => {
     const date = new Date(dateString);
@@ -112,6 +124,14 @@ const MovieTVDetailHeroSection: React.FC<MovieTVDetailHeroSectionCompType> = ({
     return { w: realWidth, h: realHeight };
   };
 
+  // useEffect(() => {
+  //   window.addEventListener("resize", getBgPos);
+
+  //   return () => {
+  //     window.removeEventListener("resize", getBgPos);
+  //   };
+  // }, []);
+
   useEffect(() => {
     const fetchAverageColor = async () => {
       try {
@@ -142,11 +162,11 @@ const MovieTVDetailHeroSection: React.FC<MovieTVDetailHeroSectionCompType> = ({
       <div
         style={{
           backgroundImage: `url(${bgImg})`,
-          backgroundPosition: bgPos,
+          // backgroundPosition: bgPos,
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
         }}
-        className="relative w-full flex justify-center items-center"
+        className="relative w-full flex justify-center items-center bg-left lg:bg-mdb"
       >
         {bgImg && (
           <Image
@@ -166,8 +186,8 @@ const MovieTVDetailHeroSection: React.FC<MovieTVDetailHeroSectionCompType> = ({
           ref={bgGradientRef}
         ></div>
 
-        <div className="z-[2] w-full max-w-[1200px] flex flex-row justify-start items-start px-[20px] py-[30px]">
-          <div className="aspect-[2/3] w-1/4 max-w-[18.75rem] basis-[18.75rem] flex justify-center items-center">
+        <div className="z-[2] w-full max-w-[1200px] flex flex-col md:flex-row justify-start items-start gap-4 md-gap-0 px-[20px] py-[30px]">
+          <div className="aspect-[2/3] md:w-1/4 max-w-[18.75rem] md:basis-[18.75rem] flex justify-center items-center self-center md:self-start">
             <Image
               src={`https://image.tmdb.org/t/p/w342/${itemData.poster_path}`}
               alt={itemData.title ? itemData.title : itemData.name}
@@ -179,40 +199,44 @@ const MovieTVDetailHeroSection: React.FC<MovieTVDetailHeroSectionCompType> = ({
 
           <div
             style={{ color: heroTextColor }}
-            className="w-3/4 max-w-[56.25rem] basis-[56.25rem] grid gap-6 text-black pl-[1.875rem] overflow-y-hidden"
+            className="w-full md:w-3/4 max-w-[56.25rem] md:basis-[56.25rem] flex flex-col md:grid gap-4 md:gap-6 text-black md:pl-[1.875rem] overflow-y-hidden"
           >
-            <div className="grid gap-0">
+            {/* Title and Year */}
+            <div className="self-center grid gap-1">
               {itemData && (
-                <div className="flex justify-start items-center gap-[0.5ch]  whitespace-pre-line">
-                  <h2 className="text-[2rem] font-bold">
-                    {(itemData.media_type === "movie"
-                      ? itemData.title
-                      : itemData.name) ||
-                      (itemData.media_type ? "" : itemData.title)}
-                  </h2>
-                  <span className="text-[2rem] opacity-80 font-regular">
-                    {itemData.release_date &&
-                      ` (${getYearFromString(itemData.release_date).year})`}
-                    {itemData.first_air_date &&
-                      ` (${getYearFromString(itemData.first_air_date).year})`}
-                  </span>
+                <div className="flex justify-center items-center gap-[0.5ch]  whitespace-pre-line">
+                  <p className="text-xl md:text-[2rem] text-center">
+                    <span className="font-bold whitespace-break-spaces">
+                      {(itemData.media_type === "movie"
+                        ? itemData.title
+                        : itemData.name) ||
+                        (itemData.media_type ? "" : itemData.title)}
+                    </span>
+                    <span className="opacity-80 font-regular">
+                      {itemData.release_date &&
+                        ` (${getYearFromString(itemData.release_date).year})`}
+                      {itemData.first_air_date &&
+                        ` (${getYearFromString(itemData.first_air_date).year})`}
+                    </span>
+                  </p>
                 </div>
               )}
 
-              <div className="flex justify-start items-center gap-2">
+              {/* Release Date, Genres, Runtime */}
+              <div className="flex flex-wrap justify-center items-center gap-x-3 md:gap-x-2 gap-y-0">
                 <div
                   style={{
                     color: heroTextColor,
                     borderColor: heroTextColor,
                   }}
-                  className="px-3 py-2 text-[0.8rem] text-black/60 font-medium border-solid border-black/60 border-[0.5px] rounded-full opacity-70"
+                  className="hidden px-3 py-2 text-xs text-black/60 font-medium border-solid border-black/60 border-[0.5px] rounded-full opacity-70"
                 >
                   U
                 </div>
 
                 {itemData.release_date && (
                   <>
-                    <p className="text-[0.9rem]">{`${
+                    <p className="text-sm">{`${
                       getYearFromString(itemData.release_date).day
                     }/${getYearFromString(itemData.release_date).month}/${
                       getYearFromString(itemData.release_date).year
@@ -220,23 +244,21 @@ const MovieTVDetailHeroSection: React.FC<MovieTVDetailHeroSectionCompType> = ({
 
                     <div
                       style={{ backgroundColor: heroTextColor }}
-                      className="size-1 rounded-full bg-black"
+                      className="hidden md:block size-1 rounded-full bg-black"
                     ></div>
                   </>
                 )}
 
-                <p className="text-[0.9rem]">
-                  {getGenresString(itemData.genres)}
-                </p>
+                <p className="text-sm">{getGenresString(itemData.genres)}</p>
 
                 {itemData.runtime && (
                   <>
                     <div
                       style={{ backgroundColor: heroTextColor }}
-                      className="size-1 rounded-full bg-black"
+                      className="hidden md:block size-1 rounded-full bg-black"
                     ></div>
 
-                    <p className="text-[0.9rem]">
+                    <p className="text-sm whitespace-nowrap">
                       {minutesToHour(itemData.runtime)}
                     </p>
                   </>
@@ -244,7 +266,8 @@ const MovieTVDetailHeroSection: React.FC<MovieTVDetailHeroSectionCompType> = ({
               </div>
             </div>
 
-            <div className="flex justify-start items-center gap-[0.625rem]">
+            {/* User Score */}
+            <div className="flex justify-start items-center gap-2 md:gap-[0.625rem]">
               <p className="text-[0.9rem] font-semibold">User Score:</p>
 
               <div className="relative w-[12.5rem] h-[2.15rem] flex justify-center items-center rounded-mdb p-1 bg-[#081C22] shadow-score">
@@ -258,31 +281,33 @@ const MovieTVDetailHeroSection: React.FC<MovieTVDetailHeroSectionCompType> = ({
               </div>
             </div>
 
+            {/* Tagline and Overview */}
             <div className="w-full grid gap-3">
-              <p className="text-[0.9rem] font-medium italic opacity-80">
+              <p className="text-xs md:text-sm font-medium italic opacity-80">
                 {itemData.tagline}
               </p>
 
-              <div className="w-full grid gap-[0.625rem] ">
-                <h3 className="text-[1rem] font-semibold">Overview</h3>
+              <div className="w-full grid gap-2 md:gap-[0.625rem] ">
+                <h3 className="text-sm md:text-[1rem] font-semibold">
+                  Overview
+                </h3>
 
-                <p className="w-full text-[0.9rem] font-regular whitespace-pre-line">
+                <p className="w-full text-xs md:text-sm font-regular whitespace-pre-line">
                   {itemData.overview}
                 </p>
               </div>
             </div>
 
-            <div className="w-full grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-10">
+            {/* Credits */}
+            <div className="w-full grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-5 md:gap-10">
               {crewData &&
                 credits().map((credit, i: number) => (
                   <div
-                    className="shrink-0 flex flex-col justify-start items-start gap-1"
+                    className="shrink-0 flex flex-col justify-start items-start gap-0 md:gap-1"
                     key={i}
                   >
-                    <p className="text=[0.9rem] font-semibold">
-                      {credit?.name}
-                    </p>
-                    <p className="text=[0.9rem]">
+                    <p className="text-sm font-semibold">{credit?.name}</p>
+                    <p className="text-sm">
                       {credit?.jobs.filter((item) => item).join(", ")}
                     </p>
                   </div>
