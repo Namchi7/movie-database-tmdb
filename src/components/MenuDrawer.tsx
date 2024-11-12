@@ -39,8 +39,8 @@ const MenuDrawer = () => {
       {/* Drawer */}
       <div
         className={`fixed top-0 left-0 ${
-          isOpen ? "left-0" : "-left-full"
-        } bottom-0 z-[500] w-full max-w-[22.5rem] h-full flex flex-col justify-start items-start gap-0 bg-[#032541] divide-y-1 divide-gray-300 transition-left`}
+          isOpen ? "left-0 flex" : "-left-full hidden"
+        } bottom-0 z-[500] w-full max-w-[22.5rem] h-full flex-col justify-start items-start gap-0 bg-[#032541] divide-y-1 divide-gray-300 transition-left`}
       >
         {/* Header */}
         <div className="w-full flex justify-between items-center p-4">
