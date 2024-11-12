@@ -1,17 +1,7 @@
-const apiCall = async (
-  endpoint: string = "",
-  parameters: string = "",
-  method: string = "GET"
-) => {
-  const options = {
-    method: method,
-    // headers: {
-    //   accept: "application/json",
-    //   Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_TOKEN}`,
-    // },
-  };
-
-  const query: string = `${endpoint}${parameters}`;
+const apiCall = async (endpoint: string = "", parameters: string = "") => {
+  const query: string = encodeURIComponent(
+    `${endpoint}${parameters}` as string
+  );
 
   const response = await fetch(`/api/tmdb-api?param=${query}`, {
     cache: "no-store",

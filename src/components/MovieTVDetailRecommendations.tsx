@@ -31,7 +31,7 @@ const MovieTVDetailRecommendations: React.FC<
   }, []);
 
   return (
-    <div className="w-full grid gap-5 py-[1.875rem]">
+    <div className="w-full grid gap-4 md:gap-5 py-[1.875rem]">
       <p className="text-xl font-semibold">Recommendations</p>
 
       <div className="w-full flex flex-row flex-nowrap justify-start items-start gap-4 overflow-x-scroll px-2 pb-2">

@@ -31,7 +31,7 @@ const Translations: React.FC = () => {
   }, [pathname]);
 
   return (
-    <div className="w-full h-full max-w-[75rem] grid gap-4 px-5 py-[1.875rem]">
+    <div className="w-full h-full max-w-[75rem] grid gap-4 px-4 md:px-5 py-[1.875rem]">
       {isLoading && (
         <div className="w-full h-full flex justify-center items-center">
           <p>Loading...</p>

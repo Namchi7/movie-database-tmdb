@@ -19,14 +19,19 @@ import {
 const MenuDrawer = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
     setIsOpen((prev) => !prev);
+  };
+
+  const closeDrawer = () => {
+    setTimeout(() => setIsOpen(false), 200);
   };
 
   return (
     <>
       <div
-        onTouchStart={handleClick}
+        onClick={(e) => handleClick(e)}
         className="size-8 flex md:hidden justify-center items-center"
       >
         <Image
@@ -37,6 +42,7 @@ const MenuDrawer = () => {
       </div>
 
       {/* Drawer */}
+
       <div
         className={`fixed top-0 left-0 ${
           isOpen ? "left-0 flex" : "-left-full hidden"
@@ -44,7 +50,7 @@ const MenuDrawer = () => {
       >
         {/* Header */}
         <div className="w-full flex justify-between items-center p-4">
-          <Link href={"/"}>
+          <Link href={"/"} onClick={() => closeDrawer()}>
             <Image
               src={logo}
               alt="Movie Database"
@@ -55,7 +61,7 @@ const MenuDrawer = () => {
           </Link>
 
           <div
-            onTouchStart={() => handleClick()}
+            onClick={(e) => handleClick(e)}
             className="size-8 flex md:hidden justify-center items-center"
           >
             <Image
@@ -81,6 +87,7 @@ const MenuDrawer = () => {
                       <li className="w-full px-4 py-4" key={ind}>
                         <Link
                           href={link.link_path}
+                          onClick={() => closeDrawer()}
                           className="w-full whitespace-nowrap"
                         >
                           {link.link_text}
@@ -95,36 +102,14 @@ const MenuDrawer = () => {
         </div>
       </div>
 
+      {/* Dark BG */}
       <div
-        onTouchStart={() => setIsOpen(false)}
+        onClick={() => setIsOpen(false)}
         className={`fixed inset-0 z-[499] ${
           isOpen ? "block" : "hidden"
         } bg-black/80`}
       ></div>
     </>
-    // <Drawer>
-    //   <DrawerTrigger>
-    //     <div className="size-8 flex md:hidden justify-center items-center">
-    //       <Image
-    //         src={menu}
-    //         alt="Menu"
-    //         className="size-full object-cover object-center"
-    //       />
-    //     </div>
-    //   </DrawerTrigger>
-    //   <DrawerContent>
-    //     <DrawerHeader>
-    //       <DrawerTitle>Are you absolutely sure?</DrawerTitle>
-    //       <DrawerDescription>This action cannot be undone.</DrawerDescription>
-    //     </DrawerHeader>
-    //     <DrawerFooter>
-    //       <Button>Submit</Button>
-    //       <DrawerClose>
-    //         <Button variant="outline">Cancel</Button>
-    //       </DrawerClose>
-    //     </DrawerFooter>
-    //   </DrawerContent>
-    // </Drawer>
   );
 };
 

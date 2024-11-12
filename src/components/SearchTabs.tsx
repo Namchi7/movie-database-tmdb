@@ -13,11 +13,11 @@ const SearchTabs: React.FC<SearchTabsCompType> = ({
 }) => {
   return (
     <div className="sticky top-4 h-fit border border-solid border-gray-200 rounded-mdb flex flex-col justify-start items-start overflow-hidden">
-      <div className="w-full bg-[#01b4e4] text-white font-medium px-4 py-3">
+      <div className="w-full bg-[#01b4e4] text-white font-medium px-2 md:px-4 py-2 md:py-3">
         Search Results
       </div>
 
-      <div className="w-full flex flex-col justify-start items-start gap-0">
+      <div className="w-full flex flex-row md:flex-col justify-start items-start gap-0 bg-white">
         {Object.keys(searchTabSeq)
           .sort(
             (a: string, b: string) =>
@@ -26,9 +26,9 @@ const SearchTabs: React.FC<SearchTabsCompType> = ({
           )
           .map((item: string, i: number) => (
             <div
-              className={`w-full px-4 py-3 flex flex-row justify-between items-center gap-2 group ${
+              className={`grow md:w-full flex flex-row justify-between items-center gap-1 md:gap-2 group ${
                 selectedResult === item ? "bg-gray-200" : ""
-              } hover:bg-gray-200 cursor-pointer`}
+              } hover:bg-gray-200 cursor-pointer px-2 md:px-4 py-3`}
               onClick={() => {
                 if (selectedResult !== item) {
                   setIsTabChange(true);
@@ -40,7 +40,7 @@ const SearchTabs: React.FC<SearchTabsCompType> = ({
               <p
                 className={`${
                   selectedResult === item ? "font-medium" : ""
-                } text-[0.9rem]`}
+                } text-xs md:text-sm`}
               >
                 {item === "movie"
                   ? "Movie"
@@ -52,7 +52,7 @@ const SearchTabs: React.FC<SearchTabsCompType> = ({
               <div
                 className={`rounded-mdb-sm ${
                   selectedResult === item ? "bg-white" : "bg-gray-200"
-                } group-hover:bg-white text-[0.85rem] px-2`}
+                } group-hover:bg-white text-xs px-2`}
               >
                 {searchTabSeq[item as keyof typeof searchTabSeq]}
               </div>

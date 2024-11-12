@@ -41,7 +41,7 @@ const CastCrewComp: React.FC = () => {
   }, [pathname]);
 
   return (
-    <div className="w-full max-w-[75rem] px-5 py-[1.875rem] grid grid-cols-2 gap-4">
+    <div className="w-full max-w-[75rem] px-4 md:px-5 py-[1.875rem] grid grid-cols-2 gap-4">
       <div className="flex flex-col justify-start items-start gap-4">
         <h3 className="text-[1.25rem] font-semibold">Cast</h3>
 

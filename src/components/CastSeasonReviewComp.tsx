@@ -56,7 +56,7 @@ const CastSeasonReviewComp: React.FC<CastSeasonReviewCompType> = ({
   }, [type]);
 
   return (
-    <div className="w-full grid gap-5 py-[1.875rem] text-black">
+    <div className="w-full grid gap-4 md:gap-5 py-[1.875rem] text-black">
       <div className="flex justify-start items-center gap-[0.5ch] text-xl">
         <p className="text-xl font-semibold">{`${title}`}</p>
         <span className="text-lg">
