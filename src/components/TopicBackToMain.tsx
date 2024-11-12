@@ -73,7 +73,12 @@ const TopicBackToMain: React.FC = () => {
 
   useEffect(() => {
     if (data && !is404) {
-      setPImg(`https://image.tmdb.org/t/p/w342${data?.poster_path}`);
+      if ("poster_path" in data) {
+        setPImg(`https://image.tmdb.org/t/p/w342${data?.poster_path}`);
+      }
+      if ("profile_path" in data) {
+        setPImg(`https://image.tmdb.org/t/p/w342${data?.profile_path}`);
+      }
     }
   }, [data]);
 
