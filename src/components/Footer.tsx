@@ -8,8 +8,8 @@ import tmdb_logo from "@/assets/svg/tmdb_logo_attribution.svg";
 const Footer: React.FC = () => {
   return (
     <div className="w-full flex flex-col justify-center items-center bg-[#032541] bg-footer-gradient">
-      <div className="w-full max-w-[1200px] flex justify-center items-center gap-24 flex-nowrap p-4 py-16">
-        <Link href={"/"}>
+      <div className="w-full max-w-[1200px] flex flex-col md:flex-row justify-center items-start md:items-center gap-12 md:gap-24 flex-nowrap p-4 py-16">
+        <Link href={"/"} className="hidden md:block order-2 md:order-1">
           <Image
             src={logo_big}
             alt="Movie Database"
@@ -19,7 +19,7 @@ const Footer: React.FC = () => {
           />
         </Link>
 
-        <nav className="flex justify-start items-start gap-12">
+        <nav className="flex flex-wrap md:flex-nowrap justify-start items-start gap-12 order-1 md:order-2">
           {navLinkData.map((navData, i: number) => (
             <div className="grid gap-2" key={i}>
               <div className="text-white text-[1rem] font-semibold tracking-wide">

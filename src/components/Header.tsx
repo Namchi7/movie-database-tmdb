@@ -9,15 +9,27 @@ import {
 } from "@/components/ui/hover-card";
 
 import logo from "@/assets/images/logo.png";
+import search from "@/assets/images/search.png";
 import filter from "@/assets/images/filter-icon.png";
 
 import { navLinkDataType } from "@/constants/types";
 import { navLinkData } from "@/constants/navLinkData";
+import MenuDrawer from "./MenuDrawer";
 
 const Header: React.FC = () => {
   return (
     <div className="z-10 w-full flex justify-center items-center bg-[#032541]">
       <div className="w-full max-w-[1200px] flex justify-between items-center gap-8 flex-nowrap p-4">
+        {/* <div className="size-8 flex md:hidden justify-center items-center">
+          <Image
+            src={menu}
+            alt="Menu"
+            className="size-full object-cover object-center"
+          />
+        </div> */}
+
+        <MenuDrawer />
+
         <Link href={"/"}>
           <Image
             src={logo}
@@ -28,7 +40,7 @@ const Header: React.FC = () => {
           />
         </Link>
 
-        <nav className="flex flex-nowrap justify-start items-center gap-8 ">
+        <nav className="hidden md:flex flex-nowrap justify-start items-center gap-8 ">
           {navLinkData.map((navData: navLinkDataType, i: number) => (
             <HoverCard openDelay={0} closeDelay={0} key={i}>
               <HoverCardTrigger className="text-[0.8rem] hover:cursor-pointer text-white font-medium">
@@ -65,6 +77,17 @@ const Header: React.FC = () => {
             /> */}
           </Link>
         </nav>
+
+        <Link
+          href={"/search"}
+          className="size-6 flex md:hidden justify-center items-center"
+        >
+          <Image
+            src={search}
+            alt="Search"
+            className="size-full object-cover object-center"
+          />
+        </Link>
       </div>
     </div>
   );

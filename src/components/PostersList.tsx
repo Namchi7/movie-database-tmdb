@@ -15,7 +15,7 @@ const PostersList: React.FC<PostersListType> = ({
         variant === "overflow"
           ? "grid-flow-col auto-cols-[150px] overflow-x-scroll pb-3"
           : "grid-cols-[repeat(auto-fill,minmax(150px,1fr))]"
-      } ${inlinePadding ? "px-10" : "p-0"}`}
+      } ${inlinePadding ? "px-4 md:px-10" : "p-0"}`}
     >
       {posterData &&
         posterData.map((item, i: number) => (

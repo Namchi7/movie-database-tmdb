@@ -45,7 +45,7 @@ const SliderSelector: React.FC<SliderSelectorType> = ({
 
   return (
     <div
-      className={`w-full flex flex-nowrap justify-start items-center gap-5 ${className}`}
+      className={`w-full flex flex-col md:flex-row md:flex-nowrap justify-start items-start gap-3 md:gap-5 ${className}`}
     >
       <h3 className="text-[1.5rem] text-[#032541] font-semibold ">{title}</h3>
 
@@ -64,7 +64,7 @@ const SliderSelector: React.FC<SliderSelectorType> = ({
               }}
             >
               <p
-                className={`transition-[background-color] font-medium text-transparent bg-clip-text ${
+                className={`text-xs md:text-base transition-[background-color] font-medium text-transparent bg-clip-text whitespace-nowrap ${
                   selected === i ? "bg-secondary-gradient" : "bg-[#032541]"
                 }`}
               >

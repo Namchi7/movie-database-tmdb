@@ -16,7 +16,7 @@ const Hero: React.FC = () => {
 
   return (
     <section className="relative grow w-full max-w-[75rem] h-max min-h-[19.5rem] flex flex-col justify-center items-center">
-      <div className="relative z-[3] flex flex-col justify-center items-center gap-8 p-10">
+      <div className="relative z-[3] flex flex-col justify-center items-center gap-8 px-4 md:px-10 py-6 md:py-10">
         <div className="w-full grid gap-0">
           <h1 className="w-full text-[2.25rem] text-white font-bold">
             Welcome.

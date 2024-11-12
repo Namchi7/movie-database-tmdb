@@ -29,9 +29,7 @@ const PopularPerson: React.FC = () => {
 
   return (
     <div className="w-full max-w-[75rem] grid gap-[1.875rem] px-5 py-[1.875rem]">
-      <h3 className="text-[1.5rem] text-[#032541] font-semibold ">
-        Popular People
-      </h3>
+      <h3 className="text-2xl text-[#032541] font-semibold ">Popular People</h3>
       <div className="w-full grid gap-5 grid-cols-[repeat(auto-fill,minmax(210px,1fr))]">
         {peopleList.map((person, i: number) => (
           <PersonCard personData={person} key={i} />
