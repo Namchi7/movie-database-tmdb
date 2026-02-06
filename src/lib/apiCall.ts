@@ -1,6 +1,6 @@
 const apiCall = async (endpoint: string = "", parameters: string = "") => {
   const query: string = encodeURIComponent(
-    `${endpoint}${parameters}` as string
+    `${endpoint}${parameters}` as string,
   );
 
   const response = await fetch(`/api/tmdb-api?param=${query}`, {

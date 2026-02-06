@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 
 import SliderSelector from "./SliderSelector";
@@ -25,13 +25,13 @@ export const TrendingList: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const getData = async () => {
+  const getData = useCallback(async () => {
     const tab: string = selectedTab === "Today" ? "day" : "week";
 
     setIsLoading(true);
     const res: MovieTVListResponseType = await apiCall(
       `/trending/all/${tab}`,
-      "?language=en-US"
+      "?language=en-US",
     );
 
     if (res) {
@@ -39,11 +39,11 @@ export const TrendingList: React.FC = () => {
     }
 
     setIsLoading(false);
-  };
+  }, [selectedTab, setPosterData, setIsLoading]);
 
   useEffect(() => {
     getData();
-  }, [selectedTab]);
+  }, [getData]);
 
   return (
     <div className="relative w-full max-w-[1200px] overflow-y-hidden mb-[1.875rem]">
@@ -110,10 +110,10 @@ export const PopularMovieList: React.FC = () => {
     startDate.setDate(today.getDate() - 15);
 
     const todayString = `${today.getFullYear()}-${getMonthWithZero(
-      today.getMonth()
+      today.getMonth(),
     )}-${today.getDate()}`;
     const startDateString = `${startDate.getFullYear()}-${getMonthWithZero(
-      startDate.getMonth()
+      startDate.getMonth(),
     )}-${startDate.getDate()}`;
 
     return { start: startDateString, end: todayString };
@@ -124,8 +124,8 @@ export const PopularMovieList: React.FC = () => {
       selectedTab === "Streaming"
         ? "flatrate"
         : selectedTab === "For Rent"
-        ? "rent"
-        : "";
+          ? "rent"
+          : "";
 
     const region = ipInfo?.country_code;
 
@@ -214,10 +214,10 @@ export const PopularTVList: React.FC = () => {
     startDate.setDate(today.getDate() - 15);
 
     const todayString = `${today.getFullYear()}-${getMonthWithZero(
-      today.getMonth()
+      today.getMonth(),
     )}-${today.getDate()}`;
     const startDateString = `${startDate.getFullYear()}-${getMonthWithZero(
-      startDate.getMonth()
+      startDate.getMonth(),
     )}-${startDate.getDate()}`;
 
     return { start: startDateString, end: todayString };
@@ -306,7 +306,7 @@ export const FreeList: React.FC = () => {
 
     const res: MovieTVListResponseType = await apiCall(
       `/discover/${tab}`,
-      `?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&&with_watch_monetization_types=ads|free&watch_region=${region}`
+      `?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&&with_watch_monetization_types=ads|free&watch_region=${region}`,
     );
 
     setPosterData(res?.results || []);

@@ -21,7 +21,7 @@ export async function GET(request: Request) {
     if (!response.ok) {
       return NextResponse.json(
         { error: "Failed to fetch data." },
-        { status: response.status }
+        { status: response.status },
       );
     }
 
@@ -31,7 +31,7 @@ export async function GET(request: Request) {
   } catch (error) {
     return NextResponse.json(
       { error: "Internal server error." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
