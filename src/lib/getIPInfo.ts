@@ -1,9 +1,12 @@
 import { IPInfoType } from "@/constants/types";
 
 const getIPInfo = async () => {
-  const res = await fetch("https://ipapi.co/json/");
+  // Use internal API route that reads Netlify geolocation headers
+  const res = await fetch("/api/geo-info");
 
-  const result: IPInfoType = await res.json();
+  const data = await res.json();
+
+  const result: IPInfoType = data;
 
   return result;
 };
