@@ -39,7 +39,7 @@ const MovieAndTVList: React.FC<MovieAndTVListType> = ({
   category,
 }) => {
   return (
-    <main className="w-full max-w-[75rem] grid gap-[1.875rem] px-4 md:px-5 py-[1.875rem]">
+    <main className="w-full max-w-site grid gap-[1.875rem] px-4 md:px-5 py-[1.875rem]">
       <h3 className="lg:hidden text-[1.5rem] text-[#032541] font-semibold ">
         {title}
       </h3>

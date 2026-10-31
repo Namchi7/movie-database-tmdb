@@ -97,7 +97,7 @@ const SeasonDetail = async ({
     <div className="w-full grid">
       {seasons && (
         <div className="w-full flex justify-center items-center border-b-1 border-gray-200 px-4 md:px-5">
-          <div className="w-full max-w-[75rem] flex flex-row justify-between items-center">
+          <div className="w-full max-w-site flex flex-row justify-between items-center">
             <div className="">
               {getSeasonsNav()?.prev !== null && (
                 <Link
@@ -153,7 +153,7 @@ const SeasonDetail = async ({
 
       <div className="w-full flex justify-center items-center px-4 md:px-5 pt-5">
         {data && (
-          <div className="w-full max-w-[75rem] grid gap-2">
+          <div className="w-full max-w-site grid gap-2">
             <h3 className="text-[1.5rem] font-bold">{name}</h3>
             <p className="text-[1.1rem] font-semibold opacity-70">
               {`Episodes `}
@@ -170,7 +170,7 @@ const SeasonDetail = async ({
               className="w-full flex justify-center items-center gap-4 md:gap-5 px-4 md:px-5 py-[1.875rem]"
               key={i}
             >
-              <div className="w-full max-w-[75rem] grid md:grid-cols-[14.1875rem_1fr] rounded-mdb overflow-hidden shadow-poster">
+              <div className="w-full max-w-site grid md:grid-cols-[14.1875rem_1fr] rounded-mdb overflow-hidden shadow-poster">
                 <div className="aspect-[227/127] w-[14.1875rem] mx-auto md:align-top flex justify-center items-center bg-slate-100">
                   <BackdropImageElement
                     src={`https://image.tmdb.org/t/p/w342${item.still_path}`}

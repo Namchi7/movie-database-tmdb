@@ -89,7 +89,7 @@ const MovieTVDetail = async ({
       />
 
       <div className="w-full flex justify-center items-center">
-        <div className="w-full max-w-[75rem] flex flex-col md:flex-row justify-between items-start gap-4 md:gap-[1.875rem] px-4 md:px-5 pb-[1.875rem] divide-y-1 md:divide-y-0 divide-gray-300">
+        <div className="w-full max-w-site flex flex-col md:flex-row justify-between items-start gap-4 md:gap-[1.875rem] px-4 md:px-5 pb-[1.875rem] divide-y-1 md:divide-y-0 divide-gray-300">
           <div className="basis-[56.875rem] min-w-0 grid gap-0 divide-solid divide-y-1 divide-gray-300">
             <Suspense fallback={null}>
               <CastSeasonReview

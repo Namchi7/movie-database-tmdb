@@ -186,7 +186,7 @@ const MovieTVDetailHeroSection: React.FC<MovieTVDetailHeroSectionCompType> = ({
           ref={bgGradientRef}
         ></div>
 
-        <div className="z-[2] w-full max-w-[1200px] flex flex-col md:flex-row justify-start items-start gap-4 md-gap-0 px-[20px] py-[30px]">
+        <div className="z-[2] w-full max-w-site flex flex-col md:flex-row justify-start items-start gap-4 md-gap-0 px-[20px] py-[30px]">
           <div className="aspect-[2/3] md:w-1/4 max-w-[18.75rem] md:basis-[18.75rem] flex justify-center items-center self-center md:self-start">
             <Image
               src={`https://image.tmdb.org/t/p/w342/${itemData.poster_path}`}

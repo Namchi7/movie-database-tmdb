@@ -123,7 +123,7 @@ const Search = async ({
     <main className="w-full min-h-[calc(100vh-4.25rem)] flex flex-col justify-start items-center px-4">
       <SearchForm query={query} key={query} />
 
-      <div className="w-full grow max-w-[75rem] grid md:grid-cols-[240px_1fr] gap-4 mb-8">
+      <div className="w-full grow max-w-site grid md:grid-cols-[240px_1fr] gap-4 mb-8">
         {query ? (
           <Suspense
             key={`${query}-${type}-${page}`}

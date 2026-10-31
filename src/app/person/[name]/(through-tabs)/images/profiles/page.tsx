@@ -20,7 +20,7 @@ const ProfilesGrid = async ({ id }: { id: string }) => {
   ]);
 
   return (
-    <div className="w-full max-w-[75rem] grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-4 md:gap-5 px-4 md:px-5 py-[1.875rem]">
+    <div className="w-full max-w-site grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-4 md:gap-5 px-4 md:px-5 py-[1.875rem]">
       {res?.profiles.map((item, i: number) => (
         <div
           className={`aspect-[${item.aspect_ratio}] rounded-mdb overflow-hidden`}

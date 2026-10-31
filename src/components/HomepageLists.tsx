@@ -79,7 +79,7 @@ const StreamedRow: React.FC<{ query: TMDBQuery | Promise<TMDBQuery> }> = ({
 
 export const TrendingList: React.FC = () => {
   return (
-    <section className="relative w-full max-w-[1200px] overflow-y-hidden mb-[1.875rem]">
+    <section className="relative w-full max-w-site overflow-y-hidden mb-[1.875rem]">
       <div className="relative w-full pt-[1.875rem] grid gap-[20px] z-[3]">
         <HomeSectionTabs
           title="Trending"
@@ -134,7 +134,7 @@ export const PopularMovieList: React.FC = () => {
     }));
 
   return (
-    <section className="w-full max-w-[1200px] pt-[1.5rem] pb-[1.875rem] grid gap-[20px]">
+    <section className="w-full max-w-site pt-[1.5rem] pb-[1.875rem] grid gap-[20px]">
       <HomeSectionTabs
         title="What's Popular (Movie)"
         tabs={[
@@ -171,7 +171,7 @@ export const PopularMovieList: React.FC = () => {
 
 export const PopularTVList: React.FC = () => {
   return (
-    <section className="w-full max-w-[75rem] pt-[1.5rem] pb-[1.875rem] grid gap-[20px]">
+    <section className="w-full max-w-site pt-[1.5rem] pb-[1.875rem] grid gap-[20px]">
       <HomeSectionTabs
         title="What's Popular (TV)"
         tabs={[
@@ -224,7 +224,7 @@ export const FreeList: React.FC = () => {
     }));
 
   return (
-    <section className="w-full max-w-[1200px] pt-[1.5rem] pb-[1.875rem] grid gap-[20px]">
+    <section className="w-full max-w-site pt-[1.5rem] pb-[1.875rem] grid gap-[20px]">
       <HomeSectionTabs
         title="Free To Watch"
         tabs={[

@@ -13,7 +13,7 @@ const ErrorPage: React.FC<{
   }, [error]);
 
   return (
-    <main className="w-full max-w-[75rem] mx-auto min-h-[50vh] flex flex-col justify-center items-center gap-4 px-4 py-16 text-center">
+    <main className="w-full max-w-site mx-auto min-h-[50vh] flex flex-col justify-center items-center gap-4 px-4 py-16 text-center">
       <h2 className="text-[1.5rem] text-[#032541] font-semibold">
         Something went wrong.
       </h2>

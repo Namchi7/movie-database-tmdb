@@ -69,7 +69,7 @@ const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
 
       {/* Media View  */}
       {
-        <div className="w-full h-fit md:h-[18.75rem] flex flex-row flex-nowrap justify-start items-start gap-0 rounded-mdb overflow-x-scroll">
+        <div className="w-full h-fit md:h-[19.5rem] flex flex-row flex-nowrap justify-start items-start gap-0 rounded-mdb scroll-x-subtle">
           {activeTab === "popular" && (
             <>
               {videos && videos.length > 0 && (

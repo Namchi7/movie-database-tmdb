@@ -21,7 +21,7 @@ const ImagesGrid = async ({
   return (
     <div className="w-full flex justify-center items-center">
       <div
-        className={`w-full max-w-[75rem] grid ${
+        className={`w-full max-w-site grid ${
           kind === "posters"
             ? "grid-cols-[repeat(auto-fill,minmax(150px,1fr))]"
             : "grid-cols-[repeat(auto-fill,minmax(220px,1fr))]"

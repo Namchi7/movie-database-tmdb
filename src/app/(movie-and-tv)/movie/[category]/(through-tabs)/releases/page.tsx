@@ -32,7 +32,7 @@ const ReleasesList = async ({ id }: { id: string }) => {
   const data = res?.results;
 
   return (
-    <div className="w-full max-w-[75rem] grid gap-4 px-4 md:px-5 py-[1.875rem]">
+    <div className="w-full max-w-site grid gap-4 px-4 md:px-5 py-[1.875rem]">
       {data &&
         data.map((item, i: number) => (
           <div

@@ -19,7 +19,7 @@ import MenuDrawer from "./MenuDrawer";
 const Header: React.FC = () => {
   return (
     <div className="z-10 w-full flex justify-center items-center bg-[#032541]">
-      <div className="w-full max-w-[1200px] flex justify-between items-center gap-8 flex-nowrap p-4">
+      <div className="w-full max-w-site flex justify-between items-center gap-8 flex-nowrap p-4">
         {/* <div className="size-8 flex md:hidden justify-center items-center">
           <Image
             src={menu}

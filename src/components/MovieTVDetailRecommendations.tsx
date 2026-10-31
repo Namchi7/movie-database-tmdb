@@ -15,7 +15,7 @@ const RecommendationsRow = async ({
   });
 
   return (
-    <div className="w-full flex flex-row flex-nowrap justify-start items-start gap-4 overflow-x-scroll px-2 pb-2">
+    <div className="w-full flex flex-row flex-nowrap justify-start items-start gap-4 scroll-x-subtle px-2 scroll-px-2 pb-2">
       {res?.results.map((item, i) => (
         <div className="shrink-0 w-[15.625rem] grid gap-[0.625rem]" key={i}>
           <div className="aspect-[16/9] w-full rounded-mdb-sm flex justify-center items-center overflow-hidden bg-slate-200 shadow-poster">

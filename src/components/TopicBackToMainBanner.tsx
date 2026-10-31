@@ -71,7 +71,7 @@ const TopicBackToMainBanner: React.FC<{
         />
       )}
 
-      <div className="w-full max-w-[75rem] flex flex-row justify-start items-center gap-4 md:gap-5">
+      <div className="w-full max-w-site flex flex-row justify-start items-center gap-4 md:gap-5">
         <div className="aspect-[58/87] shrink-0 w-[3.625rem] flex justify-center items-center bg-slate-200 rounded-mdb overflow-hidden">
           <PosterImageElement
             src={`https://image.tmdb.org/t/p/w185${imagePath}`}

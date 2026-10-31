@@ -159,7 +159,7 @@ const Person = async ({ params }: { params: Promise<{ name: string }> }) => {
     <div className="w-full flex flex-col justify-start items-center gap-0">
       <DetailTabs tabData={personDetailTabData} />
 
-      <div className="w-full max-w-[75rem] flex flex-col md:flex-row flex-nowrap justify-center items-start gap-4 md:gap-[1.875rem] px-4 md:px-5 py-[1.875rem]">
+      <div className="w-full max-w-site flex flex-col md:flex-row flex-nowrap justify-center items-start gap-4 md:gap-[1.875rem] px-4 md:px-5 py-[1.875rem]">
         {personData && (
           <>
             <div className="w-full md:w-1/4 min-w-[260px] grid gap-3 md:gap-5">

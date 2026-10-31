@@ -41,7 +41,7 @@ const VideoGrid: React.FC<{ videos: VideoResultType[] }> = ({ videos }) => {
 
   return (
     <div className="w-full flex justify-center items-start">
-      <div className="w-full max-w-[75rem] grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4 md:gap-5 px-4 md:px-5 py-[1.875rem]">
+      <div className="w-full max-w-site grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4 md:gap-5 px-4 md:px-5 py-[1.875rem]">
         {videos.map((item, i: number) => (
           <div
             className="flex flex-col justify-start items-start gap-0 rounded-mdb-sm overflow-hidden shadow-poster"
