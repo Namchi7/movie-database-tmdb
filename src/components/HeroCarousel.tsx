@@ -50,7 +50,7 @@ const HeroCarousel: React.FC<{
     <section
       aria-roledescription="carousel"
       aria-label="Trending today"
-      className="relative w-full h-[24rem] md:h-[30rem] overflow-hidden bg-[#032541]"
+      className="relative w-full h-[28.25rem] md:h-[34.25rem] -mt-[4.25rem] overflow-hidden bg-[#032541]"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
@@ -77,7 +77,7 @@ const HeroCarousel: React.FC<{
       <div className="absolute inset-0 bg-gradient-to-r from-[#032541] via-[#032541]/75 to-[#032541]/10" />
       <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#032541]/90 to-transparent" />
 
-      <div className="relative z-[1] h-full w-full max-w-site mx-auto flex flex-col justify-between gap-6 px-4 md:px-10 py-8 md:py-12">
+      <div className="relative z-[1] h-full w-full max-w-site mx-auto flex flex-col justify-between gap-6 px-4 md:px-10 pt-[6.25rem] md:pt-[7.25rem] pb-8 md:pb-12">
         <div className="max-w-[48rem]">{children}</div>
 
         {current && (

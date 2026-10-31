@@ -23,7 +23,7 @@ const HeroCopy: React.FC = () => (
 
 // Original static banner, used while trending loads or if it fails
 const StaticHero: React.FC = () => (
-  <section className="relative w-full h-[24rem] md:h-[30rem] overflow-hidden">
+  <section className="relative w-full h-[28.25rem] md:h-[34.25rem] -mt-[4.25rem] overflow-hidden">
     <Image
       src={hero_cover_image}
       alt=""
@@ -34,7 +34,7 @@ const StaticHero: React.FC = () => (
       preload
     />
     <div className="absolute inset-0 bg-[#0057FF] opacity-60" />
-    <div className="relative z-[1] h-full w-full max-w-site mx-auto flex items-center px-4 md:px-10">
+    <div className="relative z-[1] h-full w-full max-w-site mx-auto flex items-center px-4 md:px-10 pt-[4.25rem]">
       <div className="max-w-[48rem]">
         <HeroCopy />
       </div>
