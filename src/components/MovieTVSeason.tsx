@@ -1,18 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import React from "react";
 
 import StarScore from "./StarScore";
 import PosterImageElement from "./PosterImageElement";
-import { MovieTVDataType, MovieTVSeasonCompType } from "@/constants/types";
-import apiCall from "@/lib/apiCall";
+import { MovieTVSeasonCompType } from "@/constants/types";
 
-const MovieTVSeason: React.FC<MovieTVSeasonCompType> = ({ data }) => {
-  const path: string = usePathname();
-  const itemNameString: string = path.split("/")[2];
-  const itemId: string = itemNameString.split("-")[0];
-
-  const [itemName, setItemName] = useState<string>();
-
+const MovieTVSeason: React.FC<MovieTVSeasonCompType> = ({ data, itemName }) => {
   const months = [
     "January",
     "February",
@@ -49,16 +41,6 @@ const MovieTVSeason: React.FC<MovieTVSeasonCompType> = ({ data }) => {
           : date.getDate(),
     };
   };
-
-  useEffect(() => {
-    const getData = async () => {
-      const res: MovieTVDataType = await apiCall(`/tv/${itemId}`);
-
-      setItemName(res.name);
-    };
-
-    getData();
-  }, [itemId]);
 
   return (
     <>
@@ -97,7 +79,7 @@ const MovieTVSeason: React.FC<MovieTVSeasonCompType> = ({ data }) => {
 
             <p className="w-full text-[0.9rem] whitespace-pre-line">
               {`${data.name} of ${itemName} premiered on ${getMonthName(
-                getYearFromString(data?.air_date).month.toString()
+                getYearFromString(data?.air_date).month.toString(),
               )} ${getYearFromString(data?.air_date).day}, ${
                 getYearFromString(data?.air_date).year
               }.\n\n${data?.overview}`}

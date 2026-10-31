@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -22,7 +22,18 @@ const DetailTabs: React.FC<DetailTabCompType> = ({ tabData }) => {
   const preUrl: string = pathArr[0] + "/" + pathArr[1] + "/" + pathArr[2];
   const activeTabFromUrl: string = pathArr[3] || "";
 
-  const [activeTab, setActiveTab] = useState<string>("");
+  const overviewTabs: string[] = [
+    "",
+    "titles",
+    "cast",
+    "seasons",
+    "season",
+    "releases",
+    "translations",
+  ];
+  const activeTab: string = overviewTabs.includes(activeTabFromUrl)
+    ? "overview"
+    : "media";
 
   const initialStates: boolean[] = new Array(tabData.length).fill(false);
   const [states, setStates] = useState<boolean[]>(initialStates);
@@ -46,42 +57,6 @@ const DetailTabs: React.FC<DetailTabCompType> = ({ tabData }) => {
       return newStates;
     });
   };
-
-  useEffect(() => {
-    switch (activeTabFromUrl) {
-      case "": {
-        setActiveTab("overview");
-        break;
-      }
-      case "titles": {
-        setActiveTab("overview");
-        break;
-      }
-      case "cast": {
-        setActiveTab("overview");
-        break;
-      }
-      case "seasons": {
-        setActiveTab("overview");
-        break;
-      }
-      case "season": {
-        setActiveTab("overview");
-        break;
-      }
-      case "releases": {
-        setActiveTab("overview");
-        break;
-      }
-      case "translations": {
-        setActiveTab("overview");
-        break;
-      }
-      default: {
-        setActiveTab("media");
-      }
-    }
-  }, [activeTabFromUrl]);
 
   return (
     <div className="w-full h-fit flex justify-center items-center gap-[2.5rem]">

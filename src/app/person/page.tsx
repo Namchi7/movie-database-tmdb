@@ -1,42 +1,64 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
+import React, { Suspense } from "react";
 
 import PersonCard from "@/components/PersonCard";
-import Pagination from "@/components/Pagination";
-import apiCall from "@/lib/apiCall";
-import { PersonDataType, PeopleListResponseType } from "@/constants/types";
+import UrlPagination from "@/components/UrlPagination";
+import PostersListSkeleton from "@/components/skeletonLoaders/PostersListSkeleton";
+import tmdbFetch from "@/lib/tmdb";
+import { PeopleListResponseType } from "@/constants/types";
 
-const PopularPerson: React.FC = () => {
-  const [peopleList, setPeopleList] = useState<PersonDataType[]>([]);
-  const [page, setPage] = useState<number>(1);
-  const [lastPage, setLastPage] = useState<number>(1);
+// TMDB serves at most 500 pages
+const MAX_PAGES = 500;
 
-  const getData = async (pageNo: number) => {
-    const endpoint: string = `/person/popular`;
-
-    const params: string = `?page=${pageNo}`;
-
-    const res: PeopleListResponseType = await apiCall(endpoint, params);
-
-    setPeopleList([...(res?.results || [])]);
-    setLastPage(res?.total_pages < 500 ? res?.total_pages : 500);
-  };
-
-  useEffect(() => {
-    getData(page);
-  }, [page]);
+const PeopleGrid = async ({ page }: { page: number }) => {
+  const res = await tmdbFetch<PeopleListResponseType>({
+    endpoint: "/person/popular",
+    params: { page: String(page) },
+  });
 
   return (
-    <div className="w-full max-w-[75rem] grid gap-[1.875rem] px-4 md:px-5 py-[1.875rem]">
-      <h3 className="text-2xl text-[#032541] font-semibold ">Popular People</h3>
+    <>
       <div className="w-full grid gap-4 md:gap-5 grid-cols-[repeat(auto-fill,minmax(210px,1fr))]">
-        {peopleList.map((person, i: number) => (
+        {res?.results.map((person, i: number) => (
           <PersonCard personData={person} key={i} />
         ))}
       </div>
 
-      <Pagination page={page} lastPage={lastPage} setPage={setPage} />
+      <UrlPagination
+        page={page}
+        lastPage={Math.min(res?.total_pages || 1, MAX_PAGES)}
+      />
+    </>
+  );
+};
+
+const PopularPerson = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) => {
+  const { page } = await searchParams;
+  const pageNo: number = Math.min(
+    Math.max(parseInt(page || "1") || 1, 1),
+    MAX_PAGES,
+  );
+
+  return (
+    <div className="w-full max-w-[75rem] grid gap-[1.875rem] px-4 md:px-5 py-[1.875rem]">
+      <h3 className="text-2xl text-[#032541] font-semibold ">Popular People</h3>
+
+      <Suspense
+        key={pageNo}
+        fallback={
+          <PostersListSkeleton
+            posterData={[]}
+            variant="wrap"
+            showDetail={false}
+            inlinePadding={false}
+          />
+        }
+      >
+        <PeopleGrid page={pageNo} />
+      </Suspense>
     </div>
   );
 };

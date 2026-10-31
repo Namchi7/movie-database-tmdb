@@ -1,15 +1,12 @@
 import React from "react";
+import Link from "next/link";
 
-import {
-  SearchSelectedResultType,
-  SearchTabsCompType,
-} from "@/constants/types";
+import { SearchTabsCompType } from "@/constants/types";
 
 const SearchTabs: React.FC<SearchTabsCompType> = ({
   searchTabSeq,
   selectedResult,
-  setSelectedResult,
-  setIsTabChange,
+  query,
 }) => {
   return (
     <div className="sticky top-4 h-fit border border-solid border-gray-200 rounded-mdb flex flex-col justify-start items-start overflow-hidden">
@@ -22,19 +19,14 @@ const SearchTabs: React.FC<SearchTabsCompType> = ({
           .sort(
             (a: string, b: string) =>
               searchTabSeq[b as keyof typeof searchTabSeq] -
-              searchTabSeq[a as keyof typeof searchTabSeq]
+              searchTabSeq[a as keyof typeof searchTabSeq],
           )
           .map((item: string, i: number) => (
-            <div
+            <Link
+              href={`/search?${new URLSearchParams({ query, type: item })}`}
               className={`grow md:w-full flex flex-row justify-between items-center gap-1 md:gap-2 group ${
                 selectedResult === item ? "bg-gray-200" : ""
               } hover:bg-gray-200 cursor-pointer px-2 md:px-4 py-3`}
-              onClick={() => {
-                if (selectedResult !== item) {
-                  setIsTabChange(true);
-                  setSelectedResult(item as SearchSelectedResultType);
-                }
-              }}
               key={i}
             >
               <p
@@ -45,8 +37,8 @@ const SearchTabs: React.FC<SearchTabsCompType> = ({
                 {item === "movie"
                   ? "Movie"
                   : item === "tv"
-                  ? "TV Shows"
-                  : "People"}
+                    ? "TV Shows"
+                    : "People"}
               </p>
 
               <div
@@ -56,7 +48,7 @@ const SearchTabs: React.FC<SearchTabsCompType> = ({
               >
                 {searchTabSeq[item as keyof typeof searchTabSeq]}
               </div>
-            </div>
+            </Link>
           ))}
       </div>
     </div>

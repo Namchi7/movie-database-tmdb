@@ -1,82 +1,43 @@
-import React, { useEffect, useState } from "react";
-import Filters from "./Filters";
-import PostersList from "./PostersList";
-import { Button } from "./ui/button";
-import {
-  MovieTVListResponseType,
-  MovieAndTVListType,
-  MovieTVDataType,
-  IPInfoType,
-} from "@/constants/types";
-import apiCall from "@/lib/apiCall";
+import React, { Suspense } from "react";
+
+import LoadMorePosters from "./LoadMorePosters";
 import PostersListSkeleton from "./skeletonLoaders/PostersListSkeleton";
-import getIPInfo from "@/lib/getIPInfo";
+import { MovieAndTVListType } from "@/constants/types";
+import { fetchMovieTVListPage } from "@/app/actions";
+import getGeo from "@/lib/geo";
 
-const MovieAndTVList: React.FC<MovieAndTVListType> = ({ title, mediaType }) => {
-  const [posterData, setPosterData] = useState<MovieTVDataType[]>([]);
-  const [category, setCategory] = useState<string>("");
-  const [page, setPage] = useState<number>(1);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+const FirstPage = async ({
+  mediaType,
+  category,
+}: Omit<MovieAndTVListType, "title">) => {
+  const { countryCode } = await getGeo();
 
-  const getData = async (category: string, pageNo: number) => {
-    if (category) {
-      const ipInfo: IPInfoType = await getIPInfo();
+  const res = await fetchMovieTVListPage(mediaType, category, 1, countryCode);
 
-      const endpoint: string = `/${mediaType}/${category}`;
+  if (!res) {
+    return (
+      <p className="py-16 text-center text-[#032541] opacity-60">
+        Couldn&apos;t load this list. Please try again later.
+      </p>
+    );
+  }
 
-      const params: string = `?page=${pageNo}&region=${ipInfo?.country_code}`;
+  return (
+    <LoadMorePosters
+      initialData={res.results}
+      totalPages={res.total_pages}
+      mediaType={mediaType}
+      category={category}
+      region={countryCode}
+    />
+  );
+};
 
-      setIsLoading(true);
-
-      const res: MovieTVListResponseType = await apiCall(endpoint, params);
-
-      setPosterData((prev) => [...prev, ...(res?.results || [])]);
-
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    switch (title) {
-      case "Popular": {
-        setCategory("popular");
-        getData("popular", page);
-        break;
-      }
-      case "Now Playing": {
-        setCategory("now_playing");
-        getData("now_playing", page);
-        break;
-      }
-      case "Top Rated": {
-        setCategory("top_rated");
-        getData("top_rated", page);
-        break;
-      }
-      case "Upcoming": {
-        setCategory("upcoming");
-        getData("upcoming", page);
-        break;
-      }
-      case "Airing Today": {
-        setCategory("airing_today");
-        getData("airing_today", page);
-        break;
-      }
-      case "On The Air": {
-        setCategory("on_the_air");
-        getData("on_the_air", page);
-        break;
-      }
-    }
-  }, [title, mediaType]);
-
-  useEffect(() => {
-    if (category) {
-      getData(category, page);
-    }
-  }, [category, page]);
-
+const MovieAndTVList: React.FC<MovieAndTVListType> = ({
+  title,
+  mediaType,
+  category,
+}) => {
   return (
     <main className="w-full max-w-[75rem] grid gap-[1.875rem] px-4 md:px-5 py-[1.875rem]">
       <h3 className="lg:hidden text-[1.5rem] text-[#032541] font-semibold ">
@@ -99,32 +60,18 @@ const MovieAndTVList: React.FC<MovieAndTVListType> = ({ title, mediaType }) => {
         </div>
 
         <div className="w-full grid">
-          <PostersList
-            posterData={posterData}
-            variant="wrap"
-            showDetail={true}
-            inlinePadding={false}
-          />
-
-          {isLoading && (
-            <PostersListSkeleton
-              posterData={[]}
-              variant="wrap"
-              showDetail={true}
-              inlinePadding={false}
-            />
-          )}
-
-          <div className="w-full h-fit mt-[1.875rem]">
-            <Button
-              variant={"action"}
-              size={"full8"}
-              disabled={isLoading}
-              onClick={() => setPage((prev) => prev + 1)}
-            >
-              Load More
-            </Button>
-          </div>
+          <Suspense
+            fallback={
+              <PostersListSkeleton
+                posterData={[]}
+                variant="wrap"
+                showDetail={true}
+                inlinePadding={false}
+              />
+            }
+          >
+            <FirstPage mediaType={mediaType} category={category} />
+          </Suspense>
         </div>
       </section>
     </main>

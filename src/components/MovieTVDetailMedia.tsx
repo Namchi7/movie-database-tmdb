@@ -1,58 +1,23 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 
 import play from "@/assets/images/play-button.png";
-import apiCall from "@/lib/apiCall";
-import {
-  ImagesResultType,
-  MovieTVDetailMediaCompType,
-  MovieTVImagesResponseType,
-  MovieTVVideoResponseType,
-  VideoResultType,
-} from "@/constants/types";
+import YoutubeEmbed from "./YoutubeEmbed";
+import { MovieTVDetailMediaCompType, VideoResultType } from "@/constants/types";
 
 const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
-  mediaType,
-  itemId,
-  setVideoOpen,
-  setVideoKey,
-  setVideoTitle,
+  videos,
+  backdrops,
+  posters,
 }) => {
   const [activeTab, setActiveTab] = useState<string>("popular");
-
-  const [loading, setLoading] = useState<boolean>(true);
-
-  const [videos, setVideos] = useState<VideoResultType[]>();
-  const [backdrops, setBackdrops] = useState<ImagesResultType[]>();
-  const [posters, setPosters] = useState<ImagesResultType[]>();
+  const [playing, setPlaying] = useState<VideoResultType | null>(null);
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
   };
-
-  useEffect(() => {
-    const getData = async () => {
-      setLoading(true);
-      const endpoint: string = `/${mediaType}/${itemId}`;
-
-      const resVideo: MovieTVVideoResponseType = await apiCall(
-        `${endpoint}/videos`
-      );
-      const resImages: MovieTVImagesResponseType = await apiCall(
-        `${endpoint}/images`
-      );
-
-      setVideos(resVideo.results);
-      setBackdrops(resImages.backdrops);
-      setPosters(resImages.posters);
-
-      setLoading(false);
-    };
-
-    getData();
-  }, [activeTab]);
 
   return (
     <div className="w-full grid gap-4 md:gap-5 py-[1.875rem]">
@@ -103,18 +68,14 @@ const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
       </div>
 
       {/* Media View  */}
-      {!loading && (
+      {
         <div className="w-full h-fit md:h-[18.75rem] flex flex-row flex-nowrap justify-start items-start gap-0 rounded-mdb overflow-x-scroll">
           {activeTab === "popular" && (
             <>
               {videos && videos.length > 0 && (
                 <div
                   className="relative shrink-0 aspect-[250/141] w-[15.625rem] md:w-[33.333rem] flex justify-center items-center hover:cursor-pointer"
-                  onClick={() => {
-                    setVideoOpen(true);
-                    setVideoKey(videos[0]?.key);
-                    setVideoTitle(videos[0]?.name);
-                  }}
+                  onClick={() => setPlaying(videos[0])}
                 >
                   <Image
                     src={
@@ -176,14 +137,10 @@ const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
                 videos.map(
                   (video, i: number) =>
                     i < 6 && (
-                      <>
+                      <React.Fragment key={video.key}>
                         <div
                           className="relative shrink-0 aspect-[250/141] w-[15.625rem] md:w-[33.333rem] flex justify-center items-center hover:cursor-pointer"
-                          onClick={() => {
-                            setVideoOpen(true);
-                            setVideoKey(video?.key);
-                            setVideoTitle(video?.name);
-                          }}
+                          onClick={() => setPlaying(video)}
                         >
                           <Image
                             src={
@@ -203,8 +160,8 @@ const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
                             className="absolute left-[50%] top-[50%] -translate-x-1/2 -translate-y-1/2 z-[2]"
                           />
                         </div>
-                      </>
-                    )
+                      </React.Fragment>
+                    ),
                 )}
               <div className="relative shrink-0 aspect-[250/141] h-full w-[15.625rem] md:w-[33.333rem] flex justify-center items-center font-semibold">
                 View More
@@ -234,7 +191,7 @@ const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
                           className="h-full w-full object-cover object-center"
                         />
                       </div>
-                    )
+                    ),
                 )}
 
               <div className="relative shrink-0 aspect-[250/141] h-full w-[15.625rem] md:w-[33.333rem] flex justify-center items-center font-semibold">
@@ -261,13 +218,23 @@ const MovieTVDetailMedia: React.FC<MovieTVDetailMediaCompType> = ({
                           className="h-full w-full object-cover object-center"
                         />
                       </div>
-                    )
+                    ),
                 )}
               <div className="relative shrink-0 aspect-[150/225] h-full w-[12.5rem] flex justify-center items-center font-semibold">
                 View More
               </div>
             </>
           )}
+        </div>
+      }
+
+      {playing && (
+        <div className="fixed inset-0 z-[990]">
+          <YoutubeEmbed
+            title={playing.name}
+            videoKey={playing.key}
+            onClose={() => setPlaying(null)}
+          />
         </div>
       )}
     </div>

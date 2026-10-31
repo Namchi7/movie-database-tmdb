@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 
 import imageFallbackImage from "@/assets/images/image-placeholder.png";
@@ -13,16 +13,14 @@ const PosterImageElement: React.FC<CustomImageElementType> = ({
   h,
   errStyle = "",
 }) => {
-  const [imgError, setImgError] = useState(false);
-
-  useEffect(() => {
-    setImgError(false);
-  }, [src]);
+  // Track which src failed so a new src gets a fresh attempt
+  const [failedSrc, setFailedSrc] = useState<string>();
+  const imgError: boolean = failedSrc === src;
 
   return (
     <>
       <Image
-        onError={() => setImgError(true)}
+        onError={() => setFailedSrc(src)}
         src={imgError ? imageFallbackImage : src}
         alt={alt ? alt : ""}
         width={w}

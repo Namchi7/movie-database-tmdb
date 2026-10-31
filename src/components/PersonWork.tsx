@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
 
 import {
   Accordion,
@@ -23,230 +23,150 @@ import {
   NormalizedCrewDataType,
 } from "@/constants/types";
 
+const getYearFromString = (dateString: string) => {
+  const date = new Date(dateString);
+
+  return {
+    year: date.getFullYear(),
+    month:
+      (date.getUTCMonth() + 1).toString().length < 2
+        ? `0${date.getUTCMonth() + 1}`
+        : date.getUTCMonth() + 1,
+    day:
+      date.getDate().toString().length < 2
+        ? `0${date.getDate()}`
+        : date.getDate(),
+  };
+};
+
+// Newest first, without mutating the props
+const sortByDate = <
+  T extends PersonCombinedCreditCastType | PersonCombinedCreditCrewType,
+>(
+  list: T[],
+  key: "release_date" | "first_air_date",
+) =>
+  [...list].sort(
+    (a, b) => new Date(b[key]).getTime() - new Date(a[key]).getTime(),
+  );
+
+const groupCastByYear = (temp: PersonCombinedCreditCastType[]) => {
+  const normalizedData: NormalizedCastDataType[] = temp.map((item) => ({
+    title: item.title,
+    original_title: item.original_title,
+    name: item.name,
+    original_name: item.original_name,
+    character: item.character,
+    id: item.id,
+    release_date: item.release_date,
+    first_air_date: item.first_air_date,
+    credit_id: item.credit_id,
+    media_type: item.media_type,
+    episode_count: item.episode_count,
+    date:
+      item.release_date === "" || item.first_air_date === ""
+        ? 3000
+        : getYearFromString(item.release_date).year ||
+          getYearFromString(item.first_air_date).year,
+  }));
+
+  const groupedData: GroupedCastDataType = normalizedData.reduce(
+    (acc: Record<string, any>, item) => {
+      const { date } = item;
+
+      if (!acc[date]) {
+        acc[date] = [];
+      }
+
+      acc[date].push(item);
+
+      return acc;
+    },
+    {},
+  );
+
+  return groupedData;
+};
+
+const groupCrewByDepartment = (temp: PersonCombinedCreditCrewType[]) => {
+  const normalizedData: NormalizedCrewDataType[] = temp.map((item) => ({
+    id: item.id,
+    title: item.title,
+    original_title: item.original_title,
+    name: item.name,
+    original_name: item.original_name,
+    release_date: item.release_date,
+    credit_id: item.credit_id,
+    department: item.department,
+    job: item.job,
+    media_type: item.media_type,
+    first_air_date: item.first_air_date,
+    episode_count: item.episode_count,
+    date:
+      item.release_date === "" || item.first_air_date === ""
+        ? 3000
+        : getYearFromString(item.release_date).year ||
+          getYearFromString(item.first_air_date).year,
+  }));
+
+  const groupedData: GroupedCrewDataType = normalizedData.reduce(
+    (acc: Record<string, any>, item) => {
+      const { department, date } = item;
+
+      if (!acc[department]) {
+        acc[department] = {};
+      }
+
+      if (!acc[department][date]) {
+        acc[department][date] = [];
+      }
+
+      acc[department][date].push(item);
+
+      return acc;
+    },
+    {},
+  );
+
+  return groupedData;
+};
+
 const PersonWork: React.FC<PersonWorkCompType> = ({
   movieCredits,
   tvCredits,
   combinedCredits,
 }) => {
+  // 0: combined, 1: movies, 2: TV
   const [listToShow, setListToShow] = useState<number>(0);
-  const [deptToShow, setDeptToShow] = useState<number>(0);
 
-  const [movieCastCredits, setMovieCastCredits] = useState<
-    PersonCombinedCreditCastType[]
-  >([]);
-  const [movieCrewCredits, setMovieCrewCredits] = useState<
-    PersonCombinedCreditCrewType[]
-  >([]);
-  const [tvCastCredits, setTVCastCredits] = useState<
-    PersonCombinedCreditCastType[]
-  >([]);
-  const [tvCrewCredits, setTVCrewCredits] = useState<
-    PersonCombinedCreditCrewType[]
-  >([]);
-  const [combinedCastCredits, setCombinedCastCredits] = useState<
-    PersonCombinedCreditCastType[]
-  >([]);
-  const [combinedCrewCredits, setCombinedCrewCredits] = useState<
-    PersonCombinedCreditCrewType[]
-  >([]);
+  const castLists = useMemo(
+    () => [
+      sortByDate(combinedCredits.cast, "first_air_date"),
+      sortByDate(movieCredits.cast, "release_date"),
+      sortByDate(tvCredits.cast, "first_air_date"),
+    ],
+    [combinedCredits, movieCredits, tvCredits],
+  );
+  const crewLists = useMemo(
+    () => [
+      sortByDate(combinedCredits.crew, "first_air_date"),
+      sortByDate(movieCredits.crew, "release_date"),
+      sortByDate(tvCredits.crew, "first_air_date"),
+    ],
+    [combinedCredits, movieCredits, tvCredits],
+  );
 
-  const [groupedCastCredits, setGroupedCastCredits] =
-    useState<GroupedCastDataType>();
-  const [groupedCrewCredits, setGroupedCrewCredits] =
-    useState<GroupedCrewDataType>();
+  const castCredits = castLists[listToShow];
+  const crewCredits = crewLists[listToShow];
 
-  const getYearFromString = (dateString: string) => {
-    const date = new Date(dateString);
-
-    return {
-      year: date.getFullYear(),
-      month:
-        (date.getUTCMonth() + 1).toString().length < 2
-          ? `0${date.getUTCMonth() + 1}`
-          : date.getUTCMonth() + 1,
-      day:
-        date.getDate().toString().length < 2
-          ? `0${date.getDate()}`
-          : date.getDate(),
-    };
-  };
-
-  const getCastCreditsGroupedByYear = () => {
-    const temp: PersonCombinedCreditCastType[] =
-      listToShow === 0
-        ? combinedCastCredits
-        : listToShow === 1
-        ? movieCastCredits
-        : tvCastCredits;
-
-    const normalizedData: NormalizedCastDataType[] = temp.map((item) => ({
-      title: item.title,
-      original_title: item.original_title,
-      name: item.name,
-      original_name: item.original_name,
-      character: item.character,
-      id: item.id,
-      release_date: item.release_date,
-      first_air_date: item.first_air_date,
-      credit_id: item.credit_id,
-      media_type: item.media_type,
-      episode_count: item.episode_count,
-      date:
-        item.release_date === "" || item.first_air_date === ""
-          ? 3000
-          : getYearFromString(item.release_date).year ||
-            getYearFromString(item.first_air_date).year,
-    }));
-
-    const groupedData: GroupedCastDataType = normalizedData.reduce(
-      (acc: Record<string, any>, item) => {
-        const { date } = item;
-
-        if (!acc[date]) {
-          acc[date] = [];
-        }
-
-        acc[date].push(item);
-
-        return acc;
-      },
-      {}
-    );
-
-    setGroupedCastCredits(groupedData);
-  };
-
-  const getCrewCreditsGroupedByDepartment = () => {
-    const temp: PersonCombinedCreditCrewType[] =
-      listToShow === 0
-        ? combinedCrewCredits
-        : listToShow === 1
-        ? movieCrewCredits
-        : tvCrewCredits;
-
-    const normalizedData: NormalizedCrewDataType[] = temp.map((item) => ({
-      id: item.id,
-      title: item.title,
-      original_title: item.original_title,
-      name: item.name,
-      original_name: item.original_name,
-      release_date: item.release_date,
-      credit_id: item.credit_id,
-      department: item.department,
-      job: item.job,
-      media_type: item.media_type,
-      first_air_date: item.first_air_date,
-      episode_count: item.episode_count,
-      date:
-        item.release_date === "" || item.first_air_date === ""
-          ? 3000
-          : getYearFromString(item.release_date).year ||
-            getYearFromString(item.first_air_date).year,
-    }));
-
-    const groupedData: GroupedCrewDataType = normalizedData.reduce(
-      (acc: Record<string, any>, item) => {
-        const { department, date } = item;
-
-        if (!acc[department]) {
-          acc[department] = {};
-        }
-
-        if (!acc[department][date]) {
-          acc[department][date] = [];
-        }
-
-        acc[department][date].push(item);
-
-        return acc;
-      },
-      {}
-    );
-
-    setGroupedCrewCredits(groupedData);
-  };
-
-  // const getNamePathWithID = () => {
-  //   let name = personData?.name;
-  //   name = name.replace(/[^a-zA-Z0-9 ]/g, " ");
-  //   const nameArr = name.split(" ").filter((item) => item !== "");
-
-  //   return [personData.id, nameArr.join("-")].join("-").toLocaleLowerCase();
-  // };
-
-  useEffect(() => {
-    setMovieCastCredits(
-      movieCredits.cast.sort((a, b) => {
-        const dateA: number = new Date(a.release_date).getTime();
-        const dateB: number = new Date(b.release_date).getTime();
-        return dateB - dateA;
-      })
-    );
-    setMovieCrewCredits(
-      movieCredits.crew.sort((a, b) => {
-        const dateA: number = new Date(a.release_date).getTime();
-        const dateB: number = new Date(b.release_date).getTime();
-        return dateB - dateA;
-      })
-    );
-    setTVCastCredits(
-      tvCredits.cast.sort((a, b) => {
-        const dateA: number = new Date(a.first_air_date).getTime();
-        const dateB: number = new Date(b.first_air_date).getTime();
-        return dateB - dateA;
-      })
-    );
-    setTVCrewCredits(
-      tvCredits.crew.sort((a, b) => {
-        const dateA: number = new Date(a.first_air_date).getTime();
-        const dateB: number = new Date(b.first_air_date).getTime();
-        return dateB - dateA;
-      })
-    );
-    setCombinedCastCredits(
-      combinedCredits.cast.sort((a, b) => {
-        const dateA: number = new Date(a.first_air_date).getTime();
-        const dateB: number = new Date(b.first_air_date).getTime();
-        return dateB - dateA;
-      })
-    );
-    setCombinedCrewCredits(
-      combinedCredits.crew.sort((a, b) => {
-        const dateA: number = new Date(a.first_air_date).getTime();
-        const dateB: number = new Date(b.first_air_date).getTime();
-        return dateB - dateA;
-      })
-    );
-
-    getCastCreditsGroupedByYear();
-    getCrewCreditsGroupedByDepartment();
-  }, [movieCredits, tvCredits, combinedCredits]);
-
-  useEffect(() => {
-    getCastCreditsGroupedByYear();
-    getCrewCreditsGroupedByDepartment();
-  }, [listToShow]);
-
-  useEffect(() => {
-    if (
-      movieCastCredits.length > 0 ||
-      movieCrewCredits.length > 0 ||
-      tvCastCredits.length > 0 ||
-      tvCrewCredits.length > 0 ||
-      combinedCastCredits.length > 0 ||
-      combinedCrewCredits.length > 0
-    ) {
-      getCastCreditsGroupedByYear();
-      getCrewCreditsGroupedByDepartment();
-    }
-  }, [
-    movieCastCredits,
-    movieCrewCredits,
-    tvCastCredits,
-    tvCrewCredits,
-    combinedCastCredits,
-    combinedCrewCredits,
-  ]);
+  const groupedCastCredits = useMemo(
+    () => groupCastByYear(castCredits),
+    [castCredits],
+  );
+  const groupedCrewCredits = useMemo(
+    () => groupCrewByDepartment(crewCredits),
+    [crewCredits],
+  );
 
   return (
     <div className="w-full grid gap-4 md:gap-5">
@@ -257,15 +177,12 @@ const PersonWork: React.FC<PersonWorkCompType> = ({
             {listToShow === 1
               ? `(Movies)`
               : listToShow === 2
-              ? "(TV Shows)"
-              : ""}
+                ? "(TV Shows)"
+                : ""}
           </p>
         </div>
 
-        <PersonWorkFilter
-          setListToShow={setListToShow}
-          setDeptToShow={setDeptToShow}
-        />
+        <PersonWorkFilter setListToShow={setListToShow} />
       </div>
 
       <div className="w-full grid gap-4">
@@ -274,13 +191,7 @@ const PersonWork: React.FC<PersonWorkCompType> = ({
             <div className="flex justify-start items-baseline gap-1">
               <h3 className="text-[1.25rem] font-semibold">Acting</h3>
               <p className="text-[1rem] font-regular opacity-90">
-                {`(${
-                  listToShow === 1
-                    ? movieCastCredits.length
-                    : listToShow === 2
-                    ? tvCastCredits.length
-                    : combinedCastCredits.length
-                })`}
+                {`(${castCredits.length})`}
               </p>
             </div>
 
@@ -320,7 +231,7 @@ const PersonWork: React.FC<PersonWorkCompType> = ({
                                   </p>
                                 </div>
                               </li>
-                            )
+                            ),
                           )}
                         </ul>
                       </AccordionContent>
@@ -340,9 +251,8 @@ const PersonWork: React.FC<PersonWorkCompType> = ({
                 <h3 className="text-[1.25rem] font-semibold">{department}</h3>
                 <p className="text-[1rem] font-regular opacity-90">
                   {`(${
-                    combinedCrewCredits.filter(
-                      (item) => item.department === department
-                    ).length
+                    crewCredits.filter((item) => item.department === department)
+                      .length
                   })`}
                 </p>
               </div>
@@ -353,7 +263,7 @@ const PersonWork: React.FC<PersonWorkCompType> = ({
                     groupedCrewCredits as {
                       [key: string]: any;
                     }
-                  )[department]
+                  )[department],
                 )
                   .sort((a, b) => parseInt(b) - parseInt(a))
                   .map((year, ind: number) => (
@@ -385,7 +295,7 @@ const PersonWork: React.FC<PersonWorkCompType> = ({
                                   <p className="text-gray-700">{work.job}</p>
                                 </div>
                               </li>
-                            )
+                            ),
                           )}
                         </ul>
                       </AccordionContent>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 
 import userFallbackImage from "@/assets/images/user-placeholder-avatar.png";
@@ -12,15 +12,13 @@ const UserImageElement: React.FC<CustomImageElementType> = ({
   w,
   h,
 }) => {
-  const [imgError, setImgError] = useState(false);
-
-  useEffect(() => {
-    setImgError(false);
-  }, [src]);
+  // Track which src failed so a new src gets a fresh attempt
+  const [failedSrc, setFailedSrc] = useState<string>();
+  const imgError: boolean = failedSrc === src;
   return (
     <>
       <Image
-        onError={() => setImgError(true)}
+        onError={() => setFailedSrc(src)}
         src={imgError ? userFallbackImage : src}
         alt={alt}
         width={w}
