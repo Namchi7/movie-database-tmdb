@@ -48,6 +48,8 @@ const Hero: React.FC = () => {
           src={hero_cover_image}
           alt=""
           className="h-full object-cover object-center"
+          placeholder="blur"
+          preload
         />
       </div>
       <div className="absolute inset-0 z-[2] bg-[#0057FF] opacity-60"></div>

@@ -11,6 +11,8 @@ const PostersListSkeleton: React.FC<PostersListType> = ({
 
   return (
     <div
+      role="status"
+      aria-label="Loading"
       className={`w-full grid gap-4 md:gap-5 z-[3] ${
         variant === "overflow"
           ? "grid-flow-col auto-cols-[150px] overflow-x-scroll pb-3"

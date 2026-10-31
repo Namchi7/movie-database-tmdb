@@ -12,7 +12,7 @@ export interface SliderSelectorType {
   className: string;
   title: string;
   items: string[];
-  setSelectedTab: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedTab: (tab: string) => void;
 }
 
 export interface IPInfoType {
@@ -43,10 +43,6 @@ export interface IPInfoType {
   country_population: number;
   asn: string;
   org: string;
-}
-
-export interface HomepageListType {
-  ipInfo: IPInfoType | undefined;
 }
 
 export interface PostersListType {

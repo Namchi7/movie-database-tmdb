@@ -1,77 +1,113 @@
-"use client";
-
-import React, { useCallback, useEffect, useState } from "react";
+import React, { Suspense } from "react";
 import Image from "next/image";
 
-import SliderSelector from "./SliderSelector";
+import HomeSectionTabs from "./HomeSectionTabs";
 import PostersList from "./PostersList";
 import PostersListSkeleton from "./skeletonLoaders/PostersListSkeleton";
-import apiCall from "@/lib/apiCall";
-import {
-  MovieTVListResponseType,
-  MovieTVDataType,
-  HomepageListType,
-  IPInfoType,
-} from "@/constants/types";
-import getIPInfo from "@/lib/getIPInfo";
+import tmdbFetch, { TMDBQuery } from "@/lib/tmdb";
+import getGeo from "@/lib/geo";
+import { MovieTVListResponseType } from "@/constants/types";
 
 import home_trending_bg from "@/assets/svg/home_trending_bg.svg";
 
-export const TrendingList: React.FC = () => {
-  const trendingItems: string[] = ["Today", "This Week"];
+const DISCOVER_PARAMS: Record<string, string> = {
+  include_adult: "false",
+  include_video: "false",
+  language: "en-US",
+  page: "1",
+  sort_by: "popularity.desc",
+};
 
-  const [posterData, setPosterData] = useState<MovieTVDataType[]>([]);
-  const [selectedTab, setSelectedTab] = useState<string>(trendingItems[0]);
+// YYYY-MM-DD for `daysAgo` days before today
+const isoDate = (daysAgo: number = 0) => {
+  const date = new Date();
+  date.setDate(date.getDate() - daysAgo);
+  return date.toISOString().slice(0, 10);
+};
 
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+const PosterRow = async ({
+  query,
+}: {
+  query: TMDBQuery | Promise<TMDBQuery>;
+}) => {
+  const res = await tmdbFetch<MovieTVListResponseType>(await query);
 
-  const getData = useCallback(async () => {
-    const tab: string = selectedTab === "Today" ? "day" : "week";
+  // Trending "all" also returns people, which have no poster page
+  const posterData = (res?.results || []).filter(
+    (item) => item.media_type !== "person",
+  );
 
-    setIsLoading(true);
-    const res: MovieTVListResponseType = await apiCall(
-      `/trending/all/${tab}`,
-      "?language=en-US",
+  if (posterData.length === 0) {
+    return (
+      <p className="px-4 md:px-10 py-16 text-center text-[#032541] opacity-60">
+        {res ? "Nothing to show here right now." : "Couldn't load this list. Please try again later."}
+      </p>
     );
-
-    if (res) {
-      setPosterData(res?.results || []);
-    }
-
-    setIsLoading(false);
-  }, [selectedTab, setPosterData, setIsLoading]);
-
-  useEffect(() => {
-    getData();
-  }, [getData]);
+  }
 
   return (
-    <div className="relative w-full max-w-[1200px] overflow-y-hidden mb-[1.875rem]">
-      <div className="w-full pt-[1.875rem] grid gap-[20px] z-[3]">
-        <SliderSelector
-          className="px-4 md:px-[40px] z-[3]"
-          title={"Trending"}
-          items={trendingItems}
-          setSelectedTab={setSelectedTab}
+    <PostersList
+      posterData={posterData}
+      variant="overflow"
+      showDetail={true}
+      inlinePadding={true}
+    />
+  );
+};
+
+// Region-aware query: waits for the visitor's geo before building params
+const withGeo = (
+  build: (geo: Awaited<ReturnType<typeof getGeo>>) => TMDBQuery,
+): Promise<TMDBQuery> => getGeo().then(build);
+
+const StreamedRow: React.FC<{ query: TMDBQuery | Promise<TMDBQuery> }> = ({
+  query,
+}) => (
+  <Suspense
+    fallback={
+      <PostersListSkeleton
+        posterData={[]}
+        variant="overflow"
+        showDetail={true}
+        inlinePadding={true}
+      />
+    }
+  >
+    <PosterRow query={query} />
+  </Suspense>
+);
+
+export const TrendingList: React.FC = () => {
+  return (
+    <section className="relative w-full max-w-[1200px] overflow-y-hidden mb-[1.875rem]">
+      <div className="relative w-full pt-[1.875rem] grid gap-[20px] z-[3]">
+        <HomeSectionTabs
+          title="Trending"
+          tabs={[
+            {
+              label: "Today",
+              content: (
+                <StreamedRow
+                  query={{
+                    endpoint: "/trending/all/day",
+                    params: { language: "en-US" },
+                  }}
+                />
+              ),
+            },
+            {
+              label: "This Week",
+              content: (
+                <StreamedRow
+                  query={{
+                    endpoint: "/trending/all/week",
+                    params: { language: "en-US" },
+                  }}
+                />
+              ),
+            },
+          ]}
         />
-
-        {isLoading && (
-          <PostersListSkeleton
-            posterData={[]}
-            variant="overflow"
-            showDetail={true}
-            inlinePadding={true}
-          />
-        )}
-
-        {!isLoading && posterData && (
-          <PostersList
-            posterData={posterData}
-            variant="overflow"
-            showDetail={true}
-            inlinePadding={true}
-          />
-        )}
       </div>
 
       <div className="absolute inset-0 top-1/4 h-full z-[1] opacity-60">
@@ -82,276 +118,120 @@ export const TrendingList: React.FC = () => {
           fill
         />
       </div>
-    </div>
+    </section>
   );
 };
 
 export const PopularMovieList: React.FC = () => {
-  const popularItems: string[] = ["Streaming", "For Rent", "In Theaters"];
-
-  const [posterData, setPosterData] = useState<MovieTVDataType[]>([]);
-  const [selectedTab, setSelectedTab] = useState<string>(popularItems[0]);
-  const [ipInfo, setIPInfo] = useState<IPInfoType>();
-
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  const getMonthWithZero = (num: number) => {
-    if (num + 1 < 10) {
-      return `0${num}`;
-    } else {
-      return `${num}`;
-    }
-  };
-
-  const getDates = () => {
-    const today = new Date();
-    const startDate = new Date();
-
-    startDate.setDate(today.getDate() - 15);
-
-    const todayString = `${today.getFullYear()}-${getMonthWithZero(
-      today.getMonth(),
-    )}-${today.getDate()}`;
-    const startDateString = `${startDate.getFullYear()}-${getMonthWithZero(
-      startDate.getMonth(),
-    )}-${startDate.getDate()}`;
-
-    return { start: startDateString, end: todayString };
-  };
-
-  const getData = async () => {
-    const type: string =
-      selectedTab === "Streaming"
-        ? "flatrate"
-        : selectedTab === "For Rent"
-          ? "rent"
-          : "";
-
-    const region = ipInfo?.country_code;
-
-    setIsLoading(true);
-
-    const moreParams: string =
-      selectedTab === "In Theaters"
-        ? `region=${region}&with_release_type=3&release_date.gte=${
-            getDates().start
-          }&release_date.lte=${getDates().end}`
-        : `with_watch_monetization_types=${type}&watch_region=${region}`;
-
-    const endpoint: string = "/discover/movie";
-    const params: string = `?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&${moreParams}`;
-
-    const res: MovieTVListResponseType = await apiCall(endpoint, params);
-
-    setPosterData(res?.results || []);
-
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    const afterIPInfo = async () => {
-      setIPInfo(await getIPInfo());
-    };
-
-    afterIPInfo();
-  }, [selectedTab]);
-
-  useEffect(() => {
-    if (ipInfo) getData();
-  }, [ipInfo]);
+  const streamingQuery = (type: string) =>
+    withGeo(({ countryCode }) => ({
+      endpoint: "/discover/movie",
+      params: {
+        ...DISCOVER_PARAMS,
+        with_watch_monetization_types: type,
+        watch_region: countryCode,
+      },
+    }));
 
   return (
-    <div className="w-full max-w-[1200px] pt-[1.5rem] pb-[1.875rem] grid gap-[20px]">
-      <SliderSelector
-        className="px-4 md:px-[40px]"
-        title={"What's Popular (Movie)"}
-        items={popularItems}
-        setSelectedTab={setSelectedTab}
+    <section className="w-full max-w-[1200px] pt-[1.5rem] pb-[1.875rem] grid gap-[20px]">
+      <HomeSectionTabs
+        title="What's Popular (Movie)"
+        tabs={[
+          {
+            label: "Streaming",
+            content: <StreamedRow query={streamingQuery("flatrate")} />,
+          },
+          {
+            label: "For Rent",
+            content: <StreamedRow query={streamingQuery("rent")} />,
+          },
+          {
+            label: "In Theaters",
+            content: (
+              <StreamedRow
+                query={withGeo(({ countryCode }) => ({
+                  endpoint: "/discover/movie",
+                  params: {
+                    ...DISCOVER_PARAMS,
+                    region: countryCode,
+                    with_release_type: "2|3",
+                    "release_date.gte": isoDate(30),
+                    "release_date.lte": isoDate(),
+                  },
+                }))}
+              />
+            ),
+          },
+        ]}
       />
-
-      {isLoading && (
-        <PostersListSkeleton
-          posterData={[]}
-          variant="overflow"
-          showDetail={true}
-          inlinePadding={true}
-        />
-      )}
-
-      {!isLoading && posterData && (
-        <PostersList
-          posterData={posterData}
-          variant="overflow"
-          showDetail={true}
-          inlinePadding={true}
-        />
-      )}
-    </div>
+    </section>
   );
 };
 
 export const PopularTVList: React.FC = () => {
-  const popularItems: string[] = ["Streaming", "On TV"];
-
-  const [posterData, setPosterData] = useState<MovieTVDataType[]>([]);
-  const [selectedTab, setSelectedTab] = useState<string>(popularItems[0]);
-  const [ipInfo, setIPInfo] = useState<IPInfoType>();
-
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  const getMonthWithZero = (num: number) => {
-    if (num + 1 < 10) {
-      return `0${num}`;
-    } else {
-      return `${num}`;
-    }
-  };
-
-  const getDates = () => {
-    const today = new Date();
-    const startDate = new Date();
-
-    startDate.setDate(today.getDate() - 15);
-
-    const todayString = `${today.getFullYear()}-${getMonthWithZero(
-      today.getMonth(),
-    )}-${today.getDate()}`;
-    const startDateString = `${startDate.getFullYear()}-${getMonthWithZero(
-      startDate.getMonth(),
-    )}-${startDate.getDate()}`;
-
-    return { start: startDateString, end: todayString };
-  };
-
-  const getData = async () => {
-    const region = ipInfo?.country_code;
-    const timezone = ipInfo?.timezone;
-
-    setIsLoading(true);
-
-    const moreParams: string =
-      selectedTab === "Streaming"
-        ? `with_watch_monetization_types=flatrate&watch_region=${region}`
-        : `timezone-${timezone}&air_date.gte=${getDates().start}&air_date.lte=${
-            getDates().end
-          }`;
-
-    const endpoint: string = "/discover/tv";
-    const params: string = `?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&${moreParams}`;
-
-    const res: MovieTVListResponseType = await apiCall(endpoint, params);
-
-    setPosterData(res?.results || []);
-
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    const afterIPInfo = async () => {
-      setIPInfo(await getIPInfo());
-    };
-
-    afterIPInfo();
-  }, [selectedTab]);
-
-  useEffect(() => {
-    getData();
-  }, [ipInfo]);
-
   return (
-    <div className="w-full max-w-[75rem] pt-[1.5rem] pb-[1.875rem] grid gap-[20px]">
-      <SliderSelector
-        className="px-4 md:px-[40px]"
-        title={"What's Popular (TV)"}
-        items={popularItems}
-        setSelectedTab={setSelectedTab}
+    <section className="w-full max-w-[75rem] pt-[1.5rem] pb-[1.875rem] grid gap-[20px]">
+      <HomeSectionTabs
+        title="What's Popular (TV)"
+        tabs={[
+          {
+            label: "Streaming",
+            content: (
+              <StreamedRow
+                query={withGeo(({ countryCode }) => ({
+                  endpoint: "/discover/tv",
+                  params: {
+                    ...DISCOVER_PARAMS,
+                    with_watch_monetization_types: "flatrate",
+                    watch_region: countryCode,
+                  },
+                }))}
+              />
+            ),
+          },
+          {
+            label: "On TV",
+            content: (
+              <StreamedRow
+                query={withGeo(({ timezone }) => ({
+                  endpoint: "/discover/tv",
+                  params: {
+                    ...DISCOVER_PARAMS,
+                    timezone,
+                    "air_date.gte": isoDate(15),
+                    "air_date.lte": isoDate(),
+                  },
+                }))}
+              />
+            ),
+          },
+        ]}
       />
-
-      {isLoading && (
-        <PostersListSkeleton
-          posterData={[]}
-          variant="overflow"
-          showDetail={true}
-          inlinePadding={true}
-        />
-      )}
-
-      {!isLoading && posterData && (
-        <PostersList
-          posterData={posterData}
-          variant="overflow"
-          showDetail={true}
-          inlinePadding={true}
-        />
-      )}
-    </div>
+    </section>
   );
 };
 
 export const FreeList: React.FC = () => {
-  const freeItems: string[] = ["Movies", "TV"];
-
-  const [posterData, setPosterData] = useState<MovieTVDataType[]>([]);
-  const [selectedTab, setSelectedTab] = useState<string>(freeItems[0]);
-  const [ipInfo, setIPInfo] = useState<IPInfoType>();
-
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  const getData = async () => {
-    const tab: string = selectedTab === "Movies" ? "movie" : "tv";
-
-    const region = ipInfo?.country_code;
-
-    setIsLoading(true);
-
-    const res: MovieTVListResponseType = await apiCall(
-      `/discover/${tab}`,
-      `?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&&with_watch_monetization_types=ads|free&watch_region=${region}`,
-    );
-
-    setPosterData(res?.results || []);
-
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    const afterIPInfo = async () => {
-      setIPInfo(await getIPInfo());
-    };
-
-    afterIPInfo();
-  }, [selectedTab]);
-
-  useEffect(() => {
-    getData();
-  }, [ipInfo]);
+  const freeQuery = (type: "movie" | "tv") =>
+    withGeo(({ countryCode }) => ({
+      endpoint: `/discover/${type}`,
+      params: {
+        ...DISCOVER_PARAMS,
+        with_watch_monetization_types: "ads|free",
+        watch_region: countryCode,
+      },
+    }));
 
   return (
-    <div className="w-full max-w-[1200px] pt-[1.5rem] pb-[1.875rem] grid gap-[20px]">
-      <SliderSelector
-        className="px-4 md:px-[40px]"
-        title={"Free To Watch"}
-        items={freeItems}
-        setSelectedTab={setSelectedTab}
+    <section className="w-full max-w-[1200px] pt-[1.5rem] pb-[1.875rem] grid gap-[20px]">
+      <HomeSectionTabs
+        title="Free To Watch"
+        tabs={[
+          { label: "Movies", content: <StreamedRow query={freeQuery("movie")} /> },
+          { label: "TV", content: <StreamedRow query={freeQuery("tv")} /> },
+        ]}
       />
-
-      {isLoading && (
-        <PostersListSkeleton
-          posterData={[]}
-          variant="overflow"
-          showDetail={true}
-          inlinePadding={true}
-        />
-      )}
-
-      {!isLoading && posterData && (
-        <PostersList
-          posterData={posterData}
-          variant="overflow"
-          showDetail={true}
-          inlinePadding={true}
-        />
-      )}
-    </div>
+    </section>
   );
 };

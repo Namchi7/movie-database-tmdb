@@ -79,11 +79,11 @@ const Poster: React.FC<PosterCompType> = ({ posterData, showDetail }) => {
           </p>
         </Link>
 
-        {showDetail && (
+        {showDetail && (posterData.release_date || posterData.first_air_date) && (
           <p className="text-[14px] text-black opacity-60">
-            {posterData.release_date
-              ? getResolvedDate(posterData.release_date)
-              : getResolvedDate(posterData.first_air_date)}
+            {getResolvedDate(
+              posterData.release_date || posterData.first_air_date,
+            )}
           </p>
         )}
       </div>

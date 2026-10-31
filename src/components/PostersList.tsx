@@ -18,8 +18,8 @@ const PostersList: React.FC<PostersListType> = ({
       } ${inlinePadding ? "px-4 md:px-10" : "p-0"}`}
     >
       {posterData &&
-        posterData.map((item, i: number) => (
-          <Poster posterData={item} showDetail={showDetail} key={i} />
+        posterData.map((item) => (
+          <Poster posterData={item} showDetail={showDetail} key={item.id} />
         ))}
     </div>
   );
