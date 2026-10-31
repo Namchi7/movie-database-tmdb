@@ -14,7 +14,7 @@ import PostersList from "@/components/PostersList";
 import PersonWork from "@/components/PersonWork";
 import ReadMoreText from "@/components/ReadMoreText";
 import PostersListSkeleton from "@/components/skeletonLoaders/PostersListSkeleton";
-import tmdbFetch from "@/lib/tmdb";
+import tmdbFetch, { tmdbFetchStrict } from "@/lib/tmdb";
 import {
   MovieTVDataType,
   PersonCombinedCreditResponseType,
@@ -142,7 +142,7 @@ const Person = async ({ params }: { params: Promise<{ name: string }> }) => {
   const personId: string = name.split("-")[0];
 
   const [personData, externalIds] = await Promise.all([
-    tmdbFetch<PersonDataResponseType>({
+    tmdbFetchStrict<PersonDataResponseType>({
       endpoint: `/person/${personId}`,
       params: { language: "en-US" },
     }),

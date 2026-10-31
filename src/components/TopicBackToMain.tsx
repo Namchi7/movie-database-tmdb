@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import TopicBackToMainBanner from "./TopicBackToMainBanner";
 import { MovieTVDataType, PersonDataType } from "@/constants/types";
-import tmdbFetch from "@/lib/tmdb";
+import { tmdbFetchStrict } from "@/lib/tmdb";
 
 // Header for sub pages (cast, images, ...) linking back to the main detail page
 const TopicBackToMain = async ({
@@ -15,7 +15,7 @@ const TopicBackToMain = async ({
 }) => {
   const topicId: string = slug.split("-")[0];
 
-  const data = await tmdbFetch<MovieTVDataType | PersonDataType>({
+  const data = await tmdbFetchStrict<MovieTVDataType | PersonDataType>({
     endpoint: `/${topicType}/${topicId}`,
   });
 

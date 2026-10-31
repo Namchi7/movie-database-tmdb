@@ -17,7 +17,7 @@ import MovieTVDetailRecommendations from "./MovieTVDetailRecommendations";
 import MovieTVDetailExtraInfo from "./MovieTVDetailExtraInfo";
 import MovieTVDetailHeroSection from "./MovieTVDetailHeroSection";
 import { movieTVDetailTabData } from "@/constants/movieTVDetail";
-import tmdbFetch from "@/lib/tmdb";
+import tmdbFetch, { tmdbFetchStrict } from "@/lib/tmdb";
 
 // Top cast, last season (TV) and latest review
 const CastSeasonReview = async ({
@@ -67,7 +67,10 @@ const MovieTVDetail = async ({
   // Credits feed the hero's crew list; the cast section reuses the same
   // cached response
   const [itemData, creditsData] = await Promise.all([
-    tmdbFetch<MovieTVDataType>({ endpoint, params: { language: "en-US" } }),
+    tmdbFetchStrict<MovieTVDataType>({
+      endpoint,
+      params: { language: "en-US" },
+    }),
     tmdbFetch<CreditResponseType>({ endpoint: `${endpoint}/credits` }),
   ]);
 
