@@ -1,82 +1,51 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
-import { MovieTVDataType, TVSeasonsType } from "@/constants/types";
-import apiCall from "@/lib/apiCall";
-import PosterImageElement from "@/components/PosterImageElement";
-import StarScore from "@/components/StarScore";
+import React, { Suspense } from "react";
 import Link from "next/link";
 
-const Seasons: React.FC = () => {
-  const pathname: string = usePathname();
+import DetailPageLoading from "@/components/detailPages/DetailPageLoading";
+import PosterImageElement from "@/components/PosterImageElement";
+import StarScore from "@/components/StarScore";
+import tmdbFetch from "@/lib/tmdb";
+import { MovieTVDataType } from "@/constants/types";
 
-  const [seasons, setSeasons] = useState<TVSeasonsType[]>();
-  const [showName, setShowName] = useState<string>();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
+const getDateObject = (dt: string) => {
+  const date = new Date(dt);
 
-  const getDateObject = (dt: string) => {
-    const date = new Date(dt);
+  const dom: number = date.getDate();
+  const mon: number = date.getMonth();
+  const year: number = date.getFullYear();
 
-    const dom: number = date.getDate();
-    const mon: number = date.getMonth();
-    const year: number = date.getFullYear();
-
-    return {
-      date: dom,
-      month: months[mon],
-      year: year,
-    };
+  return {
+    date: dom,
+    month: months[mon],
+    year: year,
   };
+};
 
-  const getSeasonPath = (seasonNo: number) => {
-    const pathArr: string[] = pathname.split("/");
-    const path: string = [
-      pathArr[0],
-      pathArr[1],
-      pathArr[2],
-      "season",
-      seasonNo,
-    ].join("/");
-
-    return path;
-  };
-
-  useEffect(() => {
-    const getData = async () => {
-      setIsLoading(true);
-      const id: string = pathname.split("/")[2].split("-")[0];
-
-      const res: MovieTVDataType = await apiCall(`/tv/${id}`, "");
-
-      setShowName(res.name);
-      setSeasons(res.seasons);
-
-      setIsLoading(false);
-    };
-
-    getData();
-  }, [pathname]);
+const SeasonsList = async ({ slug }: { slug: string }) => {
+  const res = await tmdbFetch<MovieTVDataType>({
+    endpoint: `/tv/${slug.split("-")[0]}`,
+  });
+  const seasons = res?.seasons;
+  const showName = res?.name;
 
   return (
     <div className="w-full grid gap-0 divide-y-1 divide-gray-300">
-      {!isLoading &&
-        seasons &&
+      {seasons &&
         seasons.map((item, i: number) => (
           <div
             className="w-full flex justify-center items-center gap-0"
@@ -94,7 +63,7 @@ const Seasons: React.FC = () => {
               </div>
 
               <div className="min-h-full flex flex-col justify-center items-start gap-1">
-                <Link href={getSeasonPath(item.season_number)}>
+                <Link href={`/tv/${slug}/season/${item.season_number}`}>
                   <h3 className="text-[1.5rem] font-semibold">{item.name}</h3>
                 </Link>
 
@@ -128,6 +97,20 @@ const Seasons: React.FC = () => {
           </div>
         ))}
     </div>
+  );
+};
+
+const Seasons = async ({
+  params,
+}: {
+  params: Promise<{ category: string }>;
+}) => {
+  const { category } = await params;
+
+  return (
+    <Suspense fallback={<DetailPageLoading />}>
+      <SeasonsList slug={category} />
+    </Suspense>
   );
 };
 

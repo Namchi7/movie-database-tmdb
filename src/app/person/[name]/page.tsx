@@ -1,7 +1,5 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
-import { notFound, usePathname } from "next/navigation";
+import React, { Suspense } from "react";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -14,7 +12,9 @@ import twitter from "@/assets/images/twitter.png";
 import instagram from "@/assets/images/instagram.png";
 import PostersList from "@/components/PostersList";
 import PersonWork from "@/components/PersonWork";
-import apiCall from "@/lib/apiCall";
+import ReadMoreText from "@/components/ReadMoreText";
+import PostersListSkeleton from "@/components/skeletonLoaders/PostersListSkeleton";
+import tmdbFetch from "@/lib/tmdb";
 import {
   MovieTVDataType,
   PersonCombinedCreditResponseType,
@@ -22,128 +22,138 @@ import {
   PersonExternalIdsType,
 } from "@/constants/types";
 
-const Person: React.FC = () => {
-  const path: string = usePathname();
-  const nameString: string = path.split("/")[2];
-  const personId: string = nameString.split("-")[0];
+const genders: string[] = [
+  "Not set / not specified",
+  "Female",
+  "Male",
+  "Non-binary",
+];
 
-  const [clampLine, setClampLine] = useState<boolean>(true);
-  const [personData, setPersonData] = useState<PersonDataResponseType>();
-  const [externalIds, setExternalIds] = useState<PersonExternalIdsType>();
-  const [combinedCredits, setCombinedCredits] =
-    useState<PersonCombinedCreditResponseType>();
-  const [movieCredits, setMovieCredits] =
-    useState<PersonCombinedCreditResponseType>();
-  const [tvCredits, setTVCredits] =
-    useState<PersonCombinedCreditResponseType>();
-  const [knownForList, setKnownForList] = useState<MovieTVDataType[]>();
+const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
-  const [is404, setIs404] = useState<boolean>(false);
+const getMonthName = (mon: string) => {
+  const monNum = parseInt(mon);
 
-  const genders: string[] = [
-    "Not set / not specified",
-    "Female",
-    "Male",
-    "Non-binary",
-  ];
+  return months[monNum - 1];
+};
 
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
+const getYearFromString = (dateString: string) => {
+  const date = new Date(dateString);
 
-  const getMonthName = (mon: string) => {
-    const monNum = parseInt(mon);
-
-    return months[monNum - 1];
+  return {
+    year: date.getFullYear(),
+    month:
+      (date.getUTCMonth() + 1).toString().length < 2
+        ? `0${date.getUTCMonth() + 1}`
+        : date.getUTCMonth() + 1,
+    day:
+      date.getDate().toString().length < 2
+        ? `0${date.getDate()}`
+        : date.getDate(),
   };
+};
 
-  const getYearFromString = (dateString: string) => {
-    const date = new Date(dateString);
+const age = (b: string, d: string) => {
+  const bday: Date = new Date(b);
+  const dday: Date = d === "today" ? new Date() : new Date(d);
 
-    return {
-      year: date.getFullYear(),
-      month:
-        (date.getUTCMonth() + 1).toString().length < 2
-          ? `0${date.getUTCMonth() + 1}`
-          : date.getUTCMonth() + 1,
-      day:
-        date.getDate().toString().length < 2
-          ? `0${date.getDate()}`
-          : date.getDate(),
-    };
-  };
+  let years: number = dday.getFullYear() - bday.getFullYear();
+  if (dday.getMonth() >= bday.getMonth() && dday.getDate() >= bday.getDate()) {
+    years++;
+  }
 
-  const age = (b: string, d: string) => {
-    const bday: Date = new Date(b);
-    const dday: Date = d === "today" ? new Date() : new Date(d);
+  return years;
+};
 
-    let years: number = dday.getFullYear() - bday.getFullYear();
-    if (
-      dday.getMonth() >= bday.getMonth() &&
-      dday.getDate() >= bday.getDate()
-    ) {
-      years++;
-    }
+// Credits are shared by the sections below; tmdbFetch dedupes the requests
+const getCredits = (personId: string) =>
+  Promise.all(
+    ["combined_credits", "movie_credits", "tv_credits"].map((kind) =>
+      tmdbFetch<PersonCombinedCreditResponseType>({
+        endpoint: `/person/${personId}/${kind}`,
+      }),
+    ),
+  );
 
-    return years;
-  };
+const KnownCredits = async ({ personId }: { personId: string }) => {
+  const [, movieCredits, tvCredits] = await getCredits(personId);
 
-  useEffect(() => {
-    const getData = async () => {
-      const res: PersonDataResponseType = await apiCall(
-        `/person/${personId}`,
-        "?language=en-US"
-      );
-      const resIds: PersonExternalIdsType = await apiCall(
-        `/person/${personId}/external_ids`
-      );
+  return (
+    <>
+      {movieCredits &&
+        tvCredits &&
+        movieCredits.crew.length +
+          movieCredits.cast.length +
+          tvCredits.crew.length +
+          tvCredits.cast.length}
+    </>
+  );
+};
 
-      const resCombinedCredits: PersonCombinedCreditResponseType =
-        await apiCall(`/person/${personId}/combined_credits`);
-      const resMovieCredits: PersonCombinedCreditResponseType = await apiCall(
-        `/person/${personId}/movie_credits`
-      );
-      const resTVCredits: PersonCombinedCreditResponseType = await apiCall(
-        `/person/${personId}/tv_credits`
-      );
+const KnownFor = async ({ personId }: { personId: string }) => {
+  const [combinedCredits] = await getCredits(personId);
 
-      if ("error" in res) {
-        setIs404(true);
-      } else {
-        setPersonData(res);
-        setExternalIds(resIds);
-
-        setCombinedCredits(resCombinedCredits);
-        setMovieCredits(resMovieCredits);
-        setTVCredits(resTVCredits);
-        setKnownForList(
-          [...resCombinedCredits.cast, ...resCombinedCredits.crew].slice(
-            0,
-            8
-          ) as any
-        );
+  return (
+    <PostersList
+      variant="overflow"
+      posterData={
+        [
+          ...(combinedCredits?.cast || []),
+          ...(combinedCredits?.crew || []),
+        ].slice(0, 8) as unknown as MovieTVDataType[]
       }
-    };
+      showDetail={false}
+      inlinePadding={false}
+    />
+  );
+};
 
-    getData();
-  }, [personId]);
+const Credits = async ({ personId }: { personId: string }) => {
+  const [combinedCredits, movieCredits, tvCredits] = await getCredits(personId);
 
-  useEffect(() => {
-    if (is404) {
-      return notFound();
-    }
-  }, [is404]);
+  return (
+    movieCredits &&
+    tvCredits &&
+    combinedCredits && (
+      <PersonWork
+        movieCredits={movieCredits}
+        tvCredits={tvCredits}
+        combinedCredits={combinedCredits}
+      />
+    )
+  );
+};
+
+const Person = async ({ params }: { params: Promise<{ name: string }> }) => {
+  const { name } = await params;
+  const personId: string = name.split("-")[0];
+
+  const [personData, externalIds] = await Promise.all([
+    tmdbFetch<PersonDataResponseType>({
+      endpoint: `/person/${personId}`,
+      params: { language: "en-US" },
+    }),
+    tmdbFetch<PersonExternalIdsType>({
+      endpoint: `/person/${personId}/external_ids`,
+    }),
+  ]);
+
+  if (!personData) {
+    notFound();
+  }
 
   return (
     <div className="w-full flex flex-col justify-start items-center gap-0">
@@ -234,12 +244,9 @@ const Person: React.FC = () => {
                   <div className="w-full grid gap-1 text-[0.9rem]">
                     <p className="font-semibold">Known Credits</p>
                     <p className="font-regular">
-                      {movieCredits &&
-                        tvCredits &&
-                        movieCredits?.crew.length +
-                          movieCredits?.cast.length +
-                          tvCredits?.crew.length +
-                          tvCredits?.cast.length}
+                      <Suspense fallback="-">
+                        <KnownCredits personId={personId} />
+                      </Suspense>
                     </p>
                   </div>
 
@@ -254,7 +261,9 @@ const Person: React.FC = () => {
                     <p className="font-semibold">Birthday</p>
                     <p className="font-regular">
                       {`${getMonthName(
-                        getYearFromString(personData?.birthday).month.toString()
+                        getYearFromString(
+                          personData?.birthday,
+                        ).month.toString(),
                       )} ${getYearFromString(personData?.birthday).day}, ${
                         getYearFromString(personData?.birthday).year
                       }`}
@@ -267,12 +276,14 @@ const Person: React.FC = () => {
                     <div className="w-full grid gap-1 text-[0.9rem]">
                       <p className="font-semibold">Day of Death</p>
                       <p className="font-regular">{`${getMonthName(
-                        getYearFromString(personData?.birthday).month.toString()
+                        getYearFromString(
+                          personData?.birthday,
+                        ).month.toString(),
                       )} ${getYearFromString(personData?.birthday).day}, ${
                         getYearFromString(personData?.birthday).year
                       } (${age(
                         personData?.birthday,
-                        personData?.deathday
+                        personData?.deathday,
                       )} years old)`}</p>
                     </div>
                   )}
@@ -307,50 +318,31 @@ const Person: React.FC = () => {
               <div className="w-full grid gap-4 md:gap-5">
                 <p className="text-[1.25rem] font-semibold">Biography</p>
 
-                <div className="relative w-full">
-                  <p
-                    className={`w-full whitespace-pre-line ${
-                      clampLine ? "line-clamp-6" : "line-clamp-none"
-                    }`}
-                  >
-                    {personData?.biography}
-                  </p>
-
-                  <div
-                    className={`absolute bottom-0 w-full py-1 bg-read-more ${
-                      !clampLine && "hidden"
-                    }`}
-                  >
-                    <p
-                      className="w-full text-[#01b4e4] text-right hover:cursor-pointer"
-                      onClick={() => setClampLine(false)}
-                    >
-                      Read More...
-                    </p>
-                  </div>
-                </div>
+                <ReadMoreText text={personData.biography} />
               </div>
 
               {/* Known For Work */}
               <div className="w-full grid gap-4 md:gap-5">
                 <p className="text-[1.25rem] font-semibold">Known For</p>
 
-                <PostersList
-                  variant="overflow"
-                  posterData={knownForList as MovieTVDataType[]}
-                  showDetail={false}
-                  inlinePadding={false}
-                />
+                <Suspense
+                  fallback={
+                    <PostersListSkeleton
+                      posterData={[]}
+                      variant="overflow"
+                      showDetail={false}
+                      inlinePadding={false}
+                    />
+                  }
+                >
+                  <KnownFor personId={personId} />
+                </Suspense>
               </div>
 
               {/* Work by Person */}
-              {movieCredits && tvCredits && combinedCredits && (
-                <PersonWork
-                  movieCredits={movieCredits}
-                  tvCredits={tvCredits}
-                  combinedCredits={combinedCredits}
-                />
-              )}
+              <Suspense fallback={null}>
+                <Credits personId={personId} />
+              </Suspense>
             </div>
           </>
         )}
