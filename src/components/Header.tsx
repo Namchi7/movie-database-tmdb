@@ -15,11 +15,12 @@ import filter from "@/assets/images/filter-icon.png";
 import { navLinkDataType } from "@/constants/types";
 import { navLinkData } from "@/constants/navLinkData";
 import MenuDrawer from "./MenuDrawer";
+import HeaderShell from "./HeaderShell";
 
 const Header: React.FC = () => {
   return (
-    <div className="z-10 w-full flex justify-center items-center bg-[#032541]">
-      <div className="w-full max-w-[1200px] flex justify-between items-center gap-8 flex-nowrap p-4">
+    <HeaderShell>
+      <div className="w-full flex justify-between items-center gap-8 flex-nowrap p-4">
         {/* <div className="size-8 flex md:hidden justify-center items-center">
           <Image
             src={menu}
@@ -89,7 +90,7 @@ const Header: React.FC = () => {
           />
         </Link>
       </div>
-    </div>
+    </HeaderShell>
   );
 };
 

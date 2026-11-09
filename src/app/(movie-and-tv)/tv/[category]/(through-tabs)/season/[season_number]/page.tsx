@@ -1,86 +1,74 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import React, { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import apiCall from "@/lib/apiCall";
-import {
-  MovieTVDataType,
-  SeasonEpisodeType,
-  SeasonResponseType,
-  TVSeasonsType,
-} from "@/constants/types";
-import back from "@/assets/images/back-icon.png";
-import next from "@/assets/images/next-icon.png";
+import DetailPageLoading from "@/components/detailPages/DetailPageLoading";
 import BackdropImageElement from "@/components/BackdropImageElement";
 import StarScore from "@/components/StarScore";
+import tmdbFetch from "@/lib/tmdb";
+import { MovieTVDataType, SeasonResponseType } from "@/constants/types";
+import back from "@/assets/images/back-icon.png";
+import next from "@/assets/images/next-icon.png";
 
 export interface SeasonNavFinalType {
   prev: number | null;
   next: number | null;
 }
 
-const Season: React.FC = () => {
-  const pathname: string = usePathname();
-  const seasonNo: number = parseInt(pathname.split("/")[4]);
+const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
-  const [seasons, setSeasons] = useState<TVSeasonsType[]>();
-  const [data, setData] = useState<SeasonEpisodeType[]>();
-  const [name, setName] = useState<string>();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+const getDateObject = (dt: string) => {
+  const date = new Date(dt);
 
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
+  const dom: number = date.getDate();
+  const mon: number = date.getMonth();
+  const year: number = date.getFullYear();
 
-  const getDateObject = (dt: string) => {
-    const date = new Date(dt);
-
-    const dom: number = date.getDate();
-    const mon: number = date.getMonth();
-    const year: number = date.getFullYear();
-
-    return {
-      date: dom,
-      month: months[mon],
-      year: year,
-    };
+  return {
+    date: dom,
+    month: months[mon],
+    year: year,
   };
+};
 
-  const resolvedRuntime = (time: number) => {
-    const hr: string =
-      Math.floor(time / 60) === 0 ? "" : `${Math.floor(time / 60).toString()}h`;
-    const min: string = time % 60 === 0 ? "" : `${(time % 60).toString()}m`;
+const resolvedRuntime = (time: number) => {
+  const hr: string =
+    Math.floor(time / 60) === 0 ? "" : `${Math.floor(time / 60).toString()}h`;
+  const min: string = time % 60 === 0 ? "" : `${(time % 60).toString()}m`;
 
-    return `${hr} ${min}`;
-  };
+  return `${hr} ${min}`;
+};
 
-  const getSeasonNavPath = (sNo: number | null | undefined) => {
-    const pathArr: string[] = pathname.split("/");
+const SeasonDetail = async ({
+  slug,
+  seasonNo,
+}: {
+  slug: string;
+  seasonNo: number;
+}) => {
+  const id: string = slug.split("-")[0];
 
-    const path: string = [
-      pathArr[0],
-      pathArr[1],
-      pathArr[2],
-      pathArr[3],
-      sNo,
-    ].join("/");
+  const [res, resData] = await Promise.all([
+    tmdbFetch<MovieTVDataType>({ endpoint: `/tv/${id}` }),
+    tmdbFetch<SeasonResponseType>({ endpoint: `/tv/${id}/season/${seasonNo}` }),
+  ]);
 
-    return path;
-  };
+  const seasons = res?.seasons;
+  const name = resData?.name;
+  const data = resData?.episodes;
 
   const getSeasonsNav = () => {
     if (seasons) {
@@ -91,7 +79,7 @@ const Season: React.FC = () => {
       };
 
       const currentSeasonIndex: number = seasons.findIndex(
-        (item) => item.season_number === seasonNo
+        (item) => item.season_number === seasonNo,
       );
 
       if (currentSeasonIndex < total - 1) {
@@ -105,37 +93,15 @@ const Season: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    const getData = async () => {
-      setIsLoading(true);
-
-      const id: string = pathname.split("/")[2].split("-")[0];
-
-      const res: MovieTVDataType = await apiCall(`/tv/${id}`, "");
-      const resData: SeasonResponseType = await apiCall(
-        `/tv/${id}/season/${seasonNo}`,
-        ""
-      );
-
-      setSeasons(res.seasons);
-      setName(resData.name);
-      setData(resData.episodes);
-
-      setIsLoading(false);
-    };
-
-    getData();
-  }, [seasonNo]);
-
   return (
     <div className="w-full grid">
       {seasons && (
         <div className="w-full flex justify-center items-center border-b-1 border-gray-200 px-4 md:px-5">
-          <div className="w-full max-w-[75rem] flex flex-row justify-between items-center">
+          <div className="w-full max-w-site flex flex-row justify-between items-center">
             <div className="">
               {getSeasonsNav()?.prev !== null && (
                 <Link
-                  href={getSeasonNavPath(getSeasonsNav()?.prev)}
+                  href={`/tv/${slug}/season/${getSeasonsNav()?.prev}`}
                   className="flex justify-start items-center gap-1 py-2"
                 >
                   <Image
@@ -149,7 +115,7 @@ const Season: React.FC = () => {
                   <p className="font-medium">
                     {
                       seasons?.filter(
-                        (item) => item.season_number === getSeasonsNav()?.prev
+                        (item) => item.season_number === getSeasonsNav()?.prev,
                       )[0]?.name
                     }
                   </p>
@@ -160,13 +126,13 @@ const Season: React.FC = () => {
             <div className="">
               {getSeasonsNav()?.next !== null && (
                 <Link
-                  href={getSeasonNavPath(getSeasonsNav()?.next)}
+                  href={`/tv/${slug}/season/${getSeasonsNav()?.next}`}
                   className="flex justify-start items-center gap-1 py-2"
                 >
                   <p className="font-medium">
                     {
                       seasons?.filter(
-                        (item) => item.season_number === getSeasonsNav()?.next
+                        (item) => item.season_number === getSeasonsNav()?.next,
                       )[0]?.name
                     }
                   </p>
@@ -187,7 +153,7 @@ const Season: React.FC = () => {
 
       <div className="w-full flex justify-center items-center px-4 md:px-5 pt-5">
         {data && (
-          <div className="w-full max-w-[75rem] grid gap-2">
+          <div className="w-full max-w-site grid gap-2">
             <h3 className="text-[1.5rem] font-bold">{name}</h3>
             <p className="text-[1.1rem] font-semibold opacity-70">
               {`Episodes `}
@@ -204,7 +170,7 @@ const Season: React.FC = () => {
               className="w-full flex justify-center items-center gap-4 md:gap-5 px-4 md:px-5 py-[1.875rem]"
               key={i}
             >
-              <div className="w-full max-w-[75rem] grid md:grid-cols-[14.1875rem_1fr] rounded-mdb overflow-hidden shadow-poster">
+              <div className="w-full max-w-site grid md:grid-cols-[14.1875rem_1fr] rounded-mdb overflow-hidden shadow-poster">
                 <div className="aspect-[227/127] w-[14.1875rem] mx-auto md:align-top flex justify-center items-center bg-slate-100">
                   <BackdropImageElement
                     src={`https://image.tmdb.org/t/p/w342${item.still_path}`}
@@ -248,6 +214,20 @@ const Season: React.FC = () => {
           ))}
       </div>
     </div>
+  );
+};
+
+const Season = async ({
+  params,
+}: {
+  params: Promise<{ category: string; season_number: string }>;
+}) => {
+  const { category, season_number } = await params;
+
+  return (
+    <Suspense key={season_number} fallback={<DetailPageLoading />}>
+      <SeasonDetail slug={category} seasonNo={parseInt(season_number)} />
+    </Suspense>
   );
 };
 

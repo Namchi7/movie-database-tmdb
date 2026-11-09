@@ -14,6 +14,11 @@ const SliderSelector: React.FC<SliderSelectorType> = ({
   const prevActiveRef = useRef<number>(0);
   const [selected, setSelected] = useState<number>(0);
 
+  const selectTab = (i: number) => {
+    setSelected(i);
+    setSelectedTab(items[i]);
+  };
+
   useEffect(() => {
     if (listRef.current && activeRef.current) {
       prevActiveRef.current = activeRef.current.getBoundingClientRect().left;
@@ -52,15 +57,23 @@ const SliderSelector: React.FC<SliderSelectorType> = ({
       <div className="relative flex flex-nowrap justify-start items-center gap-0 rounded-full border-2 border-[#032541] border-solid">
         <ul
           ref={listRef}
+          role="tablist"
+          aria-label={title}
           className="flex flex-nowrap justify-start items-center gap-0 z-[2]"
         >
           {items.map((item, i) => (
             <li
-              className="px-6 py-1 rounded-full hover:cursor-pointer"
-              key={i}
-              onClick={() => {
-                setSelected(i);
-                setSelectedTab(items[i]);
+              className="px-6 py-1 rounded-full hover:cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#01B4E4]"
+              key={item}
+              role="tab"
+              tabIndex={0}
+              aria-selected={selected === i}
+              onClick={() => selectTab(i)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  selectTab(i);
+                }
               }}
             >
               <p

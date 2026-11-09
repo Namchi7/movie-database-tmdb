@@ -16,7 +16,6 @@ import { PersonWorkFilterCompType } from "@/constants/types";
 
 const PersonWorkFilter: React.FC<PersonWorkFilterCompType> = ({
   setListToShow,
-  setDeptToShow,
 }) => {
   const workFilterData = [
     {
@@ -66,12 +65,6 @@ const PersonWorkFilter: React.FC<PersonWorkFilterCompType> = ({
     }
   };
 
-  const changeDeptState = (item: string) => {
-    const i: number = workFilterData[1].items.indexOf(item);
-
-    setDeptToShow(i);
-  };
-
   return (
     <div className="flex flex-row justify-start items-center gap-4">
       {workFilterData.map((workType, i: number) => (
@@ -100,11 +93,7 @@ const PersonWorkFilter: React.FC<PersonWorkFilterCompType> = ({
             <ul>
               {workType.items.map((item, ind: number) => (
                 <li
-                  onClick={() =>
-                    workType.title === "work_type"
-                      ? changeListState(item)
-                      : changeDeptState(item)
-                  }
+                  onClick={() => changeListState(item)}
                   className="w-full px-4 py-2 text-black text-[0.85rem] hover:bg-slate-100 capitalize hover:cursor-pointer"
                   key={ind}
                 >

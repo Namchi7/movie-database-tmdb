@@ -56,7 +56,7 @@ const DatePickerComp: React.FC<DatePickerCompType> = ({
           minDate ? getParsedDate(minDate) : getParsedDate("1990-01-01")
         }
         maxValue={maxDate ? getParsedDate(maxDate) : today(getLocalTimeZone())}
-        onChange={(value) => setDate(value)}
+        onChange={(value) => value && setDate(value)}
         showMonthAndYearPickers
       />
     </div>

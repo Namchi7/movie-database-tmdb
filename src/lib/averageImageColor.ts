@@ -3,10 +3,10 @@ import { AverageImageColorReturnType } from "@/constants/types";
 const averageImageColor = async (
   img: HTMLImageElement,
   w: number,
-  h: number
+  h: number,
 ): Promise<AverageImageColorReturnType> => {
   return new Promise((resolve, reject) => {
-    img.onload = () => {
+    const compute = () => {
       if (img.width === 0 || img.height === 0) {
         return reject("Image dimensions are zero");
       }
@@ -46,6 +46,13 @@ const averageImageColor = async (
       resolve(averageColor);
     };
 
+    // Server-rendered images may finish loading before hydration
+    if (img.complete && img.naturalWidth > 0) {
+      compute();
+      return;
+    }
+
+    img.onload = compute;
     img.onerror = (err) => {
       reject(err);
     };

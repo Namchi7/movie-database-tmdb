@@ -1,58 +1,36 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import React from "react";
+import { notFound } from "next/navigation";
 
 import MovieAndTVList from "@/components/MovieAndTVList";
 import MovieTVDetail from "@/components/MovieTVDetail";
+import { movieCategory } from "@/constants/routeCategoryToTitle";
 
-const Movie: React.FC = () => {
-  const pathname: string = usePathname();
-  const mediaType: string = pathname.split("/")[1];
-  const category: string = pathname.split("/")[2];
+// /movie/<list-category> shows a list, /movie/<id>-<slug> shows a detail page
+const Movie = async ({ params }: { params: Promise<{ category: string }> }) => {
+  const { category } = await params;
 
-  const [title, setTitle] = useState<string>("");
-  const [isList, setIsList] = useState<boolean | null>(null);
-  const [isListLoading, setIsListLoading] = useState<boolean>(true);
+  if (category in movieCategory) {
+    return (
+      <MovieAndTVList
+        title={movieCategory[category as keyof typeof movieCategory]}
+        mediaType="movie"
+        category={category}
+      />
+    );
+  }
 
-  useEffect(() => {
-    switch (category) {
-      case "popular": {
-        setTitle("Popular");
-        setIsList(true);
-        break;
-      }
-      case "now-playing": {
-        setTitle("Now Playing");
-        setIsList(true);
-        break;
-      }
-      case "upcoming": {
-        setTitle("Upcoming");
-        setIsList(true);
-        break;
-      }
-      case "top-rated": {
-        setTitle("Top Rated");
-        setIsList(true);
-        break;
-      }
-      default: {
-        setIsList(false);
-        break;
-      }
-    }
-    setIsListLoading(false);
-  }, [category]);
+  const itemId: number = parseInt(category.split("-")[0]);
+
+  if (!itemId) {
+    notFound();
+  }
 
   return (
-    <>
-      {!isListLoading && isList ? (
-        <MovieAndTVList title={title} mediaType={mediaType} />
-      ) : (
-        <MovieTVDetail title={category} />
-      )}
-    </>
+    <MovieTVDetail
+      mediaType="movie"
+      itemId={itemId}
+      basePath={`/movie/${category}`}
+    />
   );
 };
 

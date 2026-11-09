@@ -30,8 +30,12 @@ const config = {
       xl: "1200px",
     },
     extend: {
+      maxWidth: {
+        // Shared page width for header, footer and page content
+        site: "90rem",
+      },
       fontFamily: {
-        sans: ["Poppins", "sans-serif"],
+        sans: ["var(--font-poppins)", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--1border))",

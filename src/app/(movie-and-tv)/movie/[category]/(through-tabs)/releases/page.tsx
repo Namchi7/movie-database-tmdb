@@ -1,58 +1,38 @@
-"use client";
+import React, { Suspense } from "react";
 
-import React, { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
-
-import apiCall from "@/lib/apiCall";
+import DetailPageLoading from "@/components/detailPages/DetailPageLoading";
+import tmdbFetch from "@/lib/tmdb";
 import { countries } from "@/constants/countryCodes";
 import { languages } from "@/constants/languageCodes";
-import {
-  ReleaseDatesResponseType,
-  ReleaseDatesResultType,
-} from "@/constants/types";
+import { ReleaseDatesResponseType } from "@/constants/types";
 import { releaseType } from "@/constants/releaseTypes";
 
-const Releases: React.FC = () => {
-  const pathname: string = usePathname();
+const getNumberWithZero = (num: number) => {
+  if (num < 10) {
+    return `0${num}`;
+  } else {
+    return `${num}`;
+  }
+};
 
-  const [data, setData] = useState<ReleaseDatesResultType[]>();
+const getResolvedDate = (dt: string) => {
+  const date = new Date(dt);
 
-  const getNumberWithZero = (num: number) => {
-    if (num < 10) {
-      return `0${num}`;
-    } else {
-      return `${num}`;
-    }
-  };
+  const dom: number = date.getDate();
+  const mon: number = date.getMonth();
+  const year: number = date.getFullYear();
 
-  const getResolvedDate = (dt: string) => {
-    const date = new Date(dt);
+  return `${getNumberWithZero(dom)}/${getNumberWithZero(mon + 1)}/${year}`;
+};
 
-    const dom: number = date.getDate();
-    const mon: number = date.getMonth();
-    const year: number = date.getFullYear();
-
-    return `${getNumberWithZero(dom)}/${getNumberWithZero(mon + 1)}/${year}`;
-  };
-
-  useEffect(() => {
-    const getData = async () => {
-      const type: string = pathname.split("/")[1];
-      const id: string = pathname.split("/")[2].split("-")[0];
-
-      const res: ReleaseDatesResponseType = await apiCall(
-        `/movie/${id}/release_dates`,
-        ""
-      );
-
-      setData(res?.results);
-    };
-
-    getData();
-  }, [pathname]);
+const ReleasesList = async ({ id }: { id: string }) => {
+  const res = await tmdbFetch<ReleaseDatesResponseType>({
+    endpoint: `/movie/${id}/release_dates`,
+  });
+  const data = res?.results;
 
   return (
-    <div className="w-full max-w-[75rem] grid gap-4 px-4 md:px-5 py-[1.875rem]">
+    <div className="w-full max-w-site grid gap-4 px-4 md:px-5 py-[1.875rem]">
       {data &&
         data.map((item, i: number) => (
           <div
@@ -93,6 +73,20 @@ const Releases: React.FC = () => {
           </div>
         ))}
     </div>
+  );
+};
+
+const Releases = async ({
+  params,
+}: {
+  params: Promise<{ category: string }>;
+}) => {
+  const { category } = await params;
+
+  return (
+    <Suspense fallback={<DetailPageLoading />}>
+      <ReleasesList id={category.split("-")[0]} />
+    </Suspense>
   );
 };
 

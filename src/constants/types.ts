@@ -12,41 +12,7 @@ export interface SliderSelectorType {
   className: string;
   title: string;
   items: string[];
-  setSelectedTab: React.Dispatch<React.SetStateAction<string>>;
-}
-
-export interface IPInfoType {
-  ip: string;
-  network: string;
-  version: string;
-  city: string;
-  region: string;
-  region_code: string;
-  country: string;
-  country_name: string;
-  country_code: string;
-  country_code_iso3: string;
-  country_capital: string;
-  country_tld: string;
-  continent_code: string;
-  in_eu: boolean;
-  postal: string;
-  latitude: number;
-  longitude: number;
-  timezone: string;
-  utc_offset: string;
-  country_calling_code: string;
-  currency: string;
-  currency_name: string;
-  languages: string;
-  country_area: number;
-  country_population: number;
-  asn: string;
-  org: string;
-}
-
-export interface HomepageListType {
-  ipInfo: IPInfoType | undefined;
+  setSelectedTab: (tab: string) => void;
 }
 
 export interface PostersListType {
@@ -134,6 +100,7 @@ export interface TVCategoryType {
 export interface MovieAndTVListType {
   title: string;
   mediaType: string;
+  category: string;
 }
 
 export interface filterListItemType {
@@ -144,7 +111,7 @@ export interface filterListItemType {
 
 export type SetValueFnType = (
   value: string | string[] | number | undefined,
-  key: string
+  key: string,
 ) => void;
 
 export interface SelectType {
@@ -198,18 +165,15 @@ export interface NumberPickerByStepType {
 }
 
 export interface MovieTVDetailCompPropsType {
-  title: string;
+  mediaType: string;
+  itemId: number;
+  basePath: string;
 }
 
 export interface MovieTVDetailHeroSectionCompType {
   itemData: MovieTVDataType;
   crewData: CreditCrewType[];
   bgImg: string;
-}
-
-export interface GetListOrDetailType {
-  ItemList: React.FC<MovieAndTVListType>;
-  ItemDetail: React.FC<MovieTVDetailCompPropsType>;
 }
 
 export interface DetailTabDataType {
@@ -266,7 +230,7 @@ export interface PersonCardCompType {
 export interface PaginationCompType {
   page: number;
   lastPage: number;
-  setPage: React.Dispatch<React.SetStateAction<number>>;
+  setPage: (page: number) => void;
 }
 
 export interface CreditCastType {
@@ -375,14 +339,16 @@ export interface SeasonResponseType {
 
 export interface CastSeasonReviewDataType {
   cast: CreditCastType[];
-  season: SeasonResponseType;
-  review: ReviewDataType;
+  season: SeasonResponseType | null;
+  review: ReviewDataType | null;
   total_reviews: number;
+  item_name: string;
 }
 
 export interface CastSeasonReviewCompType {
   type: string;
   data: CastSeasonReviewDataType;
+  basePath: string;
 }
 
 export interface CastListCompType {
@@ -390,19 +356,18 @@ export interface CastListCompType {
 }
 
 export interface MovieTVReviewCompType {
-  data: ReviewDataType;
+  data: ReviewDataType | null;
 }
 
 export interface MovieTVSeasonCompType {
-  data: SeasonResponseType;
+  data: SeasonResponseType | null;
+  itemName: string;
 }
 
 export interface MovieTVDetailMediaCompType {
-  mediaType: string;
-  itemId: number;
-  setVideoKey: React.Dispatch<React.SetStateAction<string>>;
-  setVideoTitle: React.Dispatch<React.SetStateAction<string>>;
-  setVideoOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  videos: VideoResultType[];
+  backdrops: ImagesResultType[];
+  posters: ImagesResultType[];
 }
 
 export interface VideoResultType {
@@ -476,6 +441,8 @@ export interface RecommendationsResponseType {
 
 export interface MovieTVDetailExtraInfoCompType {
   itemData: MovieTVDataType;
+  mediaType: string;
+  itemId: number;
 }
 
 export interface MovieTVExternalIdsType {
@@ -498,7 +465,9 @@ export interface MovieTVKeywordsType {
 
 export interface MovieTVKeywordsResponseType {
   id: number;
-  results: MovieTVKeywordsType[];
+  // TV returns `results`, movies return `keywords`
+  results?: MovieTVKeywordsType[];
+  keywords?: MovieTVKeywordsType[];
 }
 
 export interface PersonDataResponseType {
@@ -694,7 +663,6 @@ export interface PersonWorkCompType {
 
 export interface PersonWorkFilterCompType {
   setListToShow: React.Dispatch<React.SetStateAction<number>>;
-  setDeptToShow: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export interface NormalizedCastDataType {
@@ -829,10 +797,7 @@ export interface SearchTabSeqType {
 export interface SearchTabsCompType {
   searchTabSeq: SearchTabSeqType;
   selectedResult: SearchSelectedResultType;
-  setSelectedResult: React.Dispatch<
-    React.SetStateAction<SearchSelectedResultType>
-  >;
-  setIsTabChange: React.Dispatch<React.SetStateAction<boolean>>;
+  query: string;
 }
 
 export interface MovieTVSearchResultItemType {
@@ -935,4 +900,10 @@ export interface VideosResponseType {
 
 export interface FailedResponseType {
   error: string;
+}
+
+// Shared movie/TV sub pages (cast, titles, images, ...)
+export interface DetailPageProps {
+  mediaType: string;
+  id: string;
 }

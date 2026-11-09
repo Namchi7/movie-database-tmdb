@@ -3,8 +3,8 @@ import React from "react";
 const YoutubeEmbed: React.FC<{
   title: string;
   videoKey: string;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({ title, videoKey, setOpen }) => {
+  onClose: () => void;
+}> = ({ title, videoKey, onClose }) => {
   const embedLink = `https://www.youtube.com/embed/${videoKey}`;
 
   return (
@@ -14,10 +14,7 @@ const YoutubeEmbed: React.FC<{
           <div className="w-full flex justify-between items-center gap-8 p-3">
             <h4 className="text-[1.25rem] text-white font-bold">{title}</h4>
 
-            <span
-              className="text-white hover:cursor-pointer"
-              onClick={() => setOpen(false)}
-            >
+            <span className="text-white hover:cursor-pointer" onClick={onClose}>
               Close
             </span>
           </div>

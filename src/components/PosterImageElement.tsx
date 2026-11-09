@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 
 import imageFallbackImage from "@/assets/images/image-placeholder.png";
@@ -13,21 +13,25 @@ const PosterImageElement: React.FC<CustomImageElementType> = ({
   h,
   errStyle = "",
 }) => {
-  const [imgError, setImgError] = useState(false);
-
-  useEffect(() => {
-    setImgError(false);
-  }, [src]);
+  // Track which src failed so a new src gets a fresh attempt
+  const [failedSrc, setFailedSrc] = useState<string>();
+  const imgError: boolean = failedSrc === src;
+  // Fade images in once decoded instead of popping in mid-scroll
+  const [loadedSrc, setLoadedSrc] = useState<string>();
+  const loaded: boolean = loadedSrc === src || imgError;
 
   return (
     <>
       <Image
-        onError={() => setImgError(true)}
+        onError={() => setFailedSrc(src)}
+        onLoad={() => setLoadedSrc(src)}
         src={imgError ? imageFallbackImage : src}
         alt={alt ? alt : ""}
         width={w}
         height={h}
-        className={`object-center ${
+        className={`object-center transition-opacity duration-300 ${
+          loaded ? "opacity-100" : "opacity-0"
+        } ${
           imgError
             ? errStyle
               ? `${errStyle}`

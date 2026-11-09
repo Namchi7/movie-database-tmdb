@@ -12,7 +12,7 @@ const SearchInput: React.FC<SearchInputCompType> = ({
   handleSearchClick,
 }) => {
   return (
-    <div className="relative w-full max-w-[75rem] my-4">
+    <div className="relative w-full max-w-site my-4">
       <input
         type="text"
         placeholder="Search for a movie, tv show, person..."

@@ -74,8 +74,98 @@ html {
   background: #032541;
 }
 
+/* Themed page backdrop: a soft dot grid with cyan/teal glows. Painted on a
+   fixed layer (not background-attachment: fixed) so it never repaints on
+   scroll. Strongest at the sides on wide screens, faint behind content. */
+body {
+  position: relative;
+  isolation: isolate;
+  background-color: #f5f8fb;
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+body::before {
+  background-image:
+    radial-gradient(60rem 40rem at 0% 15%, rgb(1 180 228 / 0.1), transparent 70%),
+    radial-gradient(55rem 40rem at 100% 85%, rgb(30 213 169 / 0.1), transparent 70%);
+}
+
+body::after {
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgb(3 37 65 / 0.14) 1px,
+    transparent 0
+  );
+  background-size: 22px 22px;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    #000,
+    rgb(0 0 0 / 0.3) calc(50% - 40rem),
+    rgb(0 0 0 / 0.3) calc(50% + 40rem),
+    #000
+  );
+  mask-image: linear-gradient(
+    90deg,
+    #000,
+    rgb(0 0 0 / 0.3) calc(50% - 40rem),
+    rgb(0 0 0 / 0.3) calc(50% + 40rem),
+    #000
+  );
+}
+
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+}
+
+@layer utilities {
+  /* Horizontal-only scroller with a thin, low-contrast scrollbar that just
+     hints the row scrolls; it darkens on hover. No vertical scrolling. */
+  .scroll-x-subtle {
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    /* Settle on an item edge without fighting momentum scrolling */
+    scroll-snap-type: x proximity;
+    scroll-behavior: smooth;
+    /* Scroll on the compositor instead of repainting the row */
+    will-change: scroll-position;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(3 37 65 / 0.18) transparent;
+  }
+
+  .scroll-x-subtle > * {
+    scroll-snap-align: start;
+  }
+
+  .scroll-x-subtle:hover {
+    scrollbar-color: rgb(3 37 65 / 0.4) transparent;
+  }
+
+  /* Safari / older WebKit, which ignore scrollbar-width and scrollbar-color */
+  .scroll-x-subtle::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .scroll-x-subtle::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scroll-x-subtle::-webkit-scrollbar-thumb {
+    background-color: rgb(3 37 65 / 0.18);
+    border-radius: 9999px;
+  }
+
+  .scroll-x-subtle:hover::-webkit-scrollbar-thumb {
+    background-color: rgb(3 37 65 / 0.4);
+  }
 }

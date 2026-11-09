@@ -11,11 +11,13 @@ const PostersListSkeleton: React.FC<PostersListType> = ({
 
   return (
     <div
+      role="status"
+      aria-label="Loading"
       className={`w-full grid gap-4 md:gap-5 z-[3] ${
         variant === "overflow"
-          ? "grid-flow-col auto-cols-[150px] overflow-x-scroll pb-3"
+          ? "grid-flow-col auto-cols-[150px] scroll-x-subtle pb-3"
           : "grid-cols-[repeat(auto-fill,minmax(150px,1fr))]"
-      } ${inlinePadding ? "px-4 md:px-10" : "p-0"}`}
+      } ${inlinePadding ? "px-4 md:px-10 scroll-px-4 md:scroll-px-10" : "p-0"}`}
     >
       {arr.map((_, i: number) => (
         <PosterSkeleton key={i} />
