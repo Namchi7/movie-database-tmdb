@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import Link from "next/link";
+import Link from "@/components/Link";
 import Image from "next/image";
 
 import facebook from "@/assets/images/facebook.png";

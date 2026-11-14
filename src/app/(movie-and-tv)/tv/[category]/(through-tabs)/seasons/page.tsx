@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import Link from "next/link";
+import Link from "@/components/Link";
 
 import DetailPageLoading from "@/components/detailPages/DetailPageLoading";
 import PosterImageElement from "@/components/PosterImageElement";

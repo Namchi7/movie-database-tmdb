@@ -1,6 +1,6 @@
 import React, { Suspense } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/Link";
 
 import DetailPageLoading from "@/components/detailPages/DetailPageLoading";
 import BackdropImageElement from "@/components/BackdropImageElement";
@@ -9,6 +9,10 @@ import tmdbFetch from "@/lib/tmdb";
 import { MovieTVDataType, SeasonResponseType } from "@/constants/types";
 import back from "@/assets/images/back-icon.png";
 import next from "@/assets/images/next-icon.png";
+
+export async function generateStaticParams() {
+  return [];
+}
 
 export interface SeasonNavFinalType {
   prev: number | null;
