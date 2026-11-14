@@ -1,5 +1,5 @@
 import React from "react";
-import Link from "next/link";
+import Link from "@/components/Link";
 
 import UserImageElement from "./UserImageElement";
 import StarScore from "./StarScore";

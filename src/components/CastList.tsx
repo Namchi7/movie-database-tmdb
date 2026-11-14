@@ -1,5 +1,5 @@
 import React from "react";
-import Link from "next/link";
+import Link from "@/components/Link";
 
 import PersonImageElement from "./PersonImageElement";
 import { CastListCompType, CreditCastType } from "@/constants/types";

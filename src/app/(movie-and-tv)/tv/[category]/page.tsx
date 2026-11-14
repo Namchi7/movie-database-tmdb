@@ -1,23 +1,11 @@
 import React from "react";
 import { notFound } from "next/navigation";
 
-import MovieAndTVList from "@/components/MovieAndTVList";
 import MovieTVDetail from "@/components/MovieTVDetail";
-import { tvCategory } from "@/constants/routeCategoryToTitle";
 
-// /tv/<list-category> shows a list, /tv/<id>-<slug> shows a detail page
+// /tv/<id>-<slug> detail page (lists live in their own folders, e.g. ./popular)
 const TV = async ({ params }: { params: Promise<{ category: string }> }) => {
   const { category } = await params;
-
-  if (category in tvCategory) {
-    return (
-      <MovieAndTVList
-        title={tvCategory[category as keyof typeof tvCategory]}
-        mediaType="tv"
-        category={category}
-      />
-    );
-  }
 
   const itemId: number = parseInt(category.split("-")[0]);
 

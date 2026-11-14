@@ -1,6 +1,6 @@
 import React, { Suspense } from "react";
 import { notFound } from "next/navigation";
-import Link from "next/link";
+import Link from "@/components/Link";
 import Image from "next/image";
 
 import DetailTabs from "@/components/DetailTab";

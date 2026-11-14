@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/Link";
 
 import { navLinkData } from "@/constants/navLinkData";
 import logo_big from "@/assets/images/mdb-logo-big.png";

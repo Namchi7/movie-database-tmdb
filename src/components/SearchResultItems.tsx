@@ -6,7 +6,7 @@ import {
   MovieTVSearchResultItemType,
   PersonSearchResultItemType,
 } from "@/constants/types";
-import Link from "next/link";
+import Link from "@/components/Link";
 
 export const MovieTVSearchResultItem: React.FC<MovieTVSearchResultItemType> = ({
   itemData,

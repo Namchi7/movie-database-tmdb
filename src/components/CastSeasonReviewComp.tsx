@@ -1,5 +1,5 @@
 import React from "react";
-import Link from "next/link";
+import Link from "@/components/Link";
 
 import CastList from "./CastList";
 import MovieTVReview from "./MovieTVReview";
